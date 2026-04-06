@@ -1,349 +1,270 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EditBay | AI-Powered Creative Studio</title>
+    <title>EditBay | Premium AI Video Production Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
         
         :root {
-            --accent: #3b82f6;
-            --bg-dark: #050505; /* 깊은 다크 블랙 */
-            --card-bg: #111111;
+            --accent: #3b82f6; 
+            --bg-dark: #020617; /* 깊은 다크 블랙 블루 */
+            --text-main: #f8fafc;
         }
 
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-dark);
-            color: #ffffff;
+            color: var(--text-main);
             scroll-behavior: smooth;
         }
 
-        .lang-ko .en-text { display: none; }
-        .lang-en .ko-text { display: none; }
-
         .glass-nav {
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.12) 0%, transparent 80%);
+        }
+
         .service-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .service-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-12px);
             border-color: var(--accent);
-            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+            background: rgba(30, 41, 59, 0.6);
+            box-shadow: 0 20px 40px -20px rgba(59, 130, 246, 0.3);
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            background: linear-gradient(135deg, #93c5fd, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .btn-primary {
-            background: #2563eb;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-            transform: scale(1.05);
-        }
-
-        .lang-toggle button {
-            transition: all 0.3s ease;
+        .lang-switch-btn {
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
             opacity: 0.5;
         }
-
-        .lang-toggle button.active {
+        .lang-switch-btn.active {
             opacity: 1;
-            color: #3b82f6;
+            color: var(--accent);
             font-weight: 700;
         }
 
-        /* Hero Image Placeholder 애니메이션 */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        .hero-logo {
-            animation: float 4s ease-in-out infinite;
-        }
+        /* 기본적으로 한국어 요소는 숨김 */
+        [lang="ko"] { display: none; }
     </style>
 </head>
-<body class="lang-ko">
+<body class="overflow-x-hidden">
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- 로고 영역 -->
-            <div class="flex items-center gap-3">
-                <img src="EDITBAY LOGO (1024x1024_Favicon_White).png" alt="EditBay Logo" class="h-10 w-10 object-contain">
-                <span class="text-xl font-bold tracking-tighter">EDITBAY</span>
-            </div>
-
-            <!-- 메뉴 & 언어 선택 -->
+            <a href="#" class="flex items-center">
+                <!-- 로고 파일명을 logo.png로 맞춰서 업로드하세요 -->
+                <img src="logo.png" alt="EditBay Logo" class="h-9 w-auto">
+            </a>
+            
             <div class="flex items-center gap-8">
-                <div class="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
-                    <a href="#works" class="hover:text-blue-500 transition uppercase">Works</a>
-                    <a href="#services" class="hover:text-blue-500 transition uppercase">Services</a>
-                    <a href="#contact" class="hover:text-blue-500 transition uppercase">Contact</a>
+                <div class="hidden md:flex space-x-10 text-sm font-medium tracking-wide">
+                    <a href="#works" class="hover:text-blue-400 transition nav-item" data-en="WORKS" data-ko="작업물">WORKS</a>
+                    <a href="#services" class="hover:text-blue-400 transition nav-item" data-en="SERVICES" data-ko="서비스">SERVICES</a>
+                    <a href="#contact" class="hover:text-blue-400 transition nav-item" data-en="CONTACT" data-ko="문의하기">CONTACT</a>
                 </div>
-                
-                <div class="lang-toggle flex items-center gap-2 text-xs font-bold border-l border-white/10 pl-6">
-                    <button id="ko-btn" class="active" onclick="setLanguage('ko')">KR</button>
-                    <span class="text-white/20">|</span>
-                    <button id="en-btn" onclick="setLanguage('en')">EN</button>
+                <div class="flex items-center gap-3 bg-slate-900/50 px-3 py-1.5 rounded-full border border-white/5">
+                    <button onclick="setLanguage('en')" class="lang-switch-btn active" id="btn-en">EN</button>
+                    <span class="text-slate-700 text-xs">|</span>
+                    <button onclick="setLanguage('ko')" class="lang-switch-btn" id="btn-ko">KR</button>
                 </div>
-
-                <button class="md:hidden text-xl" onclick="toggleMenu()">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 bg-black z-40 hidden flex-col items-center justify-center space-y-8 text-2xl font-bold">
-        <button class="absolute top-6 right-6" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
-        <a href="#works" onclick="toggleMenu()">WORKS</a>
-        <a href="#services" onclick="toggleMenu()">SERVICES</a>
-        <a href="#contact" onclick="toggleMenu()">CONTACT</a>
-    </div>
-
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center pt-20 px-6">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <section class="relative min-h-screen flex items-center pt-20 hero-gradient">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
             <div class="space-y-8">
-                <div class="inline-block px-4 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase">
-                    <span class="ko-text">혁신적인 AI 영상 솔루션</span>
-                    <span class="en-text">Innovative AI Video Solution</span>
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase">
+                    AI-Powered Creative Studio
                 </div>
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight">
-                    <span class="ko-text">비즈니스의 가치를<br><span class="gradient-text">AI 영상</span>으로 완성</span>
-                    <span class="en-text">Elevate Your Business<br>with <span class="gradient-text">AI Cinematics</span></span>
+                
+                <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight" lang="en">
+                    Unrivaled Ads <br>
+                    <span class="gradient-text">Built by AI</span>
                 </h1>
-                <p class="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl">
-                    <span class="ko-text">촬영도, 조명도 필요 없습니다. 오직 AI 기술로만 구현되는 독특하고 감각적인 영상 스토리텔링을 경험하세요.</span>
-                    <span class="en-text">No cameras, no lights. Experience unique and sensory video storytelling created entirely through AI technology.</span>
+                <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed font-light" lang="en">
+                    EditBay crafts unique, high-end visual stories for small businesses. No filming, no lighting—just pure AI storytelling that captivates your audience.
                 </p>
-                <div class="flex gap-4">
-                    <a href="#contact" class="btn-primary px-8 py-4 rounded-full font-bold text-lg shadow-lg shadow-blue-900/40">
-                        <span class="ko-text">무료 상담 신청</span>
-                        <span class="en-text">Get a Free Quote</span>
+
+                <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight" lang="ko">
+                    AI로 완성하는<br>
+                    <span class="gradient-text">독보적인 광고</span>
+                </h1>
+                <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed" lang="ko">
+                    EditBay는 촬영과 조명 없이 오직 AI 스토리텔링만으로 스몰 비즈니스를 위한 감각적이고 고품격인 영상을 완성합니다.
+                </p>
+
+                <div class="pt-4">
+                    <a href="#contact" class="px-10 py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20 nav-item" data-en="Start Free Consultation" data-ko="무료 상담 시작하기">
+                        Start Free Consultation
                     </a>
                 </div>
             </div>
-            <div class="hidden md:flex justify-center items-center">
-                <img src="EDITBAY LOGO (1024x1024_Favicon_White).png" alt="EditBay Hero" class="hero-logo w-4/5 opacity-80 filter drop-shadow-[0_0_50px_rgba(59,130,246,0.3)]">
+            <div class="relative flex justify-center opacity-40 md:opacity-100">
+                <img src="logo.png" alt="EditBay Symbol" class="w-full max-w-md animate-pulse">
             </div>
         </div>
     </section>
 
-    <!-- Main Services -->
-    <section id="services" class="py-32 px-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-20">
-                <h2 class="text-4xl font-bold mb-4">
-                    <span class="ko-text">메인 AI 광고 서비스</span>
-                    <span class="en-text">Main AI Ad Services</span>
-                </h2>
-                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Branded Film -->
-                <div class="service-card p-10 rounded-3xl relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition">
-                        <i class="fas fa-film text-8xl"></i>
+    <!-- Core Services -->
+    <section id="services" class="py-32 bg-slate-950/40">
+        <div class="max-w-7xl mx-auto px-6 text-center mb-20">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight" lang="en">AI Advertising Services</h2>
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight" lang="ko">핵심 AI 광고 서비스</h2>
+            <p class="text-slate-500 text-lg" lang="en">Tailored AI solutions for vision-driven business owners.</p>
+            <p class="text-slate-500 text-lg" lang="ko">비즈니스 오너를 위한 맞춤형 AI 영상 솔루션입니다.</p>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+            <!-- Branded Film -->
+            <div class="service-card p-12 rounded-[2.5rem] space-y-8">
+                <div class="flex justify-between items-start">
+                    <div class="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 text-2xl">
+                        <i class="fas fa-film"></i>
                     </div>
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500 text-2xl">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <span class="text-blue-500 font-bold tracking-widest text-sm">30s / Horizontal</span>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4 uppercase">Branded Film</h3>
-                    <p class="text-gray-400 mb-8 leading-relaxed h-24">
-                        <span class="ko-text">자신의 회사 이미지를 확고히 구축하고 싶은 비즈니스 오너를 위한 가로형 고품격 브랜드 영상입니다.</span>
-                        <span class="en-text">High-quality horizontal brand films for business owners who want to establish a solid corporate image.</span>
-                    </p>
-                    <ul class="space-y-3 mb-10 text-sm text-gray-300">
-                        <li><i class="fas fa-check text-blue-500 mr-2"></i> <span class="ko-text">AI 시네마틱 연출</span><span class="en-text">AI Cinematic Directing</span></li>
-                        <li><i class="fas fa-check text-blue-500 mr-2"></i> <span class="ko-text">프리미엄 사운드 디자인</span><span class="en-text">Premium Sound Design</span></li>
-                        <li><i class="fas fa-check text-blue-500 mr-2"></i> <span class="ko-text">4K 고해상도 출력</span><span class="en-text">4K High-Resolution Output</span></li>
-                    </ul>
-                    <a href="#contact" class="block text-center border border-white/10 py-4 rounded-xl font-bold hover:bg-white hover:text-black transition">
-                        <span class="ko-text">자세히 보기</span>
-                        <span class="en-text">Learn More</span>
-                    </a>
+                    <span class="px-4 py-1.5 bg-blue-500/10 text-blue-400 rounded-full text-xs font-bold uppercase" lang="en">30s / Horizontal</span>
+                    <span class="px-4 py-1.5 bg-blue-500/10 text-blue-400 rounded-full text-xs font-bold uppercase" lang="ko">가로형 / 30초</span>
                 </div>
-
-                <!-- Short Form -->
-                <div class="service-card p-10 rounded-3xl relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition">
-                        <i class="fas fa-mobile-alt text-8xl"></i>
+                <div class="space-y-4">
+                    <h3 class="text-3xl font-bold" lang="en">Branded Film</h3>
+                    <h3 class="text-3xl font-bold" lang="ko">브랜디드 필름</h3>
+                    <p class="text-slate-400 leading-relaxed" lang="en">Designed for business owners who want to establish a premium brand identity. We turn your values into cinematic AI-generated visuals.</p>
+                    <p class="text-slate-400 leading-relaxed" lang="ko">회사의 프리미엄 브랜드 이미지를 구축하고 싶은 오너를 위한 서비스입니다. AI를 통해 기업의 가치를 시네마틱한 영상미로 전달합니다.</p>
+                </div>
+            </div>
+            
+            <!-- Short Form -->
+            <div class="service-card p-12 rounded-[2.5rem] space-y-8">
+                <div class="flex justify-between items-start">
+                    <div class="w-14 h-14 bg-emerald-600/10 rounded-2xl flex items-center justify-center text-emerald-500 text-2xl">
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-500 text-2xl">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <span class="text-purple-500 font-bold tracking-widest text-sm">15s / Vertical</span>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4 uppercase">Short Form Contents</h3>
-                    <p class="text-gray-400 mb-8 leading-relaxed h-24">
-                        <span class="ko-text">식당, 카페 등 스몰 비즈니스를 위한 최적화된 세로형 영상입니다. 복잡한 촬영 절차 없이 AI만으로 임팩트 있는 홍보가 가능합니다.</span>
-                        <span class="en-text">Optimized vertical videos for small businesses like restaurants and cafes. Impactful promotion via AI without complex filming.</span>
-                    </p>
-                    <ul class="space-y-3 mb-10 text-sm text-gray-300">
-                        <li><i class="fas fa-check text-purple-500 mr-2"></i> <span class="ko-text">SNS 맞춤형 트렌디 편집</span><span class="en-text">SNS-Optimized Trendy Editing</span></li>
-                        <li><i class="fas fa-check text-purple-500 mr-2"></i> <span class="ko-text">독창적인 AI 아트워크</span><span class="en-text">Original AI Artwork</span></li>
-                        <li><i class="fas fa-check text-purple-500 mr-2"></i> <span class="ko-text">빠른 제작 기간</span><span class="en-text">Fast Turnaround Time</span></li>
-                    </ul>
-                    <a href="#contact" class="block text-center border border-white/10 py-4 rounded-xl font-bold hover:bg-white hover:text-black transition">
-                        <span class="ko-text">자세히 보기</span>
-                        <span class="en-text">Learn More</span>
-                    </a>
+                    <span class="px-4 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-bold uppercase" lang="en">15s / Vertical</span>
+                    <span class="px-4 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-bold uppercase" lang="ko">세로형 / 15초</span>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-3xl font-bold" lang="en">Short Form Content</h3>
+                    <h3 class="text-3xl font-bold" lang="ko">숏폼 콘텐츠</h3>
+                    <p class="text-slate-400 leading-relaxed" lang="en">Optimized for Cafes, Restaurants, and Small Businesses. Get high-impact, unique social media content without expensive production setups.</p>
+                    <p class="text-slate-400 leading-relaxed" lang="ko">카페, 식당, 스몰 비즈니스에 최적화된 서비스입니다. 고가의 장비나 촬영팀 없이도 SNS에서 주목받는 독특한 AI 영상을 제작합니다.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Other Projects -->
-    <section id="works" class="py-24 bg-[#0a0a0c] px-6 border-y border-white/5">
-        <div class="max-w-7xl mx-auto">
-            <div class="mb-16">
-                <h2 class="text-3xl font-bold uppercase tracking-tighter">
-                    <span class="ko-text">기타 프로젝트</span>
-                    <span class="en-text">Other Projects</span>
-                </h2>
-                <p class="text-gray-500 mt-2">
-                    <span class="ko-text">전문적인 편집 역량으로 다양한 분야를 지원합니다.</span>
-                    <span class="en-text">Supporting various fields with professional editing skills.</span>
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Real Estate -->
-                <div class="flex items-center gap-6 p-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition">
-                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500 text-2xl flex-shrink-0">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-xl mb-1 uppercase">Real Estate Editing</h4>
-                        <p class="text-gray-500 text-sm">
-                            <span class="ko-text">캐나다 전역(토론토, 밴쿠버) 부동산 촬영 전문 회사 대상 편집 서비스</span>
-                            <span class="en-text">Editing services for real estate photo companies across Canada (Toronto, Vancouver)</span>
-                        </p>
-                    </div>
+    <section id="other-projects" class="py-24 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
+            <div class="flex gap-6 items-center p-6 rounded-3xl hover:bg-white/5 transition">
+                <div class="text-3xl text-slate-600"><i class="fas fa-city"></i></div>
+                <div>
+                    <h4 class="font-bold text-lg" lang="en">Real Estate Editing</h4>
+                    <h4 class="font-bold text-lg" lang="ko">부동산 편집</h4>
+                    <p class="text-slate-500 text-sm" lang="en">Partnerships for agencies in Toronto & Vancouver.</p>
+                    <p class="text-slate-500 text-sm" lang="ko">토론토, 밴쿠버 등 부동산 촬영 전문사 대상 비대면 협업</p>
                 </div>
-
-                <!-- YouTube -->
-                <div class="flex items-center gap-6 p-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition">
-                    <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 text-2xl flex-shrink-0">
-                        <i class="fab fa-youtube"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-xl mb-1 uppercase">YouTube Editing</h4>
-                        <p class="text-gray-500 text-sm">
-                            <span class="ko-text">관광, 리뷰 등 개인 브랜딩을 시작하려는 크리에이터를 위한 맞춤 편집</span>
-                            <span class="en-text">Customized editing for creators starting personal branding (Travel, Reviews, etc.)</span>
-                        </p>
-                    </div>
+            </div>
+            <div class="flex gap-6 items-center p-6 rounded-3xl hover:bg-white/5 transition">
+                <div class="text-3xl text-slate-600"><i class="fab fa-youtube"></i></div>
+                <div>
+                    <h4 class="font-bold text-lg" lang="en">YouTube Management</h4>
+                    <h4 class="font-bold text-lg" lang="ko">유튜브 편집</h4>
+                    <p class="text-slate-500 text-sm" lang="en">Personal branding, vlogs, and review channels.</p>
+                    <p class="text-slate-500 text-sm" lang="ko">관광, 리뷰 등 개인 브랜딩 채널 개설 및 운영 지원</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-32 px-6">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-5xl font-bold mb-8">
-                <span class="ko-text">프로젝트를 함께 시작할까요?</span>
-                <span class="en-text">Let's build something together</span>
-            </h2>
-            <p class="text-gray-400 mb-12 text-lg">
-                <span class="ko-text">귀하의 비즈니스에 혁신적인 영상을 더해드립니다. 지금 문의하세요.</span>
-                <span class="en-text">Add innovative videos to your business. Contact us now.</span>
-            </p>
-            
-            <div class="bg-card-bg p-10 rounded-3xl border border-white/10 text-left">
-                <div class="grid md:grid-cols-2 gap-8 mb-10">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Email</label>
-                        <p class="text-xl font-bold">info@editbay.ca</p>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Location</label>
-                        <p class="text-xl font-bold">Canada / Global Services</p>
-                    </div>
+    <!-- Contact Form -->
+    <section id="contact" class="py-32">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="bg-blue-600 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-blue-600/30">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6" lang="en">Let's Create Your Vision</h2>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6" lang="ko">함께 비전을 만들어갈까요?</h2>
+                <p class="text-blue-100 mb-12 text-lg" lang="en">Contact us for a free estimate and consultation.</p>
+                <p class="text-blue-100 mb-12 text-lg" lang="ko">무료 견적 상담을 통해 당신의 비즈니스를 빛내보세요.</p>
+                
+                <div class="space-y-4 max-w-md mx-auto">
+                    <input type="text" placeholder="Name / Business" class="w-full bg-white/10 border border-white/20 rounded-2xl p-5 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-blue-200">
+                    <textarea placeholder="Tell us about your project" rows="4" class="w-full bg-white/10 border border-white/20 rounded-2xl p-5 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-blue-200"></textarea>
+                    <button class="w-full bg-white text-blue-600 font-bold py-5 rounded-2xl hover:shadow-xl transition-all uppercase tracking-widest nav-item" data-en="Send Request" data-ko="상담 신청하기">Send Request</button>
                 </div>
                 
-                <form class="space-y-4">
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <input type="text" placeholder="Name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-blue-500 outline-none transition">
-                        <input type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-blue-500 outline-none transition">
-                    </div>
-                    <textarea placeholder="Tell us about your project" rows="5" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-blue-500 outline-none transition"></textarea>
-                    <button type="submit" class="w-full btn-primary py-4 rounded-xl font-bold text-lg">
-                        <span class="ko-text">메시지 보내기</span>
-                        <span class="en-text">Send Message</span>
-                    </button>
-                </form>
+                <div class="mt-12 pt-12 border-t border-white/10 grid grid-cols-2 gap-4 text-xs font-bold text-blue-200 uppercase tracking-widest">
+                    <div>Email: info@editbay.ca</div>
+                    <div>Based in Vancouver, BC</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-20 border-t border-white/5 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="flex items-center gap-3">
-                <img src="EDITBAY LOGO (1024x1024_Favicon_White).png" alt="EditBay Logo" class="h-8 w-8 grayscale opacity-50">
-                <span class="font-bold text-gray-500 tracking-tighter">EDITBAY STUDIO</span>
-            </div>
-            <p class="text-gray-600 text-sm">© 2024 EditBay. All rights reserved. Professional Video Production based in Canada.</p>
-            <div class="flex gap-6 text-gray-500">
-                <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-white transition"><i class="fab fa-vimeo-v"></i></a>
-                <a href="#" class="hover:text-white transition"><i class="fab fa-youtube"></i></a>
-            </div>
-        </div>
+    <footer class="py-12 text-center text-slate-600 text-xs border-t border-white/5">
+        <p>© 2026 EditBay Media. All rights reserved.</p>
     </footer>
 
     <script>
         function setLanguage(lang) {
-            document.body.className = 'lang-' + lang;
-            
-            // 버튼 활성화 상태 업데이트
-            document.getElementById('ko-btn').classList.toggle('active', lang === 'ko');
-            document.getElementById('en-btn').classList.toggle('active', lang === 'en');
-            
-            // URL 해시값 변경 (새로고침 시 유지용)
-            window.location.hash = lang;
-        }
+            // 전체 텍스트 요소 제어
+            document.querySelectorAll('[lang]').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('[lang="' + lang + '"]').forEach(el => {
+                // Block level elements
+                if(['H1', 'H2', 'H3', 'P', 'DIV', 'SECTION'].includes(el.tagName)) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'inline-block';
+                }
+            });
 
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-            menu.classList.toggle('flex');
-        }
+            // 내비게이션 및 버튼 텍스트 제어
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.innerText = el.getAttribute('data-' + lang);
+            });
 
-        // 초기 언어 설정 (URL 해시 확인)
-        window.onload = function() {
-            const hash = window.location.hash.replace('#', '');
-            if (hash === 'en' || hash === 'ko') {
-                setLanguage(hash);
+            // 입력 필드 Placeholder 제어
+            const nameInput = document.querySelector('input[type="text"]');
+            const textArea = document.querySelector('textarea');
+            if(lang === 'ko') {
+                nameInput.placeholder = "성함 / 업체명";
+                textArea.placeholder = "프로젝트에 대해 간단히 설명해 주세요.";
+            } else {
+                nameInput.placeholder = "Name / Business";
+                textArea.placeholder = "Tell us about your project";
             }
-        };
+
+            // 버튼 활성화 스타일
+            document.querySelectorAll('.lang-switch-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+            
+            document.documentElement.lang = lang;
+        }
+
+        // 초기 실행 (기본 영어)
+        window.onload = () => setLanguage('en');
     </script>
 </body>
 </html>
