@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" class="en-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Pricing | EditBay Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        :root { --accent: #10b981; --bg-dark: #050a14; } /* 부동산은 신뢰의 Emerald 색상 추천 */
+        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; background-color: var(--bg-dark); color: #f8fafc; }
+        .en-content, .ko-content { display: none !important; }
+        .en-mode .en-content { display: block !important; }
+        .ko-mode .ko-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
+        .glass-nav { background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .price-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
+        .price-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .lang-btn { font-size: 0.75rem; font-weight: 600; opacity: 0.4; transition: 0.3s; }
+        .lang-btn.active { opacity: 1; color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation (기존과 동일하게 유지) -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html"><img src="logo.png" alt="Logo" class="h-10 w-auto"></a>
+            <div class="flex items-center gap-8">
+                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest">
+                    <a href="works.html" class="en-content hover:text-emerald-400 transition">WORKS</a>
+                    <a href="works.html" class="ko-content hover:text-emerald-400 transition">작업물</a>
+                    <a href="services.html" class="en-content text-emerald-400">SERVICES</a>
+                    <a href="services.html" class="ko-content text-emerald-400">서비스</a>
+                    <a href="contact.html" class="en-content hover:text-emerald-400 transition">CONTACT</a>
+                    <a href="contact.html" class="ko-content hover:text-emerald-400 transition">문의하기</a>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                    <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
+                    <span class="text-white/10 text-[10px]">|</span>
+                    <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-40 pb-16 text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            <span class="en-content text-emerald-400">Real Estate</span>
+            <span class="ko-content text-emerald-400">부동산 영상 편집</span>
+            <span class="en-content">Pricing Plans</span>
+            <span class="ko-content">상세 가격 안내</span>
+        </h1>
+    </header>
+
+    <!-- Pricing Grid -->
+    <main class="max-w-7xl mx-auto px-6 pb-32">
+        <div class="grid md:grid-cols-3 gap-8">
+            
+            <!-- Plan 1: Essential -->
+            <div class="price-card p-8 rounded-3xl flex flex-col">
+                <h3 class="text-xl font-bold mb-2">Essential</h3>
+                <div class="text-4xl font-bold mb-6">$250 <span class="text-sm font-normal text-slate-500">/ ₩350k</span></div>
+                <ul class="space-y-4 mb-8 text-slate-400 font-light flex-grow">
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Up to 60s Video</span><span class="ko-content">60초 이내 영상</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Basic Color Correction</span><span class="ko-content">기본 색보정</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Royalty-free Music</span><span class="ko-content">저작권 무료 음악</span></li>
+                </ul>
+                <a href="contact.html" class="block text-center py-3 rounded-xl border border-emerald-500/30 hover:bg-emerald-500 transition font-bold">Select</a>
+            </div>
+
+            <!-- Plan 2: Professional (Highlight) -->
+            <div class="price-card p-8 rounded-3xl flex flex-col border-emerald-500 bg-emerald-500/5 relative">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Most Popular</div>
+                <h3 class="text-xl font-bold mb-2">Professional</h3>
+                <div class="text-4xl font-bold mb-6">$450 <span class="text-sm font-normal text-slate-500">/ ₩600k</span></div>
+                <ul class="space-y-4 mb-8 text-slate-400 font-light flex-grow">
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Up to 3 mins Tour</span><span class="ko-content">3분 이내 투어 영상</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Cinematic Grading</span><span class="ko-content">시네마틱 컬러 그레이딩</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Agent Subtitles</span><span class="ko-content">에이전트 인터뷰 자막</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">48h Delivery</span><span class="ko-content">48시간 내 납품</span></li>
+                </ul>
+                <a href="contact.html" class="block text-center py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 transition font-bold text-white">Select</a>
+            </div>
+
+            <!-- Plan 3: Luxury Custom -->
+            <div class="price-card p-8 rounded-3xl flex flex-col">
+                <h3 class="text-xl font-bold mb-2">Luxury / AI</h3>
+                <div class="text-4xl font-bold mb-6">Custom</div>
+                <ul class="space-y-4 mb-8 text-slate-400 font-light flex-grow">
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">High-end AI Narrations</span><span class="ko-content">고급 AI 나레이션</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Drone Footages Editing</span><span class="ko-content">드론 촬영본 편집</span></li>
+                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Unlimited Revisions</span><span class="ko-content">무제한 수정</span></li>
+                </ul>
+                <a href="contact.html" class="block text-center py-3 rounded-xl border border-emerald-500/30 hover:bg-emerald-500 transition font-bold">Inquire</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (기존과 동일) -->
+    <footer class="py-12 text-center border-t border-white/5">
+        <p class="text-slate-600 text-[10px] tracking-widest uppercase mb-4">© 2026 EDITBAY MEDIA</p>
+        <a href="services.html" class="text-sm text-slate-400 hover:text-white transition">← Back to Services</a>
+    </footer>
+
+    <script>
+        (function() {
+            const savedLang = localStorage.getItem('editbay_lang') || 'en';
+            document.documentElement.className = savedLang + '-mode';
+        })();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('editbay_lang') || 'en';
+            updateButtonState(savedLang);
+        });
+
+        function changeLang(lang) {
+            localStorage.setItem('editbay_lang', lang);
+            document.documentElement.className = lang + '-mode';
+            updateButtonState(lang);
+        }
+
+        function updateButtonState(lang) {
+            const btnEn = document.getElementById('btn-en');
+            const btnKo = document.getElementById('btn-ko');
+            if (btnEn && btnKo) {
+                if (lang === 'ko') { btnKo.classList.add('active'); btnEn.classList.remove('active'); }
+                else { btnEn.classList.add('active'); btnKo.classList.remove('active'); }
+            }
+        }
+    </script>
+</body>
+</html>
