@@ -345,21 +345,36 @@
     </footer>
 
     <script>
-        function changeLang(lang) {
-            const html = document.documentElement;
-            const btnEn = document.getElementById('btn-en');
-            const btnKo = document.getElementById('btn-ko');
+       // 1. 페이지가 로드될 때 실행
+document.addEventListener('DOMContentLoaded', () => {
+    // 저장된 언어 불러오기 (없으면 'en' 기본값)
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    applyLang(savedLang);
+});
 
-            if(lang === 'ko') {
-                html.className = 'ko-mode';
-                btnKo.classList.add('active');
-                btnEn.classList.remove('active');
-            } else {
-                html.className = 'en-mode';
-                btnEn.classList.add('active');
-                btnKo.classList.remove('active');
-            }
-        }
+// 2. 언어 변경 함수
+function changeLang(lang) {
+    // 선택한 언어 저장
+    localStorage.setItem('editbay_lang', lang);
+    applyLang(lang);
+}
+
+// 3. 실제 UI에 적용하는 함수
+function applyLang(lang) {
+    const html = document.documentElement;
+    const btnEn = document.getElementById('btn-en');
+    const btnKo = document.getElementById('btn-ko');
+
+    if (lang === 'ko') {
+        html.className = 'ko-mode';
+        if(btnKo) btnKo.classList.add('active');
+        if(btnEn) btnEn.classList.remove('active');
+    } else {
+        html.className = 'en-mode';
+        if(btnEn) btnEn.classList.add('active');
+        if(btnKo) btnKo.classList.remove('active');
+    }
+}
     </script>
 </body>
 </html>
