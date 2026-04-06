@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" class="en-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | EditBay Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root {
+            --accent: #3b82f6; 
+            --bg-dark: #050a14;
+            --text-main: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            scroll-behavior: smooth;
+        }
+
+        /* --- 언어 제어 로직 --- */
+        .en-content, .ko-content { display: none !important; }
+        .en-mode .en-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
+        .ko-mode .ko-content { display: block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
+
+        .glass-nav {
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Form Styling */
+        .input-field {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            width: 100%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .lang-btn {
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+            </a>
+            
+            <div class="flex items-center gap-8">
+                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
+                    <a href="works.html" class="en-content hover:text-blue-400 transition">WORKS</a>
+                    <a href="works.html" class="ko-content hover:text-blue-400 transition">작업물</a>
+                    
+                    <a href="services.html" class="en-content hover:text-blue-400 transition">SERVICES</a>
+                    <a href="services.html" class="ko-content hover:text-blue-400 transition">서비스</a>
+
+                    <a href="contact.html" class="en-content text-blue-400 font-bold">CONTACT</a>
+                    <a href="contact.html" class="ko-content text-blue-400 font-bold">문의하기</a>
+                </div>
+                
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                    <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
+                    <span class="text-white/10 text-[10px]">|</span>
+                    <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="pt-40 pb-16 text-center">
+        <div class="max-w-4xl mx-auto px-6">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8">
+                <span class="en-content">Get in <span class="text-blue-500">Touch</span></span>
+                <span class="ko-content">제작 <span class="text-blue-500">문의하기</span></span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light">
+                <span class="en-content">Have a project in mind? Let's bring your vision to life.</span>
+                <span class="ko-content">생각 중인 프로젝트가 있으신가요? 귀하의 비전을 현실로 만들어 드립니다.</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 pb-32">
+        <div class="grid lg:grid-cols-2 gap-20">
+            
+            <!-- Left: Contact Info -->
+            <div class="space-y-12">
+                <div>
+                    <h2 class="text-2xl font-bold mb-6">
+                        <span class="en-content">Contact Information</span>
+                        <span class="ko-content">연락처 정보</span>
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-5">
+                            <div class="w-12 h-12 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
+                                <i class="fas fa-envelope text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase tracking-widest mb-1">Email</p>
+                                <a href="mailto:editbaymedia@gmail.com" class="text-xl font-bold hover:text-blue-400 transition">editbaymedia@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <div class="w-12 h-12 bg-purple-600/10 rounded-xl flex items-center justify-center text-purple-500 shrink-0">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase tracking-widest mb-1">Social</p>
+                                <a href="#" class="text-xl font-bold hover:text-purple-400 transition">@editbay.media</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 bg-blue-600/5 border border-blue-500/10 rounded-[2rem]">
+                    <h3 class="text-xl font-bold mb-4">
+                        <span class="en-content">Why EditBay?</span>
+                        <span class="ko-content">왜 EditBay인가요?</span>
+                    </h3>
+                    <ul class="space-y-4 text-slate-400 font-light">
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-blue-500"></i>
+                            <span class="en-content">Tailored AI video solutions</span>
+                            <span class="ko-content">맞춤형 AI 비디오 솔루션</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-blue-500"></i>
+                            <span class="en-content">4+ Years of Real Estate expertise</span>
+                            <span class="ko-content">4년 이상의 부동산 영상 전문성</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-blue-500"></i>
+                            <span class="en-content">Fast delivery & High quality</span>
+                            <span class="ko-content">빠른 제작 기간 및 고품질 결과물</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right: Contact Form (Using Formspree as an example) -->
+            <div class="bg-white/5 border border-white/5 p-8 md:p-12 rounded-[3rem]">
+                <form action="https://formspree.io/f/YOUR_ID" method="POST" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2 ml-2">Name</label>
+                            <input type="text" name="name" placeholder="John Doe" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2 ml-2">Email</label>
+                            <input type="email" name="email" placeholder="john@example.com" class="input-field" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2 ml-2">Service Type</label>
+                        <select name="service" class="input-field appearance-none bg-slate-900">
+                            <option value="ai-video">AI Branded Film</option>
+                            <option value="real-estate">Real Estate Video</option>
+                            <option value="youtube">YouTube Editing</option>
+                            <option value="custom">Custom Project</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2 ml-2">Message</label>
+                        <textarea name="message" rows="5" placeholder="Tell us about your project..." class="input-field resize-none" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 uppercase tracking-widest">
+                        <span class="en-content">Send Message</span>
+                        <span class="ko-content">메시지 보내기</span>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase border-t border-white/5">
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        function changeLang(lang) {
+            const html = document.documentElement;
+            const btnEn = document.getElementById('btn-en');
+            const btnKo = document.getElementById('btn-ko');
+
+            if(lang === 'ko') {
+                html.className = 'ko-mode';
+                btnKo.classList.add('active');
+                btnEn.classList.remove('active');
+            } else {
+                html.className = 'en-mode';
+                btnEn.classList.add('active');
+                btnKo.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
