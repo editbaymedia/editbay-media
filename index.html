@@ -345,34 +345,48 @@
     </footer>
 
     <script>
-       // 1. 페이지가 로드될 때 실행
-document.addEventListener('DOMContentLoaded', () => {
-    // 저장된 언어 불러오기 (없으면 'en' 기본값)
+/* 
+   EditBay Media Language Manager 
+   로컬 스토리지를 사용하여 페이지 이동 시에도 언어 설정을 유지합니다.
+*/
+
+// 1. 페이지 로드 시 즉시 실행하여 깜빡임 최소화
+(function() {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
-    applyLang(savedLang);
+    document.documentElement.className = savedLang + '-mode';
+})();
+
+// 2. DOM이 완전히 로드된 후 버튼 상태 업데이트
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    updateButtonState(savedLang);
 });
 
-// 2. 언어 변경 함수
+// 3. 언어 변경 함수 (버튼 클릭 시 호출)
 function changeLang(lang) {
-    // 선택한 언어 저장
+    // 로컬 스토리지에 저장
     localStorage.setItem('editbay_lang', lang);
-    applyLang(lang);
+    
+    // HTML 클래스 교체
+    document.documentElement.className = lang + '-mode';
+    
+    // 버튼 UI 업데이트
+    updateButtonState(lang);
 }
 
-// 3. 실제 UI에 적용하는 함수
-function applyLang(lang) {
-    const html = document.documentElement;
+// 4. 버튼 활성화 상태 표시 함수
+function updateButtonState(lang) {
     const btnEn = document.getElementById('btn-en');
     const btnKo = document.getElementById('btn-ko');
 
-    if (lang === 'ko') {
-        html.className = 'ko-mode';
-        if(btnKo) btnKo.classList.add('active');
-        if(btnEn) btnEn.classList.remove('active');
-    } else {
-        html.className = 'en-mode';
-        if(btnEn) btnEn.classList.add('active');
-        if(btnKo) btnKo.classList.remove('active');
+    if (btnEn && btnKo) {
+        if (lang === 'ko') {
+            btnKo.classList.add('active');
+            btnEn.classList.remove('active');
+        } else {
+            btnEn.classList.add('active');
+            btnKo.classList.remove('active');
+        }
     }
 }
     </script>
