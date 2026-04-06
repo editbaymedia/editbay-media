@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="en-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Pricing | EditBay Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root {
+            --accent: #3b82f6; 
+            --bg-dark: #050a14;
+            --text-main: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            scroll-behavior: smooth;
+        }
+
+        /* --- 언어 제어 로직 --- */
+        .en-content, .ko-content { display: none !important; }
+        .en-mode .en-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content, .en-mode div.en-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
+        .ko-mode .ko-content { display: block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content, .ko-mode div.ko-content { display: block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
+
+        .glass-nav {
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .price-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.2);
+        }
+
+        .lang-btn {
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+            </a>
+            
+            <div class="flex items-center gap-8">
+                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
+                    <a href="works.html" class="en-content hover:text-blue-400 transition">WORKS</a>
+                    <a href="works.html" class="ko-content hover:text-blue-400 transition">작업물</a>
+                    
+                    <a href="services.html" class="en-content text-blue-400 transition">SERVICES</a>
+                    <a href="services.html" class="ko-content text-blue-400 transition">서비스</a>
+
+                    <a href="contact.html" class="en-content hover:text-blue-400 transition">CONTACT</a>
+                    <a href="contact.html" class="ko-content hover:text-blue-400 transition font-medium text-sm">문의하기</a>
+                </div>
+                
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                    <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
+                    <span class="text-white/10 text-[10px]">|</span>
+                    <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="pt-40 pb-16 text-center">
+        <div class="max-w-4xl mx-auto px-6">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8">
+                <span class="en-content">AI Video <span class="text-blue-500">Pricing</span></span>
+                <span class="ko-content">AI 비디오 <span class="text-blue-500">가격 안내</span></span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light">
+                <span class="en-content">Cutting-edge AI visuals to redefine your brand storytelling.</span>
+                <span class="ko-content">최첨단 AI 비주얼로 브랜드 스토리텔링의 한계를 넓히세요.</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Pricing Grid -->
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- Plan 1: AI Short Form -->
+            <div class="price-card p-10 flex flex-col">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold mb-2">AI Short Form</h3>
+                    <p class="text-slate-500 text-sm">
+                        <span class="en-content">Optimized for TikTok, Reels, and Shorts.</span>
+                        <span class="ko-content">틱톡, 릴스, 쇼츠에 최적화된 고효율 콘텐츠입니다.</span>
+                    </p>
+                </div>
+                <div class="mb-8">
+                    <div class="en-content">
+                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
+                        <span class="text-4xl font-bold text-white">$500+</span>
+                    </div>
+                    <div class="ko-content">
+                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
+                        <span class="text-4xl font-bold text-white">$500+</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Up to 30s AI Video</span><span class="ko-content">30초 이내 AI 영상</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Trending AI Visuals</span><span class="ko-content">트렌디한 AI 비주얼 구현</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Dynamic Subtitles</span><span class="ko-content">다이나믹 자막 효과</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">AI Voice Generation</span><span class="ko-content">AI 성우 나레이션</span></li>
+                </ul>
+                <a href="contact.html" class="w-full py-4 text-center border border-blue-500/30 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all uppercase tracking-widest text-xs">
+                    <span class="en-content">Select Plan</span><span class="ko-content font-bold">플랜 선택하기</span>
+                </a>
+            </div>
+
+            <!-- Plan 2: AI Branded Film -->
+            <div class="price-card p-10 flex flex-col border-blue-500/50 bg-blue-500/5 relative scale-105 z-10">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-4 py-1 rounded-full tracking-widest uppercase">Most Popular</div>
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold mb-2">AI Branded Film</h3>
+                    <p class="text-slate-500 text-sm">
+                        <span class="en-content">High-end cinematic film for brand identity.</span>
+                        <span class="ko-content">브랜드 정체성을 위한 시네마틱 하이엔드 영상입니다.</span>
+                    </p>
+                </div>
+                <div class="mb-8">
+                    <div class="en-content">
+                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
+                        <span class="text-4xl font-bold text-white">$1,200+</span>
+                    </div>
+                    <div class="ko-content">
+                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
+                        <span class="text-4xl font-bold text-white">$1,200+</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-200 font-light">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">60-90s Cinematic Film</span><span class="ko-content">60-90초 시네마틱 필름</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Custom AI Visual Concept</span><span class="ko-content">커스텀 AI 비주얼 컨셉</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Professional Storyboarding</span><span class="ko-content">전문 스토리보드 설계</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Premium Sound Design</span><span class="ko-content">프리미엄 사운드 디자인</span></li>
+                </ul>
+                <a href="contact.html" class="w-full py-4 text-center bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20 uppercase tracking-widest text-xs">
+                    <span class="en-content">Select Plan</span><span class="ko-content font-bold">플랜 선택하기</span>
+                </a>
+            </div>
+
+            <!-- Plan 3: Enterprise / Custom -->
+            <div class="price-card p-10 flex flex-col">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                    <p class="text-slate-500 text-sm">
+                        <span class="en-content">Tailored solutions for agencies & large scale projects.</span>
+                        <span class="ko-content">에이전시 및 대규모 프로젝트를 위한 맞춤형 솔루션입니다.</span>
+                    </p>
+                </div>
+                <div class="mb-8 text-4xl font-bold text-white">
+                    <span class="en-content">Custom</span><span class="ko-content">별도 문의</span>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Unlimited Duration Options</span><span class="ko-content">길이 제한 없는 옵션</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Multi-Platform Ad Variants</span><span class="ko-content">다중 플랫폼 광고 버전 제작</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Bespoke AI Integration</span><span class="ko-content">맞춤형 AI 기술 통합</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Priority Support & Revisions</span><span class="ko-content">우선 지원 및 무제한 수정</span></li>
+                </ul>
+                <a href="contact.html" class="w-full py-4 text-center border border-blue-500/30 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all uppercase tracking-widest text-xs">
+                    <span class="en-content">Contact Us</span><span class="ko-content font-bold">견적 문의하기</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Additional AI Options -->
+    <section class="max-w-4xl mx-auto px-6 pb-32">
+        <div class="bg-white/5 rounded-[2.5rem] p-10 border border-white/5">
+            <h3 class="text-xl font-bold mb-8 text-center uppercase tracking-widest text-blue-400">AI Add-on Services</h3>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div class="flex justify-between p-4 border-b border-white/5">
+                    <span class="text-slate-400">AI Avatar Creation</span>
+                    <span class="font-bold">+$200</span>
+                </div>
+                <div class="flex justify-between p-4 border-b border-white/5">
+                    <span class="text-slate-400">Multilingual AI Voice Dubbing</span>
+                    <span class="font-bold">+$150</span>
+                </div>
+                <div class="flex justify-between p-4 border-b border-white/5">
+                    <span class="text-slate-400">AI Upscaling to 4K/8K</span>
+                    <span class="font-bold">+$100</span>
+                </div>
+                <div class="flex justify-between p-4 border-b border-white/5">
+                    <span class="text-slate-400">Custom AI Scriptwriting</span>
+                    <span class="font-bold">+$50</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase border-t border-white/5">
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+        <div class="mt-4">
+            <a href="services.html" class="text-slate-500 hover:text-blue-500 transition lowercase italic">← back to services</a>
+        </div>
+    </footer>
+
+    <script>
+        /* EditBay Media Language Manager */
+        (function() {
+            const savedLang = localStorage.getItem('editbay_lang') || 'en';
+            document.documentElement.className = savedLang + '-mode';
+        })();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('editbay_lang') || 'en';
+            updateButtonState(savedLang);
+        });
+
+        function changeLang(lang) {
+            localStorage.setItem('editbay_lang', lang);
+            document.documentElement.className = lang + '-mode';
+            updateButtonState(lang);
+        }
+
+        function updateButtonState(lang) {
+            const btnEn = document.getElementById('btn-en');
+            const btnKo = document.getElementById('btn-ko');
+
+            if (btnEn && btnKo) {
+                if (lang === 'ko') {
+                    btnKo.classList.add('active');
+                    btnEn.classList.remove('active');
+                } else {
+                    btnEn.classList.add('active');
+                    btnKo.classList.remove('active');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
