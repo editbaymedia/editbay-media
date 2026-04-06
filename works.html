@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" class="en-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Works Portfolio | EditBay Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root {
+            --accent: #3b82f6; 
+            --bg-dark: #050a14;
+            --text-main: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            scroll-behavior: smooth;
+        }
+
+        /* --- 언어 제어 로직 --- */
+        .en-content, .ko-content { display: none !important; }
+        .en-mode .en-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
+        .ko-mode .ko-content { display: block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
+
+        .glass-nav {
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .video-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .video-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
+        }
+
+        .lang-btn {
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        /* 그리드 내 영상 비율 유지 */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation (index.html과 동일) -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+            </a>
+            
+            <div class="flex items-center gap-8">
+                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
+                    <a href="index.html" class="en-content text-blue-400">WORKS</a>
+                    <a href="index.html" class="ko-content text-blue-400">작업물</a>
+                    
+                    <a href="services.html" class="en-content hover:text-blue-400 transition">SERVICES</a>
+                    <a href="services.html" class="ko-content hover:text-blue-400 transition">서비스</a>
+
+                    <a href="index.html#contact" class="en-content hover:text-blue-400 transition">CONTACT</a>
+                    <a href="index.html#contact" class="ko-content hover:text-blue-400 transition font-medium text-sm">문의하기</a>
+                </div>
+                
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                    <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
+                    <span class="text-white/10 text-[10px]">|</span>
+                    <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="pt-40 pb-20 text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+                <span class="en-content">OUR <span class="text-blue-500">WORKS</span></span>
+                <span class="ko-content">포트폴리오 <span class="text-blue-500">전체보기</span></span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
+                <span class="en-content">Explore our high-end video solutions from AI branded films to cinematic property tours.</span>
+                <span class="ko-content">AI 브랜디드 필름부터 시네마틱 부동산 투어까지, EditBay의 고품격 영상 솔루션을 만나보세요.</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- 4x5 Video Grid Section -->
+    <section class="pb-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <!-- Grid: Desktop 4, Tablet 2, Mobile 1 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- [ROW 1: AI Video Solutions] -->
+                <!-- Item 1 -->
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/영상ID_1" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold mb-1">AI Branded Film 01</h3>
+                        <p class="text-sm text-blue-400 font-medium">AI Creative</p>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_2" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">AI Branded Film 02</h3><p class="text-sm text-blue-400 font-medium">AI Creative</p></div>
+                </div>
+                <!-- Item 3 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_3" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">AI Short Form AD</h3><p class="text-sm text-blue-400 font-medium">AI Creative</p></div>
+                </div>
+                <!-- Item 4 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_4" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">AI Social Teaser</h3><p class="text-sm text-blue-400 font-medium">AI Creative</p></div>
+                </div>
+
+                <!-- [ROW 2: Real Estate] -->
+                <!-- Item 5 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_5" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Luxury Penthouse</h3><p class="text-sm text-emerald-400 font-medium">Real Estate</p></div>
+                </div>
+                <!-- Item 6 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_6" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Modern Villa Tour</h3><p class="text-sm text-emerald-400 font-medium">Real Estate</p></div>
+                </div>
+                <!-- Item 7 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_7" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Office Space View</h3><p class="text-sm text-emerald-400 font-medium">Real Estate</p></div>
+                </div>
+                <!-- Item 8 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_8" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Apartment Walkthrough</h3><p class="text-sm text-emerald-400 font-medium">Real Estate</p></div>
+                </div>
+
+                <!-- [ROW 3: YouTube Content] -->
+                <!-- Item 9 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_9" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Tech Review Vlog</h3><p class="text-sm text-red-500 font-medium">YouTube Content</p></div>
+                </div>
+                <!-- Item 10 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_10" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Cooking Tutorial</h3><p class="text-sm text-red-500 font-medium">YouTube Content</p></div>
+                </div>
+                <!-- Item 11 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_11" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Gaming Highlights</h3><p class="text-sm text-red-500 font-medium">YouTube Content</p></div>
+                </div>
+                <!-- Item 12 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_12" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Travel Vlog Seoul</h3><p class="text-sm text-red-500 font-medium">YouTube Content</p></div>
+                </div>
+
+                <!-- [ROW 4: Shorts & Tik Tok] -->
+                <!-- Item 13 -->
+                <div class="video-card">
+                    <div class="video-container flex justify-center bg-black">
+                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/영상ID_13" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Viral Shorts 01</h3><p class="text-sm text-purple-400 font-medium">Short Form</p></div>
+                </div>
+                <!-- Item 14 -->
+                <div class="video-card">
+                    <div class="video-container flex justify-center bg-black">
+                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/영상ID_14" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Viral Shorts 02</h3><p class="text-sm text-purple-400 font-medium">Short Form</p></div>
+                </div>
+                <!-- Item 15 -->
+                <div class="video-card">
+                    <div class="video-container flex justify-center bg-black">
+                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/영상ID_15" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Tik Tok AD</h3><p class="text-sm text-purple-400 font-medium">Short Form</p></div>
+                </div>
+                <!-- Item 16 -->
+                <div class="video-card">
+                    <div class="video-container flex justify-center bg-black">
+                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/영상ID_16" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Instagram Reels</h3><p class="text-sm text-purple-400 font-medium">Short Form</p></div>
+                </div>
+
+                <!-- [ROW 5: Custom Projects] -->
+                <!-- Item 17 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_17" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Event Highlight</h3><p class="text-sm text-slate-400 font-medium">Custom Project</p></div>
+                </div>
+                <!-- Item 18 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_18" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Music Video Edit</h3><p class="text-sm text-slate-400 font-medium">Custom Project</p></div>
+                </div>
+                <!-- Item 19 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_19" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Interview Series</h3><p class="text-sm text-slate-400 font-medium">Custom Project</p></div>
+                </div>
+                <!-- Item 20 -->
+                <div class="video-card">
+                    <div class="video-container"><iframe src="https://www.youtube.com/embed/영상ID_20" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="p-6"><h3 class="text-lg font-bold mb-1">Commercial B-Roll</h3><p class="text-sm text-slate-400 font-medium">Custom Project</p></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Call to Action -->
+    <section class="py-20 bg-blue-600">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8 text-white">
+                <span class="en-content tracking-tighter">Inspired by our work?</span>
+                <span class="ko-content font-bold">작업물이 마음에 드셨나요?</span>
+            </h2>
+            <a href="index.html#contact" class="inline-block bg-white text-blue-600 font-bold px-12 py-5 rounded-2xl hover:bg-slate-100 transition-all shadow-xl">
+                <span class="en-content">START PROJECT</span>
+                <span class="ko-content">지금 문의하기</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase">
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        function changeLang(lang) {
+            const html = document.documentElement;
+            const btnEn = document.getElementById('btn-en');
+            const btnKo = document.getElementById('btn-ko');
+
+            if(lang === 'ko') {
+                html.className = 'ko-mode';
+                btnKo.classList.add('active');
+                btnEn.classList.remove('active');
+            } else {
+                html.className = 'en-mode';
+                btnEn.classList.add('active');
+                btnKo.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
