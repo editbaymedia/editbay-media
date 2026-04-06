@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="en-mode">
+<html lang="en" class="en-mode"> <!-- 기본값 영어 설정 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,44 +22,40 @@
             scroll-behavior: smooth;
         }
 
-        /* --- 언어 제어 핵심 CSS (네비게이션 포함) --- */
-        .ko-content { display: none !important; }
-        .en-mode .en-content { display: block !important; }
-        .en-mode .ko-content { display: none !important; }
+        /* ============================================================
+           [핵심] 언어 전환 로직 - 네비게이션 및 전체 콘텐츠 제어
+           ============================================================ */
         
-        .ko-mode .en-content { display: none !important; }
+        /* 1. 기본적으로 모든 언어 콘텐츠 숨김 */
+        .en-content, .ko-content { display: none !important; }
+
+        /* 2. 영어 모드일 때: 영어만 보임 */
+        .en-mode .en-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
+
+        /* 3. 한국어 모드일 때: 한국어만 보임 */
         .ko-mode .ko-content { display: block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
 
-        /* 인라인 요소용 (메뉴 등) */
-        .en-mode span.en-content, .en-mode a.en-content { display: inline !important; }
-        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline !important; }
-
-        /* 비디오 컨테이너 공통 스타일 */
-        .video-card {
-            position: relative;
-            width: 100%;
-            background: #000;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.5s ease;
-        }
-        .video-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
-        }
-
+        /* 네비게이션 유리효과 */
         .glass-nav {
             background: rgba(5, 10, 20, 0.8);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #93c5fd, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* 비디오 카드 공통 스타일 */
+        .video-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .video-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
         }
 
         .lang-btn {
@@ -79,25 +75,25 @@
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="flex items-center text-xl font-bold tracking-tighter">
+            <a href="#" class="text-xl font-bold tracking-tighter">
                 EDITBAY<span class="text-blue-500">.</span>
             </a>
             
             <div class="flex items-center gap-8">
-                <!-- 네비게이션 메뉴: 언어 설정에 따라 완벽히 분리됨 -->
+                <!-- 네비게이션 메뉴: 언어 모드에 따라 완전히 교체됨 -->
                 <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest">
-                    <!-- English Menu -->
+                    <!-- 영어 메뉴 세트 -->
                     <a href="#services" class="en-content hover:text-blue-400 transition">SERVICES</a>
                     <a href="#portfolio" class="en-content hover:text-blue-400 transition">PORTFOLIO</a>
                     <a href="#contact" class="en-content hover:text-blue-400 transition">CONTACT</a>
                     
-                    <!-- Korean Menu -->
+                    <!-- 한국어 메뉴 세트 -->
                     <a href="#services" class="ko-content hover:text-blue-400 transition">서비스</a>
                     <a href="#portfolio" class="ko-content hover:text-blue-400 transition">포트폴리오</a>
                     <a href="#contact" class="ko-content hover:text-blue-400 transition">문의하기</a>
                 </div>
                 
-                <!-- Language Switcher -->
+                <!-- 언어 스위처 -->
                 <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
                     <span class="text-white/10 text-[10px]">|</span>
@@ -111,136 +107,111 @@
     <section class="relative min-h-screen flex items-center pt-20">
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
             <div class="space-y-8">
-                <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold tracking-[0.2em] uppercase">
-                    AI-Driven Creative Agency
-                </div>
-                
                 <div class="en-content space-y-6">
-                    <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight">Unrivaled Ads <br><span class="gradient-text">Built by AI</span></h1>
-                    <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed font-light">Elevate your brand with high-end AI storytelling. No filming required.</p>
+                    <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight">Unrivaled Ads <br><span class="text-blue-500">Built by AI</span></h1>
+                    <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed">No filming, no lighting—just pure AI storytelling.</p>
                 </div>
-
                 <div class="ko-content space-y-6">
-                    <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight">AI로 완성하는<br><span class="gradient-text">독보적인 광고</span></h1>
-                    <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed font-light">촬영 없이 AI 스토리텔링만으로 귀하의 비즈니스를 시네마틱하게 표현합니다.</p>
+                    <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight">AI로 완성하는<br><span class="text-blue-500">독보적인 광고</span></h1>
+                    <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed">촬영 없이 AI 스토리텔링만으로 귀하의 브랜드를 시네마틱하게 표현합니다.</p>
                 </div>
-
                 <div class="pt-4">
-                    <a href="#contact" class="px-10 py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
-                        <span class="en-content">Get Started</span>
-                        <span class="ko-content">상담 신청하기</span>
+                    <a href="#contact" class="px-10 py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all">
+                        <span class="en-content">Start Project</span>
+                        <span class="ko-content">문의 시작하기</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 메인 Showreel 영상 -->
+            <!-- 메인 쇼릴 비디오 -->
             <div class="video-card aspect-video shadow-2xl">
-                <iframe 
-                    class="w-full h-full" 
-                    src="https://www.youtube.com/embed/-yapoXm91tw?autoplay=1&mute=1&loop=1&playlist=-yapoXm91tw&controls=0&modestbranding=1" 
-                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                <iframe class="w-full h-full" 
+                    src="https://www.youtube.com/embed/-yapoXm91tw?autoplay=1&mute=1&loop=1&playlist=-yapoXm91tw&controls=0" 
+                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
                 </iframe>
             </div>
         </div>
     </section>
 
-    <!-- 2. AI Services (Branded Film & Short Form) -->
+    <!-- 2. AI Services: Branded Film & Short Form -->
     <section id="services" class="py-32 bg-slate-950/50">
-        <div class="max-w-7xl mx-auto px-6 text-center mb-20">
-            <h2 class="text-4xl md:text-5xl font-bold mb-6">
-                <span class="en-content">AI Advertising Services</span>
-                <span class="ko-content">핵심 AI 광고 서비스</span>
-            </h2>
-        </div>
-        
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10">
             <!-- Branded Film -->
-            <div class="video-card p-4 bg-white/5 space-y-6">
+            <div class="video-card p-6 space-y-6">
                 <div class="aspect-video rounded-xl overflow-hidden">
                     <iframe class="w-full h-full" src="https://www.youtube.com/embed/C8WePt4gmkc" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <div class="p-6 pt-0">
+                <div class="px-2">
                     <h3 class="text-2xl font-bold mb-2">
                         <span class="en-content">Branded Film</span>
                         <span class="ko-content">브랜디드 필름</span>
                     </h3>
-                    <p class="text-slate-400">
-                        <span class="en-content">Premium cinematic visuals that tell your brand's unique story.</span>
-                        <span class="ko-content">브랜드의 가치를 시네마틱한 AI 비주얼로 담아내는 프리미엄 서비스입니다.</span>
+                    <p class="text-slate-400 text-sm">
+                        <span class="en-content">Premium cinematic AI visuals for your brand identity.</span>
+                        <span class="ko-content">브랜드의 가치를 시네마틱한 AI 비주얼로 담아내는 프리미엄 서비스.</span>
                     </p>
                 </div>
             </div>
             
-            <!-- Short Form Content -->
-            <div class="video-card p-4 bg-white/5 space-y-6">
-                <div class="aspect-video rounded-xl overflow-hidden flex justify-center bg-black">
-                    <!-- 숏폼은 세로 비율 유지를 위해 내부 iframe 크기 조정 가능 -->
-                    <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/jLTKt0mUbAk" frameborder="0" allowfullscreen></iframe>
+            <!-- Short Form -->
+            <div class="video-card p-6 space-y-6">
+                <div class="aspect-video rounded-xl overflow-hidden bg-black flex justify-center">
+                    <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/Yrpg-fsi-6A" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <div class="p-6 pt-0">
+                <div class="px-2">
                     <h3 class="text-2xl font-bold mb-2">
-                        <span class="en-content">Short Form Content</span>
-                        <span class="ko-content">숏폼 콘텐츠</span>
+                        <span class="en-content">Short Form AD</span>
+                        <span class="ko-content">숏폼 광고</span>
                     </h3>
-                    <p class="text-slate-400">
-                        <span class="en-content">Optimized for social media growth. High engagement guaranteed.</span>
-                        <span class="ko-content">SNS 성장에 최적화된 고효율 AI 숏폼 영상 제작 서비스입니다.</span>
+                    <p class="text-slate-400 text-sm">
+                        <span class="en-content">Optimized for social media engagement.</span>
+                        <span class="ko-content">인스타그램, 틱톡 등에 최적화된 고효율 SNS 광고 영상.</span>
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 3 & 4. Specialized Portfolios (Real Estate & YouTube) -->
-    <section id="portfolio" class="py-32">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid md:grid-cols-2 gap-16">
-                <!-- Real Estate -->
-                <div class="space-y-6">
-                    <h3 class="text-2xl font-bold border-l-4 border-blue-500 pl-4">
-                        <span class="en-content">Real Estate Editing</span>
-                        <span class="ko-content">부동산 영상 편집</span>
-                    </h3>
-                    <div class="video-card aspect-video">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/WVIgJEfBmig" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <p class="text-slate-500 text-sm">
-                        <span class="en-content">Specialized for Agencies in Toronto & Vancouver.</span>
-                        <span class="ko-content">토론토 및 밴쿠버 부동산 에이전시를 위한 전문 편집 포트폴리오.</span>
-                    </p>
+    <!-- 3 & 4. Specialized: Real Estate & YouTube -->
+    <section id="portfolio" class="py-32 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+            <!-- Real Estate -->
+            <div class="space-y-6">
+                <div class="video-card aspect-video">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/WVIgJEfBmig" frameborder="0" allowfullscreen></iframe>
                 </div>
+                <h4 class="text-xl font-bold px-2">
+                    <span class="en-content">Real Estate Portfolio (Vancouver/Toronto)</span>
+                    <span class="ko-content">부동산 영상 편집 (밴쿠버/토론토)</span>
+                </h4>
+            </div>
 
-                <!-- YouTube -->
-                <div class="space-y-6">
-                    <h3 class="text-2xl font-bold border-l-4 border-red-500 pl-4">
-                        <span class="en-content">YouTube & Vlogs</span>
-                        <span class="ko-content">유튜브 및 브이로그</span>
-                    </h3>
-                    <div class="video-card aspect-video">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/anOqaENnlqM" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <p class="text-slate-500 text-sm">
-                        <span class="en-content">Personal Branding, Reviews, and Lifestyle Content.</span>
-                        <span class="ko-content">퍼스널 브랜딩, 리뷰, 라이프스타일 채널 전담 편집 서비스.</span>
-                    </p>
+            <!-- YouTube -->
+            <div class="space-y-6">
+                <div class="video-card aspect-video">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/anOqaENnlqM" frameborder="0" allowfullscreen></iframe>
                 </div>
+                <h4 class="text-xl font-bold px-2">
+                    <span class="en-content">YouTube & Personal Branding</span>
+                    <span class="ko-content">유튜브 및 퍼스널 브랜딩 편집</span>
+                </h4>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Contact Form -->
     <section id="contact" class="py-32">
         <div class="max-w-4xl mx-auto px-6">
-            <div class="bg-blue-600 rounded-[3.5rem] p-12 md:p-20 text-center shadow-2xl">
-                <h2 class="text-4xl md:text-5xl font-bold mb-8">
+            <div class="bg-blue-600 rounded-[3rem] p-12 text-center">
+                <h2 class="text-4xl font-bold mb-8">
                     <span class="en-content">Let's Create Together</span>
-                    <span class="ko-content">함께 프로젝트를 시작할까요?</span>
+                    <span class="ko-content">함께 시작해 볼까요?</span>
                 </h2>
                 <div class="space-y-4 max-w-md mx-auto">
-                    <input type="text" id="nameInput" placeholder="Name / Business" class="w-full bg-white/10 border border-white/20 rounded-2xl p-5 focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-blue-100">
-                    <textarea id="msgInput" placeholder="Project details..." rows="4" class="w-full bg-white/10 border border-white/20 rounded-2xl p-5 focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-blue-100"></textarea>
-                    <button class="w-full bg-white text-blue-600 font-bold py-5 rounded-2xl hover:bg-slate-100 transition-all">
-                        <span class="en-content">REQUEST CONSULTATION</span>
+                    <input type="text" id="nameInput" placeholder="Name" class="w-full bg-white/10 border border-white/20 rounded-xl p-4 text-white placeholder-blue-100">
+                    <textarea id="msgInput" placeholder="Message" rows="4" class="w-full bg-white/10 border border-white/20 rounded-xl p-4 text-white placeholder-blue-100"></textarea>
+                    <button class="w-full bg-white text-blue-600 font-bold py-4 rounded-xl hover:bg-slate-100 transition-all uppercase tracking-widest">
+                        <span class="en-content">Send Request</span>
                         <span class="ko-content">상담 신청하기</span>
                     </button>
                 </div>
@@ -248,26 +219,26 @@
         </div>
     </section>
 
-    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase">
+    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest">
         <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
     </footer>
 
     <script>
         function changeLang(lang) {
-            const body = document.body;
+            const html = document.documentElement;
             const btnEn = document.getElementById('btn-en');
             const btnKo = document.getElementById('btn-ko');
             const nameInput = document.getElementById('nameInput');
             const msgInput = document.getElementById('msgInput');
 
             if(lang === 'ko') {
-                body.classList.replace('en-mode', 'ko-mode');
+                html.className = 'ko-mode';
                 btnKo.classList.add('active');
                 btnEn.classList.remove('active');
                 nameInput.placeholder = "성함 또는 업체명";
                 msgInput.placeholder = "프로젝트에 대해 알려주세요...";
             } else {
-                body.classList.replace('ko-mode', 'en-mode');
+                html.className = 'en-mode';
                 btnEn.classList.add('active');
                 btnKo.classList.remove('active');
                 nameInput.placeholder = "Name / Business";
