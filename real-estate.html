@@ -8,35 +8,92 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        :root { --accent: #10b981; --bg-dark: #050a14; } /* 부동산은 신뢰의 Emerald 색상 추천 */
-        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; background-color: var(--bg-dark); color: #f8fafc; }
+        
+        :root {
+            --accent: #10b981; 
+            --bg-dark: #050a14;
+            --text-main: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            scroll-behavior: smooth;
+        }
+
+        /* --- Language Control Logic --- */
         .en-content, .ko-content { display: none !important; }
         .en-mode .en-content { display: block !important; }
-        .ko-mode .ko-content { display: block !important; }
+        .en-mode span.en-content, .en-mode a.en-content, .en-mode div.en-content { display: block !important; }
         .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
+        .ko-mode .ko-content { display: block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content, .ko-mode div.ko-content { display: block !important; }
         .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
-        .glass-nav { background: rgba(5, 10, 20, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .price-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
-        .price-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .lang-btn { font-size: 0.75rem; font-weight: 600; opacity: 0.4; transition: 0.3s; }
-        .lang-btn.active { opacity: 1; color: var(--accent); }
+
+        .glass-nav {
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .price-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.2);
+        }
+
+        .lang-btn {
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .revision-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
     </style>
 </head>
-<body>
+<body class="overflow-x-hidden">
 
-    <!-- Navigation (기존과 동일하게 유지) -->
+    <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html"><img src="logo.png" alt="Logo" class="h-10 w-auto"></a>
+            <a href="index.html" class="flex items-center">
+                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+            </a>
+            
             <div class="flex items-center gap-8">
-                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest">
+                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
                     <a href="works.html" class="en-content hover:text-emerald-400 transition">WORKS</a>
-                    <a href="works.html" class="ko-content hover:text-emerald-400 transition">작업물</a>
-                    <a href="services.html" class="en-content text-emerald-400">SERVICES</a>
-                    <a href="services.html" class="ko-content text-emerald-400">서비스</a>
+                    <a href="works.html" class="ko-content hover:text-emerald-400 transition font-bold">작업물</a>
+                    
+                    <a href="services.html" class="en-content text-emerald-400 transition">SERVICES</a>
+                    <a href="services.html" class="ko-content text-emerald-400 transition font-bold">서비스</a>
+
                     <a href="contact.html" class="en-content hover:text-emerald-400 transition">CONTACT</a>
-                    <a href="contact.html" class="ko-content hover:text-emerald-400 transition">문의하기</a>
+                    <a href="contact.html" class="ko-content hover:text-emerald-400 transition font-bold">문의하기</a>
                 </div>
+                
                 <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
                     <span class="text-white/10 text-[10px]">|</span>
@@ -46,67 +103,192 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="pt-40 pb-16 text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-6">
-            <span class="en-content text-emerald-400">Real Estate</span>
-            <span class="ko-content text-emerald-400">부동산 영상 편집</span>
-            <span class="en-content">Pricing Plans</span>
-            <span class="ko-content">상세 가격 안내</span>
-        </h1>
+    <!-- Header -->
+    <header class="pt-48 pb-16 text-center">
+        <div class="max-w-4xl mx-auto px-6">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-white">
+                <span class="en-content">Real Estate <span class="text-emerald-500 italic">Pricing</span></span>
+                <span class="ko-content">부동산 영상 <span class="text-emerald-500 italic">가격 정책</span></span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light">
+                <span class="en-content">High-retention property tours for Vancouver's luxury market.</span>
+                <span class="ko-content">밴쿠버 리얼터들을 위한 고효율 시네마틱 매물 투어 솔루션입니다.</span>
+            </p>
+        </div>
     </header>
 
     <!-- Pricing Grid -->
-    <main class="max-w-7xl mx-auto px-6 pb-32">
-        <div class="grid md:grid-cols-3 gap-8">
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+        <div class="grid lg:grid-cols-3 gap-8">
             
-            <!-- Plan 1: Essential -->
-            <div class="price-card p-8 rounded-3xl flex flex-col">
-                <h3 class="text-xl font-bold mb-2">Essential</h3>
-                <div class="text-4xl font-bold mb-6">$250 <span class="text-sm font-normal text-slate-500">/ ₩350k</span></div>
-                <ul class="space-y-4 mb-8 text-slate-400 font-light flex-grow">
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Up to 60s Video</span><span class="ko-content">60초 이내 영상</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Basic Color Correction</span><span class="ko-content">기본 색보정</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Royalty-free Music</span><span class="ko-content">저작권 무료 음악</span></li>
+            <!-- Plan 1: Basic Edit -->
+            <div class="price-card p-10 flex flex-col">
+                <div class="mb-6 flex justify-between items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">Basic Edit</h3>
+                        <p class="text-slate-500 text-xs uppercase tracking-widest">Entry Level</p>
+                    </div>
+                    <div class="revision-badge">1 Revision</div>
+                </div>
+                <div class="mb-8">
+                    <div class="en-content">
+                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Fixed Price</span>
+                        <span class="text-4xl font-bold text-white">$50</span>
+                    </div>
+                    <div class="ko-content">
+                        <span class="text-xs text-slate-500 block mb-1">정찰제</span>
+                        <span class="text-4xl font-bold text-white">$50</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Essential Cut Editing</span><span class="ko-content">기본 컷 편집</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Simple Title Graphics</span><span class="ko-content">심플 타이틀 그래픽</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Licensed Background Music</span><span class="ko-content">라이센스 배경음악</span></li>
+                    <li class="flex items-center gap-3 text-slate-500"><i class="fas fa-info-circle"></i> <span class="en-content">Up to 1 Revision</span><span class="ko-content">수정 1회 제한</span></li>
                 </ul>
-                <a href="contact.html" class="block text-center py-3 rounded-xl border border-emerald-500/30 hover:bg-emerald-500 transition font-bold">Select</a>
+                <a href="contact.html" class="w-full py-4 text-center border border-emerald-500/30 rounded-2xl font-bold hover:bg-emerald-600 hover:text-white transition-all uppercase tracking-widest text-xs">
+                    <span class="en-content">Select Basic</span><span class="ko-content font-bold">베이직 선택</span>
+                </a>
             </div>
 
-            <!-- Plan 2: Professional (Highlight) -->
-            <div class="price-card p-8 rounded-3xl flex flex-col border-emerald-500 bg-emerald-500/5 relative">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Most Popular</div>
-                <h3 class="text-xl font-bold mb-2">Professional</h3>
-                <div class="text-4xl font-bold mb-6">$450 <span class="text-sm font-normal text-slate-500">/ ₩600k</span></div>
-                <ul class="space-y-4 mb-8 text-slate-400 font-light flex-grow">
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Up to 3 mins Tour</span><span class="ko-content">3분 이내 투어 영상</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Cinematic Grading</span><span class="ko-content">시네마틱 컬러 그레이딩</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Agent Subtitles</span><span class="ko-content">에이전트 인터뷰 자막</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">48h Delivery</span><span class="ko-content">48시간 내 납품</span></li>
+            <!-- Plan 2: Standard Showcase -->
+            <div class="price-card p-10 flex flex-col border-emerald-500/50 bg-emerald-500/5 relative scale-105 z-10 shadow-2xl shadow-emerald-500/10">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-4 py-1 rounded-full tracking-widest uppercase">Most Popular</div>
+                <div class="mb-6 flex justify-between items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">Standard Showcase</h3>
+                        <p class="text-slate-500 text-xs uppercase tracking-widest">Professional</p>
+                    </div>
+                    <div class="revision-badge">2 Revisions</div>
+                </div>
+                <div class="mb-8">
+                    <div class="en-content">
+                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
+                        <span class="text-4xl font-bold text-white">$100+</span>
+                    </div>
+                    <div class="ko-content">
+                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
+                        <span class="text-4xl font-bold text-white">$100+</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-200">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Advanced Motion Titles</span><span class="ko-content">어드밴스드 모션 타이틀</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Speed Ramping & Transitions</span><span class="ko-content">스피드 조절 및 트랜지션</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Audio (Mic) & SFX Enhancement</span><span class="ko-content">마이크 음성 및 효과음 보정</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Cinematic Color Grading</span><span class="ko-content">시네마틱 컬러그레이딩</span></li>
+                    <li class="flex items-center gap-3 font-bold text-emerald-400"><i class="fas fa-info-circle"></i> <span class="en-content">2 Professional Revisions</span><span class="ko-content">전문 수정 2회 포함</span></li>
                 </ul>
-                <a href="contact.html" class="block text-center py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 transition font-bold text-white">Select</a>
+                <a href="contact.html" class="w-full py-4 text-center bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 uppercase tracking-widest text-xs text-white">
+                    <span class="en-content font-bold">Select Standard</span><span class="ko-content font-bold">스탠다드 선택</span>
+                </a>
             </div>
 
-            <!-- Plan 3: Luxury Custom -->
-            <div class="price-card p-8 rounded-3xl flex flex-col">
-                <h3 class="text-xl font-bold mb-2">Luxury / AI</h3>
-                <div class="text-4xl font-bold mb-6">Custom</div>
-                <ul class="space-y-4 mb-8 text-slate-400 font-light flex-grow">
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">High-end AI Narrations</span><span class="ko-content">고급 AI 나레이션</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Drone Footages Editing</span><span class="ko-content">드론 촬영본 편집</span></li>
-                    <li><i class="fas fa-check text-emerald-500 mr-2"></i> <span class="en-content">Unlimited Revisions</span><span class="ko-content">무제한 수정</span></li>
+            <!-- Plan 3: Premium AI Cinematic -->
+            <div class="price-card p-10 flex flex-col">
+                <div class="mb-6 flex justify-between items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">Premium AI</h3>
+                        <p class="text-slate-500 text-xs uppercase tracking-widest">Innovation</p>
+                    </div>
+                    <div class="revision-badge">2 + Flexible</div>
+                </div>
+                <div class="mb-8">
+                    <div class="en-content">
+                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
+                        <span class="text-4xl font-bold text-white">$200+</span>
+                    </div>
+                    <div class="ko-content">
+                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
+                        <span class="text-4xl font-bold text-white">$200+</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
+                    <li class="flex items-center gap-3"><i class="fas fa-sparkles text-emerald-500"></i> <span class="en-content">Standard Content Included</span><span class="ko-content">스탠다드 모든 기능 포함</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-sparkles text-emerald-500"></i> <span class="en-content">Premium Motion Graphics</span><span class="ko-content">프리미엄 모션 그래픽</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-sparkles text-emerald-500"></i> <span class="en-content">AI Visual Upgrade (Sky/Season)</span><span class="ko-content">AI 비주얼 업그레이드 (계절 변환 등)</span></li>
+                    <li class="flex items-center gap-3 font-bold text-emerald-400"><i class="fas fa-plus-circle"></i> <span class="en-content">2 Revisions + Flexible Tweaks</span><span class="ko-content">수정 2회 + 유연한 미세 조정</span></li>
                 </ul>
-                <a href="contact.html" class="block text-center py-3 rounded-xl border border-emerald-500/30 hover:bg-emerald-500 transition font-bold">Inquire</a>
+                <a href="contact.html" class="w-full py-4 text-center border border-emerald-500/30 rounded-2xl font-bold hover:bg-emerald-600 hover:text-white transition-all uppercase tracking-widest text-xs">
+                    <span class="en-content">Select Premium</span><span class="ko-content font-bold">프리미엄 선택</span>
+                </a>
             </div>
         </div>
     </main>
 
-    <!-- Footer (기존과 동일) -->
-    <footer class="py-12 text-center border-t border-white/5">
-        <p class="text-slate-600 text-[10px] tracking-widest uppercase mb-4">© 2026 EDITBAY MEDIA</p>
-        <a href="services.html" class="text-sm text-slate-400 hover:text-white transition">← Back to Services</a>
+    <!-- Real Estate Add-on Services -->
+    <section class="max-w-4xl mx-auto px-6 pb-32">
+        <div class="bg-white/5 rounded-[2.5rem] p-10 border border-white/5">
+            <h3 class="text-xl font-bold mb-8 text-center uppercase tracking-widest text-emerald-400">Custom Add-ons</h3>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <!-- AI Visual Enhancements -->
+                <div class="flex justify-between items-center p-4 border-b border-white/5">
+                    <span class="text-slate-400">
+                        <span class="en-content">AI Visual Enhancements</span>
+                        <span class="ko-content">AI 비주얼 업그레이드</span>
+                    </span>
+                    <span class="font-bold text-white">
+                        <span class="en-content">$20 / scene</span>
+                        <span class="ko-content">씬당 $20</span>
+                    </span>
+                </div>
+                <!-- 2nd Video -->
+                <div class="flex justify-between items-center p-4 border-b border-white/5">
+                    <span class="text-slate-400">
+                        <span class="en-content">2nd Video (Variation)</span>
+                        <span class="ko-content">두 번째 영상 (베리에이션)</span>
+                    </span>
+                    <span class="font-bold text-white">$25</span>
+                </div>
+                <!-- Additional Revision -->
+                <div class="flex justify-between items-center p-4 border-b border-white/5">
+                    <span class="text-slate-400">
+                        <span class="en-content">Additional Revision Request</span>
+                        <span class="ko-content">추가 수정 요청</span>
+                    </span>
+                    <span class="font-bold text-white">$25</span>
+                </div>
+                <!-- Map / Community Highlights -->
+                <div class="flex justify-between items-center p-4 border-b border-white/5">
+                    <span class="text-slate-400">
+                        <span class="en-content">Map / Community Highlights</span>
+                        <span class="ko-content">지도 및 주변 커뮤니티 강조</span>
+                    </span>
+                    <span class="font-bold text-white">$50</span>
+                </div>
+                <!-- 24h Delivery -->
+                <div class="flex justify-between items-center p-4 border-b border-white/5">
+                    <span class="text-slate-400">
+                        <span class="en-content italic">24-hour Express Delivery</span>
+                        <span class="ko-content italic">24시간 내 초고속 납기</span>
+                    </span>
+                    <span class="font-bold text-emerald-400">$50</span>
+                </div>
+                <!-- Bilingual Subtitles -->
+                <div class="flex justify-between items-center p-4 border-b border-white/5">
+                    <span class="text-slate-400">
+                        <span class="en-content">Bilingual Subtitles (EN/KR)</span>
+                        <span class="ko-content">한/영 이중 자막 작업</span>
+                    </span>
+                    <span class="font-bold text-white">$30</span>
+                </div>
+            </div>
+            <p class="mt-8 text-[10px] text-center text-slate-500 uppercase tracking-widest">
+                <span class="en-content">Note: Revisions are counted as a consolidated batch of feedback.</span>
+                <span class="ko-content">참고: 수정 요청은 항목들을 한데 모아 1회차씩 진행됩니다.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase border-t border-white/5">
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+        <div class="mt-4">
+            <a href="services.html" class="text-slate-500 hover:text-emerald-500 transition lowercase italic">← back to services</a>
+        </div>
     </footer>
 
     <script>
+        /* EditBay Media Language Manager */
         (function() {
             const savedLang = localStorage.getItem('editbay_lang') || 'en';
             document.documentElement.className = savedLang + '-mode';
@@ -126,9 +308,15 @@
         function updateButtonState(lang) {
             const btnEn = document.getElementById('btn-en');
             const btnKo = document.getElementById('btn-ko');
+
             if (btnEn && btnKo) {
-                if (lang === 'ko') { btnKo.classList.add('active'); btnEn.classList.remove('active'); }
-                else { btnEn.classList.add('active'); btnKo.classList.remove('active'); }
+                if (lang === 'ko') {
+                    btnKo.classList.add('active');
+                    btnEn.classList.remove('active');
+                } else {
+                    btnEn.classList.add('active');
+                    btnKo.classList.remove('active');
+                }
             }
         }
     </script>
