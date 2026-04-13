@@ -229,44 +229,50 @@
     </footer>
 
     <script>
-        function changeLang(lang) {
-            const html = document.documentElement;
-            const btnEn = document.getElementById('btn-en');
-            const btnKo = document.getElementById('btn-ko');
+      /* 
+   EditBay Media Language Manager 
+   로컬 스토리지를 사용하여 페이지 이동 시에도 언어 설정을 유지합니다.
+*/
 
-            if(lang === 'ko') {
-                html.className = 'ko-mode';
-                btnKo.classList.add('active');
-                btnEn.classList.remove('active');
-            } else {
-                html.className = 'en-mode';
-                btnEn.classList.add('active');
-                btnKo.classList.remove('active');
-            }
+// 1. 페이지 로드 시 즉시 실행하여 깜빡임 최소화
+(function() {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    document.documentElement.className = savedLang + '-mode';
+})();
+
+// 2. DOM이 완전히 로드된 후 버튼 상태 업데이트
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    updateButtonState(savedLang);
+});
+
+// 3. 언어 변경 함수 (버튼 클릭 시 호출)
+function changeLang(lang) {
+    // 로컬 스토리지에 저장
+    localStorage.setItem('editbay_lang', lang);
+    
+    // HTML 클래스 교체
+    document.documentElement.className = lang + '-mode';
+    
+    // 버튼 UI 업데이트
+    updateButtonState(lang);
+}
+
+// 4. 버튼 활성화 상태 표시 함수
+function updateButtonState(lang) {
+    const btnEn = document.getElementById('btn-en');
+    const btnKo = document.getElementById('btn-ko');
+
+    if (btnEn && btnKo) {
+        if (lang === 'ko') {
+            btnKo.classList.add('active');
+            btnEn.classList.remove('active');
+        } else {
+            btnEn.classList.add('active');
+            btnKo.classList.remove('active');
         }
-
-        function handleContact(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const service = document.getElementById('service').value;
-            const message = document.getElementById('message').value;
-
-            const adminEmail = "editbaymedia@gmail.com";
-            const subject = encodeURIComponent(`[EditBay Inquiry] ${service} - from ${name}`);
-            
-            const bodyContent = `Hello EditBay Team,\n\n` +
-                                `New inquiry from website:\n\n` +
-                                `Name: ${name}\n` +
-                                `Sender Email: ${email}\n` +
-                                `Service: ${service}\n\n` +
-                                `Message:\n${message}\n\n` +
-                                `---------------------------\n` +
-                                `Please reply to sender at: ${email}`;
-
-            window.location.href = `mailto:${adminEmail}?subject=${subject}&body=${encodeURIComponent(bodyContent)}`;
-        }
+    }
+}
     </script>
 </body>
 </html>
