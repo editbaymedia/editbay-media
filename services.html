@@ -40,12 +40,20 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 2.5rem;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
         }
         .service-card:hover {
             border-color: var(--accent);
             transform: translateY(-10px);
             background: rgba(59, 130, 246, 0.05);
             box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.2);
+        }
+
+        .video-preview {
+            position: relative;
+            background: #000;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
         }
 
         .lang-btn {
@@ -57,15 +65,6 @@
         .lang-btn.active {
             opacity: 1;
             color: var(--accent);
-        }
-
-        .price-badge {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent);
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            font-size: 0.875rem;
-            font-weight: 700;
         }
     </style>
 </head>
@@ -115,148 +114,152 @@
 
     <!-- Services Detailed Grid -->
     <section class="pb-32">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
             
             <!-- Service 1: AI Solutions -->
-            <div class="service-card p-10 rounded-[2.5rem] cursor-pointer group flex flex-col justify-between" onclick="location.href='ai-video.html'">
-                <div>
-                    <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mb-8 text-blue-500 text-3xl">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4">
-                        <span class="en-content">AI Video Solutions</span>
-                        <span class="ko-content font-bold">AI 비디오 솔루션</span>
-                    </h3>
-                    <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                        <span class="en-content">Transform your brand with AI-generated visuals. Ideal for branded films, high-concept ads, and storytelling without the need for traditional filming.</span>
-                        <span class="ko-content font-light">AI 기술을 통해 브랜드 메시지를 시각화합니다. 촬영 없이도 감각적인 브랜디드 필름, 하이엔드 광고 및 스토리텔링 구현이 가능합니다.</span>
-                    </p>
-                    <ul class="space-y-3 mb-10 text-sm text-slate-300">
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> AI Visual Storytelling</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> High-End Color Grading</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> AI Voiceovers & Audio</li>
-                    </ul>
+            <div class="service-card cursor-pointer group flex flex-col" onclick="location.href='ai-video.html'">
+                <!-- Video Sample -->
+                <div class="video-preview">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/영상ID_AI솔루션?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-                <div class="border-t border-white/5 pt-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="en-content">
+                <div class="p-10 flex flex-col justify-between flex-grow">
+                    <div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500 text-2xl">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold">
+                                <span class="en-content">AI Video Solutions</span>
+                                <span class="ko-content font-bold">AI 비디오 솔루션</span>
+                            </h3>
+                        </div>
+                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
+                            <span class="en-content">Transform your brand with AI-generated visuals. Ideal for branded films, high-concept ads, and storytelling.</span>
+                            <span class="ko-content font-light">AI 기술로 브랜드 메시지를 시각화합니다. 촬영 없이도 감각적인 광고 및 스토리텔링 구현이 가능합니다.</span>
+                        </p>
+                    </div>
+                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
+                        <div>
                             <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
                             <span class="text-2xl font-bold">$150+</span>
                         </div>
-                        <div class="ko-content text-right">
-                            <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                            <span class="text-2xl font-bold">$150+</span>
+                        <div class="text-right">
+                            <a href="ai-video.html" class="text-blue-500 font-bold hover:underline">
+                                <span class="en-content">View Details →</span>
+                                <span class="ko-content font-bold">상세 정보 →</span>
+                            </a>
                         </div>
-                    </div>
-                    <div class="mt-4">
-                        <a href="ai-video.html" class="text-blue-500 font-bold hover:underline">
-                            <span class="en-content">View Detailed Pricing →</span>
-                            <span class="ko-content font-bold">상세 가격 보기 →</span>
-                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Service 2: Real Estate -->
-            <div class="service-card p-10 rounded-[2.5rem] cursor-pointer group flex flex-col justify-between" onclick="location.href='real-estate.html'">
-                <div>
-                    <div class="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8 text-emerald-500 text-3xl">
-                        <i class="fas fa-camera-retro"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4">
-                        <span class="en-content">Real Estate Editing</span>
-                        <span class="ko-content font-bold">부동산 영상 편집</span>
-                    </h3>
-                    <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                        <span class="en-content">Showcase properties with a cinematic touch. Specialized in Vancouver's luxury market, delivering high-retention tours for agents.</span>
-                        <span class="ko-content font-light">매물의 가치를 높이는 시네마틱 투어 영상입니다. 밴쿠버 럭셔리 부동산 시장에서의 노하우로 중개인을 위한 고효율 영상을 제작합니다.</span>
-                    </p>
-                    <ul class="space-y-3 mb-10 text-sm text-slate-300">
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> Cinematic Walkthroughs</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> Sky Replacement & Enhancements</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> Instagram Reels Optimization</li>
-                    </ul>
+            <div class="service-card cursor-pointer group flex flex-col" onclick="location.href='real-estate.html'">
+                <!-- Video Sample -->
+                <div class="video-preview">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/영상ID_부동산?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-                <div class="border-t border-white/5 pt-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="en-content">
+                <div class="p-10 flex flex-col justify-between flex-grow">
+                    <div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-emerald-600/20 rounded-xl flex items-center justify-center text-emerald-500 text-2xl">
+                                <i class="fas fa-camera-retro"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold">
+                                <span class="en-content">Real Estate Editing</span>
+                                <span class="ko-content font-bold">부동산 영상 편집</span>
+                            </h3>
+                        </div>
+                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
+                            <span class="en-content">Showcase properties with a cinematic touch. Optimized for agent's high-retention property tours.</span>
+                            <span class="ko-content font-light">매물의 가치를 높이는 시네마틱 투어 영상입니다. 밴쿠버 럭셔리 매물 시장의 노하우를 담았습니다.</span>
+                        </p>
+                    </div>
+                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
+                        <div>
                             <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
                             <span class="text-2xl font-bold">$50+</span>
                         </div>
-                        <div class="ko-content text-right">
-                            <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                            <span class="text-2xl font-bold">$50+</span>
+                        <div class="text-right">
+                            <a href="real-estate.html" class="text-emerald-500 font-bold hover:underline">
+                                <span class="en-content">View Details →</span>
+                                <span class="ko-content font-bold">상세 정보 →</span>
+                            </a>
                         </div>
-                    </div>
-                    <div class="mt-4">
-                        <a href="real-estate.html" class="text-emerald-500 font-bold hover:underline">
-                            <span class="en-content">View Detailed Pricing →</span>
-                            <span class="ko-content font-bold">상세 가격 보기 →</span>
-                        </a>
                     </div>
                 </div>
             </div>    
 
             <!-- Service 3: YouTube Content -->
-            <div class="service-card p-12 flex flex-col justify-between">
-                <div>
-                    <div class="w-16 h-16 bg-red-600/20 rounded-2xl flex items-center justify-center mb-8 text-red-500 text-3xl">
-                        <i class="fab fa-youtube"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4">
-                        <span class="en-content">YouTube Content</span>
-                        <span class="ko-content font-bold">유튜브 콘텐츠 관리</span>
-                    </h3>
-                    <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                        <span class="en-content">End-to-end editing for creators. We focus on viewer retention, dynamic pacing, and custom motion graphics.</span>
-                        <span class="ko-content font-light">크리에이터를 위한 엔드투엔드 편집 서비스입니다. 시청 지속시간을 극대화하는 다이나믹한 호흡과 커스텀 그래픽을 제공합니다.</span>
-                    </p>
-                    <ul class="space-y-3 mb-10 text-sm text-slate-300">
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-red-500"></i> Dynamic Transitions</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-red-500"></i> Subtitle & Motion Graphics</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-red-500"></i> Professional Sound Design</li>
-                    </ul>
+            <div class="service-card flex flex-col">
+                <!-- Video Sample -->
+                <div class="video-preview">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/영상ID_유튜브?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-                <div class="border-t border-white/5 pt-8 flex justify-between items-center">
+                <div class="p-10 flex flex-col justify-between flex-grow">
                     <div>
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                        <span class="text-2xl font-bold">$150+</span>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-red-600/20 rounded-xl flex items-center justify-center text-red-500 text-2xl">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold">
+                                <span class="en-content">YouTube Content</span>
+                                <span class="ko-content font-bold">유튜브 콘텐츠 관리</span>
+                            </h3>
+                        </div>
+                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
+                            <span class="en-content">End-to-end editing for creators. Focus on retention, dynamic pacing, and custom motion graphics.</span>
+                            <span class="ko-content font-light">크리에이터를 위한 전문 편집 서비스입니다. 시청 지속시간과 다이나믹한 호흡에 집중합니다.</span>
+                        </p>
                     </div>
-                    <div class="ko-content text-right">
-                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                        <span class="text-2xl font-bold">$150+</span>
+                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
+                        <div>
+                            <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Price</span>
+                            <span class="text-2xl font-bold">Custom</span>
+                        </div>
+                        <div class="text-right">
+                            <a href="contact.html" class="text-red-500 font-bold hover:underline">
+                                <span class="en-content">Get a Quote →</span>
+                                <span class="ko-content font-bold">견적 문의 →</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Service 4: Custom Project -->
-            <div class="service-card p-12 flex flex-col justify-between">
-                <div>
-                    <div class="w-16 h-16 bg-purple-600/20 rounded-2xl flex items-center justify-center mb-8 text-purple-500 text-3xl">
-                        <i class="fas fa-sparkles"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4">
-                        <span class="en-content">Custom Projects</span>
-                        <span class="ko-content font-bold">커스텀 프로젝트</span>
-                    </h3>
-                    <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                        <span class="en-content">Specialized editing for music videos, event highlights, or any unique creative vision. Tailored to your exact needs.</span>
-                        <span class="ko-content font-light">뮤직비디오, 이벤트 하이라이트 등 창의적인 모든 프로젝트를 지원합니다. 귀하의 요구에 100% 맞춘 시네마틱 연출을 제공합니다.</span>
-                    </p>
-                    <ul class="space-y-3 mb-10 text-sm text-slate-300">
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-purple-500"></i> Bespoke Editing Style</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-purple-500"></i> Advanced Compositing</li>
-                        <li class="flex items-center gap-3"><i class="fas fa-check text-purple-500"></i> Creative Consultation</li>
-                    </ul>
+            <div class="service-card flex flex-col">
+                <!-- Video Sample -->
+                <div class="video-preview">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/영상ID_커스텀?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-                <div class="border-t border-white/5 pt-8 flex justify-between items-center">
+                <div class="p-10 flex flex-col justify-between flex-grow">
                     <div>
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Contact for</span>
-                        <span class="text-2xl font-bold">Quote</span>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center text-purple-500 text-2xl">
+                                <i class="fas fa-sparkles"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold">
+                                <span class="en-content">Custom Projects</span>
+                                <span class="ko-content font-bold">커스텀 프로젝트</span>
+                            </h3>
+                        </div>
+                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
+                            <span class="en-content">Music videos, event highlights, or any unique creative vision. Tailored to your exact needs.</span>
+                            <span class="ko-content font-light">뮤직비디오, 이벤트 하이라이트 등 창의적인 모든 프로젝트를 귀하의 요구에 맞춰 제작합니다.</span>
+                        </p>
                     </div>
-                    <div class="ko-content text-right">
-                        <span class="text-xs text-slate-500 block mb-1">문의 후</span>
-                        <span class="text-2xl font-bold">견적 협의</span>
+                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
+                        <div>
+                            <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Consultation</span>
+                            <span class="text-2xl font-bold">Bespoke</span>
+                        </div>
+                        <div class="text-right">
+                            <a href="contact.html" class="text-purple-500 font-bold hover:underline">
+                                <span class="en-content">Contact Us →</span>
+                                <span class="ko-content font-bold">상담 하기 →</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -264,7 +267,7 @@
         </div>
     </section>
 
-    <!-- Footer Area (Same as index.html) -->
+    <!-- Footer Area -->
     <footer class="py-20 text-center border-t border-white/5 bg-slate-950/20">
         <div class="max-w-4xl mx-auto px-6">
             <h4 class="text-2xl font-bold mb-10">
@@ -286,35 +289,24 @@
     </footer>
 
     <script>
-/* EditBay Media Language Manager 
-   로컬 스토리지를 사용하여 페이지 이동 시에도 언어 설정을 유지합니다.
-*/
+/* EditBay Media Language Manager */
 
-// 1. 페이지 로드 시 즉시 실행하여 깜빡임 최소화
 (function() {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
     document.documentElement.className = savedLang + '-mode';
 })();
 
-// 2. DOM이 완전히 로드된 후 버튼 상태 업데이트
 document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
     updateButtonState(savedLang);
 });
 
-// 3. 언어 변경 함수 (버튼 클릭 시 호출)
 function changeLang(lang) {
-    // 로컬 스토리지에 저장
     localStorage.setItem('editbay_lang', lang);
-    
-    // HTML 클래스 교체
     document.documentElement.className = lang + '-mode';
-    
-    // 버튼 UI 업데이트
     updateButtonState(lang);
 }
 
-// 4. 버튼 활성화 상태 표시 함수
 function updateButtonState(lang) {
     const btnEn = document.getElementById('btn-en');
     const btnKo = document.getElementById('btn-ko');
