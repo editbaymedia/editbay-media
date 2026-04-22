@@ -49,11 +49,15 @@
             .glass-panel { border: none !important; background: white !important; box-shadow: none !important; }
             input, select, textarea { border: none !important; background: transparent !important; color: black !important; padding: 2px !important; }
             .invoice-container { margin: 0 !important; width: 100% !important; max-width: none !important; }
-            .service-row { border-bottom: 1px solid #eee !important; }
+            .service-row { border-bottom: 1px solid #eee !important; margin-bottom: 10px !important; }
             .preset-badge { display: none !important; }
             .row-total { color: black !important; }
             #total-display { color: #3b82f6 !important; -webkit-print-color-adjust: exact; }
+            .service-select { display: none !important; }
+            .print-service-label { display: block !important; font-weight: bold; }
         }
+
+        .print-service-label { display: none; }
 
         #auth-overlay {
             position: fixed;
@@ -138,7 +142,6 @@
                 <div class="flex flex-col justify-end text-right no-print">
                     <p class="text-xs text-slate-500 mb-4 uppercase tracking-widest font-bold">Quick Services</p>
                     <div class="flex flex-wrap justify-end gap-2">
-                        <button onclick="addPreset('AI Short Form Content', 500)" class="preset-badge bg-blue-600/10 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-600 hover:text-white transition">Short Form ($500)</button>
                         <button onclick="addPreset('AI Branded Film', 1200)" class="preset-badge bg-blue-600/10 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-600 hover:text-white transition">Branded Film ($1.2k)</button>
                         <button onclick="addPreset('Real Estate Video Tour', 350)" class="preset-badge bg-emerald-600/10 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition">RE Tour ($350)</button>
                     </div>
@@ -154,7 +157,7 @@
                     <div class="col-span-2 md:col-span-1 text-right">Total</div>
                 </div>
 
-                <div id="item-list" class="space-y-4">
+                <div id="item-list" class="space-y-6">
                     <!-- 항목이 여기에 동적으로 추가됩니다 -->
                 </div>
 
@@ -171,7 +174,7 @@
                         <span class="font-bold" id="subtotal-display">$0.00</span>
                     </div>
                     <div class="flex justify-between text-sm items-center">
-                        <span class="text-slate-500">Tax (e.g. 5% GST)</span>
+                        <span class="text-slate-500">Tax (GST/HST)</span>
                         <div class="flex items-center gap-2">
                             <input type="number" id="tax-rate" value="5" class="w-16 text-right py-1 px-2 text-xs" onchange="calculate()">
                             <span>%</span>
@@ -209,17 +212,28 @@
             }
         }
 
+        // --- 서비스 리스트 및 가격 정보 ---
+        const servicePriceList = {
+            "Basic": 50,
+            "Standard": 100,
+            "AI Photo to Video": 20,
+            "Graphics": 20,
+            "2nd Video": 25,
+            "AI Video": 200,
+            "Premium": 200
+        };
+
         // --- 파트너님 전용 고객 DB ---
         const customerDB = {
             "PROPERTY-SPACES": {
                 code: "PS",
-                name: "Property Spaces",
+                name: "PropertySpaces Ltd",
                 email: "propertyspaces@gmail.com",
-                note: "Real Estate Photography & Video Services",
-                tax: 5,
+                note: "33 Harbour Square, Suite 2019, TORONTO ON, M5J 2G2, CANADA",
+                tax: 0,
                 defaultItems: [
-                    { desc: "Cinematic Property Tour Video", qty: 1, price: 350 },
-                    { desc: "Sky Replacement & Enhancements", qty: 1, price: 50 }
+                    { desc: "Standard", detail: "Standard Video Editing", qty: 1, price: 100 },
+                    { desc: "Basic", detail: "Basic Video Editing", qty: 4, price: 50 }
                 ]
             },
             "LEON-LI": {
@@ -229,7 +243,7 @@
                 note: "Cloud Solutions & Media Content Project",
                 tax: 5,
                 defaultItems: [
-                    { desc: "Custom AI Video Content Creation", qty: 1, price: 500 }
+                    { desc: "Premium", detail: "Custom AI Video Content Creation", qty: 1, price: 200 }
                 ]
             },
             "DANIEL-K": {
@@ -237,10 +251,9 @@
                 name: "Daniel Kupnicki",
                 email: "contact@aiirmedia.ca",
                 note: "AI Media Production & Branded Content",
-                tax: 12, // PST + GST
+                tax: 13,
                 defaultItems: [
-                    { desc: "AI Branded Film Production", qty: 1, price: 1200 },
-                    { desc: "Advanced AI Voiceover Package", qty: 1, price: 150 }
+                    { desc: "AI Video", detail: "AI Branded Film Production", qty: 1, price: 200 }
                 ]
             },
             "ANDREW-T": {
@@ -250,7 +263,7 @@
                 note: "Video Production & Editing Project",
                 tax: 5,
                 defaultItems: [
-                    { desc: "Professional Video Editing Services", qty: 1, price: 400 }
+                    { desc: "Standard", detail: "Professional Video Editing Services", qty: 1, price: 100 }
                 ]
             }
         };
@@ -280,19 +293,32 @@
 
             document.getElementById('item-list').innerHTML = '';
             client.defaultItems.forEach(item => {
-                addItem(item.desc, item.qty, item.price);
+                addItem(item.desc, item.qty, item.price, item.detail);
             });
 
             calculate();
         }
 
-        function addItem(desc = '', qty = 1, price = 0) {
+        // 항목 추가 함수
+        function addItem(serviceName = '', qty = 1, price = 0, detail = '') {
             const container = document.getElementById('item-list');
             const rowId = 'row-' + Math.random().toString(36).substr(2, 9);
+            
+            // 서비스 옵션 생성
+            let optionsHtml = `<option value="">-- Choose Item --</option>`;
+            for (let name in servicePriceList) {
+                optionsHtml += `<option value="${name}" ${serviceName === name ? 'selected' : ''}>${name}</option>`;
+            }
+
             const html = `
-                <div class="grid grid-cols-12 gap-4 items-center service-row group relative" id="${rowId}">
-                    <div class="col-span-6 md:col-span-7">
-                        <input type="text" class="w-full desc-input text-sm" placeholder="Service description" value="${desc}">
+                <div class="grid grid-cols-12 gap-4 items-start service-row group relative" id="${rowId}">
+                    <div class="col-span-6 md:col-span-7 flex flex-col gap-2">
+                        <span class="print-service-label text-sm">${serviceName}</span>
+                        <select class="service-select text-xs font-bold text-blue-400 no-print" onchange="handleServiceChange(this)">
+                            ${optionsHtml}
+                            <option value="Custom">Custom Service</option>
+                        </select>
+                        <input type="text" class="w-full detail-input text-xs opacity-80" placeholder="Address or specific details" value="${detail}">
                     </div>
                     <div class="col-span-2">
                         <input type="number" class="w-full text-center qty-input text-sm" value="${qty}" oninput="calculate()">
@@ -300,10 +326,10 @@
                     <div class="col-span-2">
                         <input type="number" class="w-full text-right price-input text-sm" value="${price}" oninput="calculate()">
                     </div>
-                    <div class="col-span-2 md:col-span-1 text-right font-bold row-total text-sm">
+                    <div class="col-span-2 md:col-span-1 text-right font-bold row-total text-sm pt-2">
                         $0.00
                     </div>
-                    <div class="no-print opacity-0 group-hover:opacity-100 absolute -right-8 transition-opacity">
+                    <div class="no-print opacity-0 group-hover:opacity-100 absolute -right-8 transition-opacity pt-2">
                         <button onclick="removeRow('${rowId}')" class="text-red-500 hover:text-red-400">
                             <i class="fas fa-times-circle"></i>
                         </button>
@@ -314,13 +340,32 @@
             calculate();
         }
 
+        // 서비스 선택 변경 핸들러
+        function handleServiceChange(select) {
+            const row = select.closest('.service-row');
+            const serviceName = select.value;
+            const priceInput = row.querySelector('.price-input');
+            const label = row.querySelector('.print-service-label');
+            
+            if (serviceName && servicePriceList[serviceName]) {
+                priceInput.value = servicePriceList[serviceName];
+                label.innerText = serviceName;
+            } else if (serviceName === "Custom") {
+                label.innerText = "Custom Service";
+            } else {
+                label.innerText = "";
+            }
+            
+            calculate();
+        }
+
         function removeRow(id) {
             document.getElementById(id).remove();
             calculate();
         }
 
         function addPreset(name, price) {
-            addItem(name, 1, price);
+            addItem('', 1, price, name);
         }
 
         function calculate() {
@@ -352,14 +397,15 @@
             
             document.querySelectorAll('.service-row').forEach(row => {
                 draft.items.push({
-                    desc: row.querySelector('.desc-input').value,
+                    service: row.querySelector('.service-select').value,
+                    detail: row.querySelector('.detail-input').value,
                     qty: row.querySelector('.qty-input').value,
                     price: row.querySelector('.price-input').value
                 });
             });
 
             localStorage.setItem('eb_invoice_draft', JSON.stringify(draft));
-            alert('인보이스 데이터가 브라우저에 임시 저장되었습니다.');
+            alert('Draft saved locally.');
         }
 
         window.onload = () => {
