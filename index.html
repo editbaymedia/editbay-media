@@ -390,5 +390,30 @@ function updateButtonState(lang) {
     }
 }
     </script>
+        <!-- Footer: 관리자 숨김 링크 추가 -->
+    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase">
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED. 
+            <!-- 마우스를 올려야만 보이는 투명한 관리자 링크 -->
+            <a href="admin-invoice.html" class="ml-2 opacity-0 hover:opacity-100 transition-opacity cursor-default">ADMIN</a>
+        </p>
+    </footer>
+
+    <script>
+        function changeLang(lang) {
+            const html = document.documentElement;
+            const btnEn = document.getElementById('btn-en');
+            const btnKo = document.getElementById('btn-ko');
+
+            if(lang === 'ko') {
+                html.className = 'ko-mode';
+                btnKo.classList.add('active');
+                btnEn.classList.remove('active');
+            } else {
+                html.className = 'en-mode';
+                btnEn.classList.add('active');
+                btnKo.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
