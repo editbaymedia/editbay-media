@@ -68,6 +68,19 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* 로딩 애니메이션 */
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="p-4 md:p-10">
@@ -100,6 +113,10 @@
                 
                 <button onclick="saveDraft()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-700 transition">
                     <i class="fas fa-save mr-2"></i> Save Draft
+                </button>
+                <!-- 구글 시트 전송 버튼 추가 -->
+                <button id="export-btn" onclick="exportToSheets()" class="bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-600 transition flex items-center">
+                    <i class="fab fa-google-drive mr-2"></i> Export to Sheets
                 </button>
                 <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">
                     <i class="fas fa-print mr-2"></i> Print to PDF
@@ -202,7 +219,9 @@
 
     <script>
         const ADMIN_PASS = "2026"; 
-        
+        // --- [중요] 구글 앱스 스크립트 배포 후 받은 웹 앱 URL을 여기에 넣으세요 ---
+        const GOOGLE_SCRIPT_URL = ""; 
+
         function checkAuth() {
             const pass = document.getElementById('admin-pass').value;
             if(pass === ADMIN_PASS) {
@@ -212,7 +231,6 @@
             }
         }
 
-        // --- 서비스 리스트 및 가격 정보 ---
         const servicePriceList = {
             "Basic": 50,
             "Standard": 100,
@@ -223,7 +241,6 @@
             "Premium": 200
         };
 
-        // --- 파트너님 전용 고객 DB ---
         const customerDB = {
             "PROPERTY-SPACES": {
                 code: "PS",
@@ -299,12 +316,10 @@
             calculate();
         }
 
-        // 항목 추가 함수
         function addItem(serviceName = '', qty = 1, price = 0, detail = '') {
             const container = document.getElementById('item-list');
             const rowId = 'row-' + Math.random().toString(36).substr(2, 9);
             
-            // 서비스 옵션 생성
             let optionsHtml = `<option value="">-- Choose Item --</option>`;
             for (let name in servicePriceList) {
                 optionsHtml += `<option value="${name}" ${serviceName === name ? 'selected' : ''}>${name}</option>`;
@@ -316,7 +331,7 @@
                         <span class="print-service-label text-sm">${serviceName}</span>
                         <select class="service-select text-xs font-bold text-blue-400 no-print" onchange="handleServiceChange(this)">
                             ${optionsHtml}
-                            <option value="Custom">Custom Service</option>
+                            <option value="Custom" ${serviceName === "Custom" ? 'selected' : ''}>Custom Service</option>
                         </select>
                         <input type="text" class="w-full detail-input text-xs opacity-80" placeholder="Address or specific details" value="${detail}">
                     </div>
@@ -340,7 +355,6 @@
             calculate();
         }
 
-        // 서비스 선택 변경 핸들러
         function handleServiceChange(select) {
             const row = select.closest('.service-row');
             const serviceName = select.value;
@@ -355,17 +369,12 @@
             } else {
                 label.innerText = "";
             }
-            
             calculate();
         }
 
         function removeRow(id) {
             document.getElementById(id).remove();
             calculate();
-        }
-
-        function addPreset(name, price) {
-            addItem('', 1, price, name);
         }
 
         function calculate() {
@@ -391,7 +400,12 @@
         function saveDraft() {
             const draft = {
                 invNum: document.getElementById('inv-num').value,
+                invDate: document.getElementById('inv-date').value,
                 clientName: document.getElementById('client-name').value,
+                clientEmail: document.getElementById('client-email').value,
+                clientNote: document.getElementById('client-note').value,
+                taxRate: document.getElementById('tax-rate').value,
+                paymentInfo: document.getElementById('payment-info').value,
                 items: []
             };
             
@@ -405,15 +419,78 @@
             });
 
             localStorage.setItem('eb_invoice_draft', JSON.stringify(draft));
-            alert('Draft saved locally.');
+            alert('초안이 브라우저에 안전하게 저장되었습니다.');
+        }
+
+        // --- 구글 시트 내보내기 핵심 로직 ---
+        async function exportToSheets() {
+            if (!GOOGLE_SCRIPT_URL) {
+                alert("구글 앱스 스크립트 URL이 설정되지 않았습니다. 코드를 확인해주세요.");
+                return;
+            }
+
+            const btn = document.getElementById('export-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loader"></span> Sending...`;
+
+            const data = {
+                invNum: document.getElementById('inv-num').value,
+                invDate: document.getElementById('inv-date').value,
+                clientName: document.getElementById('client-name').value,
+                totalAmount: document.getElementById('total-display').innerText.replace('$', '').replace(',', ''),
+                items: []
+            };
+
+            document.querySelectorAll('.service-row').forEach(row => {
+                data.items.push({
+                    service: row.querySelector('.service-select').value || "Custom",
+                    detail: row.querySelector('.detail-input').value,
+                    total: row.querySelector('.row-total').innerText
+                });
+            });
+
+            try {
+                // 구글 앱스 스크립트로 데이터 전송 (JSONP 방식의 우회 또는 단순 POST)
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // CORS 정책 우회를 위해 no-cors 사용
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                alert('구글 시트로 데이터를 전송했습니다! (성공 여부는 시트를 확인하세요)');
+            } catch (error) {
+                console.error("Export error:", error);
+                alert('전송 중 오류가 발생했습니다.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
 
         window.onload = () => {
-            document.getElementById('inv-date').valueAsDate = new Date();
             initCustomerList();
-            if(document.getElementById('item-list').children.length === 0) {
-                addItem(); 
+            const saved = localStorage.getItem('eb_invoice_draft');
+            if(saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('inv-num').value = data.invNum || '';
+                document.getElementById('inv-date').value = data.invDate || new Date().toISOString().slice(0, 10);
+                document.getElementById('client-name').value = data.clientName || '';
+                document.getElementById('client-email').value = data.clientEmail || '';
+                document.getElementById('client-note').value = data.clientNote || '';
+                document.getElementById('tax-rate').value = data.taxRate || 5;
+                document.getElementById('payment-info').value = data.paymentInfo || '';
+                document.getElementById('item-list').innerHTML = '';
+                if (data.items && data.items.length > 0) {
+                    data.items.forEach(item => addItem(item.service, item.qty, item.price, item.detail));
+                } else { addItem(); }
+            } else {
+                document.getElementById('inv-date').valueAsDate = new Date();
+                addItem();
             }
+            calculate();
         }
     </script>
 </body>
