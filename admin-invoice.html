@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Manager | EditBay Business</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root {
+            --accent: #3b82f6; 
+            --bg-dark: #050a14;
+            --card-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        input, select, textarea {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* 인쇄 전용 스타일 */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .glass-panel { border: none !important; background: white !important; box-shadow: none !important; }
+            input, select, textarea { border: none !important; background: transparent !important; color: black !important; padding: 2px !important; }
+            .invoice-container { margin: 0 !important; width: 100% !important; max-width: none !important; }
+            .service-row { border-bottom: 1px solid #eee !important; }
+            .preset-badge { display: none !important; }
+            .row-total { color: black !important; }
+            #total-display { color: #3b82f6 !important; -webkit-print-color-adjust: exact; }
+        }
+
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <!-- 보안 오버레이 (초기 비번: 2026) -->
+    <div id="auth-overlay">
+        <div class="text-center space-y-6">
+            <img src="logo.png" alt="Logo" class="h-12 mx-auto mb-8">
+            <h2 class="text-xl font-bold tracking-widest text-blue-500">ADMIN ACCESS</h2>
+            <input type="password" id="admin-pass" placeholder="Password" class="text-center w-64 block">
+            <button onclick="checkAuth()" class="bg-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-all">ENTER</button>
+            <p id="auth-error" class="text-red-500 text-sm hidden">Invalid Password</p>
+        </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto invoice-container">
+        
+        <!-- 상단 컨트롤 (출력 방지) -->
+        <div class="no-print flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+            <a href="index.html" class="text-slate-500 hover:text-white transition text-sm">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Site
+            </a>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="relative">
+                    <select id="customer-select" onchange="loadCustomerTemplate()" class="bg-blue-600/20 border-blue-500/30 text-blue-400 font-bold px-4 py-2.5">
+                        <option value="">-- Select Registered Client --</option>
+                    </select>
+                </div>
+                
+                <button onclick="saveDraft()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-700 transition">
+                    <i class="fas fa-save mr-2"></i> Save Draft
+                </button>
+                <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">
+                    <i class="fas fa-print mr-2"></i> Print to PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- 인보이스 본문 -->
+        <div class="glass-panel rounded-[2.5rem] p-8 md:p-16 shadow-2xl overflow-hidden relative">
+            
+            <!-- 인보이스 헤더 -->
+            <div class="flex flex-col md:flex-row justify-between gap-10 mb-20">
+                <div class="space-y-4">
+                    <img src="logo.png" alt="EditBay Logo" class="h-12 mb-6">
+                    <div class="text-slate-400 text-sm leading-relaxed">
+                        <p class="font-bold text-white uppercase tracking-wider">EditBay Media</p>
+                        <p>editbaymedia@gmail.com</p>
+                        <p>Vancouver, BC, Canada</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <h1 class="text-5xl font-black tracking-tighter mb-4 text-blue-500">INVOICE</h1>
+                    <div class="space-y-2 text-sm">
+                        <p><span class="text-slate-500 uppercase tracking-widest mr-2">Invoice #</span> <input type="text" id="inv-num" value="EB-TEMP-001" class="text-right w-56 font-bold text-white"></p>
+                        <p><span class="text-slate-500 uppercase tracking-widest mr-2">Date</span> <input type="date" id="inv-date" class="text-right"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 고객 정보 -->
+            <div class="grid md:grid-cols-2 gap-10 mb-16 border-b border-white/5 pb-16">
+                <div>
+                    <h3 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Bill To</h3>
+                    <div class="flex flex-col gap-2">
+                        <input type="text" id="client-name" placeholder="Client Name / Company" class="text-xl font-bold">
+                        <input type="text" id="client-email" placeholder="client@example.com" class="text-sm">
+                        <textarea id="client-note" placeholder="Project details or Address" class="text-sm h-20"></textarea>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-end text-right no-print">
+                    <p class="text-xs text-slate-500 mb-4 uppercase tracking-widest font-bold">Quick Services</p>
+                    <div class="flex flex-wrap justify-end gap-2">
+                        <button onclick="addPreset('AI Short Form Content', 500)" class="preset-badge bg-blue-600/10 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-600 hover:text-white transition">Short Form ($500)</button>
+                        <button onclick="addPreset('AI Branded Film', 1200)" class="preset-badge bg-blue-600/10 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-600 hover:text-white transition">Branded Film ($1.2k)</button>
+                        <button onclick="addPreset('Real Estate Video Tour', 350)" class="preset-badge bg-emerald-600/10 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition">RE Tour ($350)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 서비스 항목 테이블 -->
+            <div class="mb-12">
+                <div class="grid grid-cols-12 gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-4">
+                    <div class="col-span-6 md:col-span-7 text-left">Description</div>
+                    <div class="col-span-2 text-center">Qty</div>
+                    <div class="col-span-2 text-right">Unit Price</div>
+                    <div class="col-span-2 md:col-span-1 text-right">Total</div>
+                </div>
+
+                <div id="item-list" class="space-y-4">
+                    <!-- 항목이 여기에 동적으로 추가됩니다 -->
+                </div>
+
+                <button onclick="addItem()" class="no-print mt-8 text-sm font-bold text-blue-500 hover:text-white transition flex items-center gap-2">
+                    <i class="fas fa-plus-circle"></i> Add New Item
+                </button>
+            </div>
+
+            <!-- 합계 계산 -->
+            <div class="flex justify-end pt-10 border-t border-white/5">
+                <div class="w-full md:w-80 space-y-4">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500">Subtotal</span>
+                        <span class="font-bold" id="subtotal-display">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm items-center">
+                        <span class="text-slate-500">Tax (e.g. 5% GST)</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="tax-rate" value="5" class="w-16 text-right py-1 px-2 text-xs" onchange="calculate()">
+                            <span>%</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-white/10">
+                        <span class="text-xl font-bold uppercase tracking-tighter">Total Due</span>
+                        <span class="text-3xl font-black text-blue-500" id="total-display">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단 메모 -->
+            <div class="mt-20">
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Payment & Note</h3>
+                <textarea id="payment-info" class="w-full text-xs h-24 bg-transparent border-dashed border-white/10 italic text-slate-500" placeholder="e-Transfer: editbaymedia@gmail.com&#10;Please include the Invoice # in the message field."></textarea>
+            </div>
+
+        </div>
+
+        <footer class="mt-12 text-center text-slate-700 text-[10px] tracking-widest uppercase no-print">
+            <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+        </footer>
+    </div>
+
+    <script>
+        const ADMIN_PASS = "2026"; 
+        
+        function checkAuth() {
+            const pass = document.getElementById('admin-pass').value;
+            if(pass === ADMIN_PASS) {
+                document.getElementById('auth-overlay').style.display = 'none';
+            } else {
+                document.getElementById('auth-error').classList.remove('hidden');
+            }
+        }
+
+        // --- 파트너님 전용 고객 DB ---
+        const customerDB = {
+            "PROPERTY-SPACES": {
+                code: "PS",
+                name: "Property Spaces",
+                email: "propertyspaces@gmail.com",
+                note: "Real Estate Photography & Video Services",
+                tax: 5,
+                defaultItems: [
+                    { desc: "Cinematic Property Tour Video", qty: 1, price: 350 },
+                    { desc: "Sky Replacement & Enhancements", qty: 1, price: 50 }
+                ]
+            },
+            "LEON-LI": {
+                code: "LL",
+                name: "Leon Li",
+                email: "leon@slideshowcloud.com",
+                note: "Cloud Solutions & Media Content Project",
+                tax: 5,
+                defaultItems: [
+                    { desc: "Custom AI Video Content Creation", qty: 1, price: 500 }
+                ]
+            },
+            "DANIEL-K": {
+                code: "DK",
+                name: "Daniel Kupnicki",
+                email: "contact@aiirmedia.ca",
+                note: "AI Media Production & Branded Content",
+                tax: 12, // PST + GST
+                defaultItems: [
+                    { desc: "AI Branded Film Production", qty: 1, price: 1200 },
+                    { desc: "Advanced AI Voiceover Package", qty: 1, price: 150 }
+                ]
+            },
+            "ANDREW-T": {
+                code: "AT",
+                name: "Andrew Tourigny",
+                email: "andrew@slideshowcloud.com",
+                note: "Video Production & Editing Project",
+                tax: 5,
+                defaultItems: [
+                    { desc: "Professional Video Editing Services", qty: 1, price: 400 }
+                ]
+            }
+        };
+
+        function initCustomerList() {
+            const select = document.getElementById('customer-select');
+            for (let key in customerDB) {
+                let opt = document.createElement('option');
+                opt.value = key;
+                opt.innerText = customerDB[key].name;
+                select.appendChild(opt);
+            }
+        }
+
+        function loadCustomerTemplate() {
+            const key = document.getElementById('customer-select').value;
+            if (!key) return;
+
+            const client = customerDB[key];
+            document.getElementById('client-name').value = client.name;
+            document.getElementById('client-email').value = client.email;
+            document.getElementById('client-note').value = client.note;
+            document.getElementById('tax-rate').value = client.tax;
+
+            const today = new Date().toISOString().slice(0,10).replace(/-/g, "");
+            document.getElementById('inv-num').value = `EB-${client.code}-${today}`;
+
+            document.getElementById('item-list').innerHTML = '';
+            client.defaultItems.forEach(item => {
+                addItem(item.desc, item.qty, item.price);
+            });
+
+            calculate();
+        }
+
+        function addItem(desc = '', qty = 1, price = 0) {
+            const container = document.getElementById('item-list');
+            const rowId = 'row-' + Math.random().toString(36).substr(2, 9);
+            const html = `
+                <div class="grid grid-cols-12 gap-4 items-center service-row group relative" id="${rowId}">
+                    <div class="col-span-6 md:col-span-7">
+                        <input type="text" class="w-full desc-input text-sm" placeholder="Service description" value="${desc}">
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="w-full text-center qty-input text-sm" value="${qty}" oninput="calculate()">
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="w-full text-right price-input text-sm" value="${price}" oninput="calculate()">
+                    </div>
+                    <div class="col-span-2 md:col-span-1 text-right font-bold row-total text-sm">
+                        $0.00
+                    </div>
+                    <div class="no-print opacity-0 group-hover:opacity-100 absolute -right-8 transition-opacity">
+                        <button onclick="removeRow('${rowId}')" class="text-red-500 hover:text-red-400">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            calculate();
+        }
+
+        function removeRow(id) {
+            document.getElementById(id).remove();
+            calculate();
+        }
+
+        function addPreset(name, price) {
+            addItem(name, 1, price);
+        }
+
+        function calculate() {
+            const rows = document.querySelectorAll('.service-row');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+                const price = parseFloat(row.querySelector('.price-input').value) || 0;
+                const total = qty * price;
+                subtotal += total;
+                row.querySelector('.row-total').innerText = '$' + total.toLocaleString(undefined, {minimumFractionDigits: 2});
+            });
+
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const finalTotal = subtotal + taxAmount;
+
+            document.getElementById('subtotal-display').innerText = '$' + subtotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('total-display').innerText = '$' + finalTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+        }
+
+        function saveDraft() {
+            const draft = {
+                invNum: document.getElementById('inv-num').value,
+                clientName: document.getElementById('client-name').value,
+                items: []
+            };
+            
+            document.querySelectorAll('.service-row').forEach(row => {
+                draft.items.push({
+                    desc: row.querySelector('.desc-input').value,
+                    qty: row.querySelector('.qty-input').value,
+                    price: row.querySelector('.price-input').value
+                });
+            });
+
+            localStorage.setItem('eb_invoice_draft', JSON.stringify(draft));
+            alert('인보이스 데이터가 브라우저에 임시 저장되었습니다.');
+        }
+
+        window.onload = () => {
+            document.getElementById('inv-date').valueAsDate = new Date();
+            initCustomerList();
+            if(document.getElementById('item-list').children.length === 0) {
+                addItem(); 
+            }
+        }
+    </script>
+</body>
+</html>
