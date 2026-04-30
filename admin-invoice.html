@@ -69,7 +69,6 @@
             justify-content: center;
         }
 
-        /* 로딩 애니메이션 */
         .loader {
             border: 2px solid #f3f3f3;
             border-top: 2px solid var(--accent);
@@ -98,7 +97,7 @@
 
     <div class="max-w-5xl mx-auto invoice-container">
         
-        <!-- 상단 컨트롤 (출력 방지) -->
+        <!-- 상단 컨트롤 -->
         <div class="no-print flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
             <a href="index.html" class="text-slate-500 hover:text-white transition text-sm">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Site
@@ -114,7 +113,6 @@
                 <button onclick="saveDraft()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-700 transition">
                     <i class="fas fa-save mr-2"></i> Save Draft
                 </button>
-                <!-- 구글 시트 전송 버튼 추가 -->
                 <button id="export-btn" onclick="exportToSheets()" class="bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-600 transition flex items-center">
                     <i class="fab fa-google-drive mr-2"></i> Export to Sheets
                 </button>
@@ -161,6 +159,8 @@
                     <div class="flex flex-wrap justify-end gap-2">
                         <button onclick="addPreset('AI Branded Film', 1200)" class="preset-badge bg-blue-600/10 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-600 hover:text-white transition">Branded Film ($1.2k)</button>
                         <button onclick="addPreset('Real Estate Video Tour', 350)" class="preset-badge bg-emerald-600/10 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition">RE Tour ($350)</button>
+                        <!-- 24시간 배송 옵션 버튼 추가 -->
+                        <button onclick="addPreset('24-hour Express Delivery', 50)" class="preset-badge bg-orange-600/10 text-orange-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-orange-500/20 hover:bg-orange-600 hover:text-white transition">Express Delivery ($50)</button>
                     </div>
                 </div>
             </div>
@@ -219,8 +219,7 @@
 
     <script>
         const ADMIN_PASS = "2026"; 
-        // --- [중요] 구글 앱스 스크립트 배포 후 받은 웹 앱 URL을 여기에 넣으세요 ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxmIY6hmEAWp01vyXDM4TVm7Wd5cJ-VvLMsbadqCkr6YjfZk5fdYT1cle4_EJOX1g0tw/exec"; 
+        const GOOGLE_SCRIPT_URL = ""; 
 
         function checkAuth() {
             const pass = document.getElementById('admin-pass').value;
@@ -238,7 +237,8 @@
             "Graphics": 20,
             "2nd Video": 25,
             "AI Video": 200,
-            "Premium": 200
+            "Premium": 200,
+            "24-hour Express Delivery": 50 // 요청하신 익스프레스 옵션 추가
         };
 
         const customerDB = {
@@ -261,26 +261,6 @@
                 tax: 5,
                 defaultItems: [
                     { desc: "Premium", detail: "Custom AI Video Content Creation", qty: 1, price: 200 }
-                ]
-            },
-            "DANIEL-K": {
-                code: "DK",
-                name: "Daniel Kupnicki",
-                email: "contact@aiirmedia.ca",
-                note: "AI Media Production & Branded Content",
-                tax: 13,
-                defaultItems: [
-                    { desc: "AI Video", detail: "AI Branded Film Production", qty: 1, price: 200 }
-                ]
-            },
-            "ANDREW-T": {
-                code: "AT",
-                name: "Andrew Tourigny",
-                email: "andrew@slideshowcloud.com",
-                note: "Video Production & Editing Project",
-                tax: 5,
-                defaultItems: [
-                    { desc: "Standard", detail: "Professional Video Editing Services", qty: 1, price: 100 }
                 ]
             }
         };
@@ -315,6 +295,7 @@
 
             calculate();
         }
+
         // 프리셋 간편 추가 함수
         function addPreset(serviceName, price) {
             addItem(serviceName, 1, price, serviceName === '24-hour Express Delivery' ? 'RUSH ORDER: 24h turnaround' : '');
@@ -337,7 +318,7 @@
                             ${optionsHtml}
                             <option value="Custom" ${serviceName === "Custom" ? 'selected' : ''}>Custom Service</option>
                         </select>
-                        <input type="text" class="w-full detail-input text-xs opacity-80" placeholder="Address or specific details" value="${detail}">
+                        <input type="text" class="w-full detail-input text-xs opacity-80" placeholder="Details or notes" value="${detail}">
                     </div>
                     <div class="col-span-2">
                         <input type="number" class="w-full text-center qty-input text-sm" value="${qty}" oninput="calculate()">
@@ -426,10 +407,9 @@
             alert('초안이 브라우저에 안전하게 저장되었습니다.');
         }
 
-        // --- 구글 시트 내보내기 핵심 로직 ---
         async function exportToSheets() {
             if (!GOOGLE_SCRIPT_URL) {
-                alert("구글 앱스 스크립트 URL이 설정되지 않았습니다. 코드를 확인해주세요.");
+                alert("구글 앱스 스크립트 URL이 설정되지 않았습니다.");
                 return;
             }
 
@@ -455,16 +435,14 @@
             });
 
             try {
-                // 구글 앱스 스크립트로 데이터 전송 (JSONP 방식의 우회 또는 단순 POST)
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // CORS 정책 우회를 위해 no-cors 사용
+                    mode: 'no-cors',
                     cache: 'no-cache',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                
-                alert('구글 시트로 데이터를 전송했습니다! (성공 여부는 시트를 확인하세요)');
+                alert('전송 완료! 구글 시트를 확인해주세요.');
             } catch (error) {
                 console.error("Export error:", error);
                 alert('전송 중 오류가 발생했습니다.');
