@@ -315,6 +315,10 @@
 
             calculate();
         }
+        // 프리셋 간편 추가 함수
+        function addPreset(serviceName, price) {
+            addItem(serviceName, 1, price, serviceName === '24-hour Express Delivery' ? 'RUSH ORDER: 24h turnaround' : '');
+        }
 
         function addItem(serviceName = '', qty = 1, price = 0, detail = '') {
             const container = document.getElementById('item-list');
