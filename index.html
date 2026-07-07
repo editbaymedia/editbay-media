@@ -115,46 +115,47 @@
         </div>
     </nav>
 
-    <!-- 1. Hero Section (Showreel 포함) -->
-    <section id="hero" class="relative min-h-screen flex items-center pt-24 pb-16">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full">
-            <div class="space-y-8">
-                <!-- English Main Text -->
-                <div class="en-content space-y-6">
-                    <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight text-white">
-                        Unrivaled Ads <br>
-                        <span class="text-blue-500">Built by AI</span>
-                    </h1>
-                    <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed font-light">
-                        Elevate your brand with high-end AI storytelling. No filming required.
-                    </p>
-                </div>
+    <!-- 1. Hero Section (풀와이드 1920x1080 루프 영상 + 하단 텍스트) -->
+    <section id="hero" class="relative pt-20">
 
-                <!-- Korean Main Text -->
-                <div class="ko-content space-y-6">
-                    <h1 class="text-6xl md:text-8xl font-bold leading-[1.1] tracking-tight text-white">
-                        독보적인 광고 <br>
-                        <span class="text-blue-500">AI로 완성하다</span>
-                    </h1>
-                    <p class="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed font-light font-light">
-                        촬영 없이 AI 스토리텔링만으로 귀하의 브랜드를 고품격 영상으로 재탄생시킵니다.
-                    </p>
-                </div>
+        <!-- Full-width 1920x1080 Looping Showreel Video (self-hosted MP4) -->
+        <div class="hero-video-wrap">
+            <video autoplay muted loop playsinline preload="auto" poster="showreel-poster.jpg">
+                <source src="2026 SHOWREEL_15sec_25mb.mp4" type="video/mp4">
+                <!-- 브라우저가 video 태그를 지원하지 않을 경우 대체 텍스트 -->
+                Your browser does not support the video tag.
+            </video>
+        </div>
 
-                <div class="pt-4">
-                    <a href="works.html" class="px-10 py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/30 text-white inline-block">
-                        <span class="en-content">Explore Portfolio</span>
-                        <span class="ko-content font-bold">포트폴리오 둘러보기</span>
-                    </a>
-                </div>
+        <!-- 텍스트: 영상 아래로 이동 -->
+        <div class="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
+            <!-- English Main Text -->
+            <div class="en-content space-y-6">
+                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight text-white">
+                    Unrivaled Ads <br>
+                    <span class="text-blue-500">Built by AI</span>
+                </h1>
+                <p class="text-slate-400 text-lg md:text-xl max-w-lg mx-auto leading-relaxed font-light">
+                    Elevate your brand with high-end AI storytelling. No filming required.
+                </p>
             </div>
 
-            <!-- Showreel Video 영역 -->
-            <div class="video-card aspect-video shadow-2xl">
-                <iframe class="w-full h-full" 
-                    src="https://www.youtube.com/embed/-yapoXm91tw?autoplay=1&mute=1&loop=1&playlist=-yapoXm91tw&controls=0" 
-                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-                </iframe>
+            <!-- Korean Main Text -->
+            <div class="ko-content space-y-6">
+                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight text-white">
+                    독보적인 광고 <br>
+                    <span class="text-blue-500">AI로 완성하다</span>
+                </h1>
+                <p class="text-slate-400 text-lg md:text-xl max-w-lg mx-auto leading-relaxed font-light">
+                    촬영 없이 AI 스토리텔링만으로 귀하의 브랜드를 고품격 영상으로 재탄생시킵니다.
+                </p>
+            </div>
+
+            <div class="pt-8">
+                <a href="works.html" class="px-10 py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/30 text-white inline-block">
+                    <span class="en-content">Explore Portfolio</span>
+                    <span class="ko-content font-bold">포트폴리오 둘러보기</span>
+                </a>
             </div>
         </div>
     </section>
