@@ -58,6 +58,25 @@
             opacity: 1;
             color: var(--accent);
         }
+
+        /* 히어로 풀와이드 영상 (1920x1080 / 16:9) */
+        .hero-video-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+        .hero-video-wrap video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 1920x1080 소스를 영역에 꽉 차게, 잘림 허용 */
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
