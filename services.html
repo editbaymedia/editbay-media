@@ -4,301 +4,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services | EditBay Media</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
+
         :root {
-            --accent: #3b82f6; 
+            --accent: #3b82f6;
             --bg-dark: #050a14;
             --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --text-faint: #64748b;
+
+            --c-ai: #3b82f6;
+            --c-re: #10b981;
+            --c-yt: #ef4444;
+            --c-cu: #a855f7;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
+
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .wrap-sm { max-width: 896px; margin: 0 auto; padding: 0 24px; }
 
         /* --- 언어 제어 로직 --- */
         .en-content, .ko-content { display: none !important; }
         .en-mode .en-content { display: block !important; }
-        .en-mode span.en-content, .en-mode a.en-content, .en-mode div.en-content { display: inline-block !important; }
+        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
         .ko-mode .ko-content { display: block !important; }
-        .ko-mode span.ko-content, .ko-mode a.ko-content, .ko-mode div.ko-content { display: inline-block !important; }
+        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
 
+        /* --- Nav --- */
         .glass-nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
             background: rgba(5, 10, 20, 0.85);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
+        .nav-logo:hover img { opacity: .8; }
+        .nav-right { display: flex; align-items: center; gap: 32px; }
+        .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
+        .nav-links a { transition: color .2s; }
+        .nav-links a:hover { color: #60a5fa; }
+        @media (max-width: 767px) { .nav-links { display: none; } }
 
-        .service-card {
+        .lang-switch {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 12px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+        }
+        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; opacity: 0.4; color: var(--text-main); transition: opacity .3s; }
+        .lang-btn.active { opacity: 1; color: var(--accent); }
+        .lang-divider { color: rgba(255,255,255,0.1); font-size: 10px; }
+
+        /* --- Hero --- */
+        #hero { padding: 160px 0 64px; text-align: center; }
+        .hero-text h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #fff; }
+        .hero-text p { margin-top: 20px; color: var(--text-dim); font-size: clamp(16px, 2vw, 19px); font-weight: 300; line-height: 1.7; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+        /* --- Service cards --- */
+        #services-grid { padding: 32px 0 96px; }
+        .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+        @media (max-width: 860px) { .svc-grid { grid-template-columns: 1fr; } }
+
+        .svc-card {
             background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2.5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
             overflow: hidden;
+            padding: 28px;
+            display: flex; flex-direction: column;
+            transition: all 0.4s ease;
         }
-        .service-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-10px);
-            background: rgba(59, 130, 246, 0.05);
-            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.2);
-        }
+        .svc-card:hover { transform: translateY(-5px); }
+        .svc-card.ai:hover { border-color: var(--c-ai); box-shadow: 0 20px 40px -15px rgba(59,130,246,0.25); }
+        .svc-card.re:hover { border-color: var(--c-re); box-shadow: 0 20px 40px -15px rgba(16,185,129,0.25); }
+        .svc-card.yt:hover { border-color: var(--c-yt); box-shadow: 0 20px 40px -15px rgba(239,68,68,0.25); }
+        .svc-card.cu:hover { border-color: var(--c-cu); box-shadow: 0 20px 40px -15px rgba(168,85,247,0.25); }
 
-        .video-preview {
-            position: relative;
-            background: #000;
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
-        }
+        .svc-thumb { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .svc-thumb iframe { width: 100%; height: 100%; border: 0; }
 
-        .lang-btn {
-            font-size: 0.75rem;
-            font-weight: 600;
-            opacity: 0.4;
-            transition: opacity 0.3s;
+        .svc-card h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .svc-card.ai h3 { color: var(--c-ai); }
+        .svc-card.re h3 { color: var(--c-re); }
+        .svc-card.yt h3 { color: var(--c-yt); }
+        .svc-card.cu h3 { color: var(--c-cu); }
+
+        .svc-card p.desc { color: var(--text-dim); font-size: 14px; font-weight: 300; line-height: 1.7; margin-bottom: 20px; flex-grow: 1; }
+
+        .svc-price { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 20px; }
+
+        .svc-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+            color: #fff;
+            padding: 13px 24px; border-radius: 12px;
+            width: fit-content;
+            transition: opacity .2s;
         }
-        .lang-btn.active {
-            opacity: 1;
-            color: var(--accent);
+        .svc-btn:hover { opacity: .85; }
+        .svc-card.ai .svc-btn { background: var(--c-ai); }
+        .svc-card.re .svc-btn { background: var(--c-re); }
+        .svc-card.yt .svc-btn { background: var(--c-yt); }
+        .svc-card.cu .svc-btn { background: var(--c-cu); }
+
+        /* --- Contact CTA --- */
+        #contact { padding: 0 0 96px; text-align: center; }
+        #contact h2 { font-size: clamp(28px, 4vw, 36px); font-weight: 700; color: #fff; margin-bottom: 32px; }
+        .cta-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .cta-btn {
+            padding: 16px 32px; border-radius: 12px;
+            font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+            transition: all .2s;
         }
+        .cta-btn.solid { background: var(--accent); color: #fff; }
+        .cta-btn.solid:hover { background: #2563eb; }
+        .cta-btn.outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .cta-btn.outline:hover { background: rgba(255,255,255,0.08); }
+
+        footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+        footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
+        footer a:hover { opacity: 1; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-nav">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center">
-                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+    <nav class="glass-nav">
+        <div class="nav-inner wrap">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="EditBay Logo">
             </a>
-            
-            <div class="flex items-center gap-8">
-                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
-                    <a href="works.html" class="en-content hover:text-blue-400 transition">WORKS</a>
-                    <a href="works.html" class="ko-content hover:text-blue-400 transition">작업물</a>
-                    
-                    <a href="services.html" class="en-content text-blue-400 transition">SERVICES</a>
-                    <a href="services.html" class="ko-content text-blue-400 transition font-bold">서비스</a>
-
-                    <a href="contact.html" class="en-content hover:text-blue-400 transition">CONTACT</a>
-                    <a href="contact.html" class="ko-content hover:text-blue-400 transition font-medium text-sm">문의하기</a>
+            <div class="nav-right">
+                <!-- Navigation Menu (SERVICES - CONTACT, WORKS 제거) -->
+                <div class="nav-links">
+                    <a href="services.html" class="en-content">SERVICES</a>
+                    <a href="services.html" class="ko-content">서비스</a>
+                    <a href="contact.html" class="en-content">CONTACT</a>
+                    <a href="contact.html" class="ko-content">문의하기</a>
                 </div>
-                
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                <div class="lang-switch">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <span class="text-white/10 text-[10px]">|</span>
+                    <span class="lang-divider">|</span>
                     <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Header -->
-    <header class="pt-40 pb-20 text-center">
-        <div class="max-w-4xl mx-auto px-6">
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8">
-                <span class="en-content">Our <span class="text-blue-500">Expertise</span></span>
-                <span class="ko-content">제작 <span class="text-blue-500">솔루션</span></span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl font-light leading-relaxed">
-                <span class="en-content">We provide tailored video solutions using high-end AI tools and cinematic techniques. </span>
-                <span class="ko-content">하이엔드 AI 도구와 시네마틱 기법을 활용한 맞춤형 영상 솔루션을 제공합니다.</span>
-            </p>
+    <!-- 1. Hero -->
+    <section id="hero" class="wrap-sm">
+        <div class="hero-text">
+            <div class="en-content">
+                <h1>Our Expertise</h1>
+                <p>We provide tailored video solutions using high-end AI tools and cinematic techniques.</p>
+            </div>
+            <div class="ko-content">
+                <h1>제작 솔루션</h1>
+                <p>하이엔드 AI 도구와 시네마틱 기법을 활용한 맞춤형 영상 솔루션을 제공합니다.</p>
+            </div>
         </div>
-    </header>
+    </section>
 
-    <!-- Services Detailed Grid -->
-    <section class="pb-32">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
-            
-            <!-- Service 1: AI Solutions -->
-            <div class="service-card cursor-pointer group flex flex-col" onclick="location.href='ai-video.html'">
-                <!-- Video Sample -->
-                <div class="video-preview">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/hnZAk7Ekf_c?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <!-- 2. Service Cards -->
+    <section id="services-grid" class="wrap">
+        <div class="svc-grid">
+
+            <!-- AI Video Solutions -->
+            <div class="svc-card ai">
+                <div class="svc-thumb">
+                    <iframe src="https://www.youtube.com/embed/hnZAk7Ekf_c?autoplay=0&mute=1&controls=0&loop=1" title="AI Video Solutions" allowfullscreen></iframe>
                 </div>
-                <div class="p-10 flex flex-col justify-between flex-grow">
-                    <div>
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500 text-2xl">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h3 class="text-3xl font-bold">
-                                <span class="en-content">AI Video Solutions</span>
-                                <span class="ko-content font-bold">AI 비디오 솔루션</span>
-                            </h3>
-                        </div>
-                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                            <span class="en-content">Transform your brand with AI-generated visuals.<br>
-                                Ideal for branded films, high-concept ads, and storytelling.</span>
-                            <span class="ko-content font-light">AI 기술로 브랜드 메시지를 시각화합니다.<br>
-                                촬영 없이도 감각적인 광고 및 스토리텔링 구현이 가능합니다.</span>
-                        </p>
-                    </div>
-                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
-                        <div>
-                            <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                            <span class="text-2xl font-bold">$100+</span>
-                        </div>
-                        <div class="text-right">
-                            <a href="ai-video.html" class="text-blue-500 font-bold hover:underline">
-                                <span class="en-content">View Details →</span>
-                                <span class="ko-content font-bold">상세 정보 →</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <h3><span class="en-content">AI Video Solutions</span><span class="ko-content">AI 비디오 솔루션</span></h3>
+                <p class="desc">
+                    <span class="en-content">Transform your brand with AI-generated visuals.<br>Ideal for branded films, high-concept ads, and storytelling.</span>
+                    <span class="ko-content">AI 기술로 브랜드 메시지를 시각화합니다.<br>촬영 없이도 감각적인 광고 및 스토리텔링 구현이 가능합니다.</span>
+                </p>
+                <div class="svc-price"><span class="en-content">Starting at $100+</span><span class="ko-content">시작가 $100+</span></div>
+                <a href="ai-video.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
             </div>
 
-            <!-- Service 2: Real Estate -->
-            <div class="service-card cursor-pointer group flex flex-col" onclick="location.href='real-estate.html'">
-                <!-- Video Sample -->
-                <div class="video-preview">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/6aDCxezccow?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <!-- Real Estate Editing -->
+            <div class="svc-card re">
+                <div class="svc-thumb">
+                    <iframe src="https://www.youtube.com/embed/6aDCxezccow?autoplay=0&mute=1&controls=0&loop=1" title="Real Estate Editing" allowfullscreen></iframe>
                 </div>
-                <div class="p-10 flex flex-col justify-between flex-grow">
-                    <div>
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 bg-emerald-600/20 rounded-xl flex items-center justify-center text-emerald-500 text-2xl">
-                                <i class="fas fa-camera-retro"></i>
-                            </div>
-                            <h3 class="text-3xl font-bold">
-                                <span class="en-content">Real Estate Editing</span>
-                                <span class="ko-content font-bold">부동산 영상 편집</span>
-                            </h3>
-                        </div>
-                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                            <span class="en-content">Showcase properties with a cinematic touch.<br>
-                                Optimized for agent's high-retention property tours.</span>
-                            <span class="ko-content font-light">매물의 가치를 높이는 시네마틱 투어 영상입니다.<br>
-                                밴쿠버 럭셔리 매물 시장의 노하우를 담았습니다.</span>
-                        </p>
-                    </div>
-                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
-                        <div>
-                            <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                            <span class="text-2xl font-bold">$50+</span>
-                        </div>
-                        <div class="text-right">
-                            <a href="real-estate.html" class="text-emerald-500 font-bold hover:underline">
-                                <span class="en-content">View Details →</span>
-                                <span class="ko-content font-bold">상세 정보 →</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>    
-
-            <!-- Service 3: YouTube Content -->
-            <div class="service-card flex flex-col">
-                <!-- Video Sample -->
-                <div class="video-preview">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/anOqaENnlqM?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                </div>
-                <div class="p-10 flex flex-col justify-between flex-grow">
-                    <div>
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 bg-red-600/20 rounded-xl flex items-center justify-center text-red-500 text-2xl">
-                                <i class="fab fa-youtube"></i>
-                            </div>
-                            <h3 class="text-3xl font-bold">
-                                <span class="en-content">YouTube Content</span>
-                                <span class="ko-content font-bold">유튜브 콘텐츠 관리</span>
-                            </h3>
-                        </div>
-                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                            <span class="en-content">End-to-end editing for creators.<br>
-                                Focus on retention, dynamic pacing, and custom motion graphics.</span>
-                            <span class="ko-content font-light">크리에이터를 위한 전문 편집 서비스입니다.<br>
-                                시청 지속시간과 다이나믹한 호흡에 집중합니다.</span>
-                        </p>
-                    </div>
-                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
-                        <div>
-                            <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Price</span>
-                            <span class="text-2xl font-bold">Custom</span>
-                        </div>
-                        <div class="text-right">
-                            <a href="contact.html" class="text-red-500 font-bold hover:underline">
-                                <span class="en-content">Get a Quote →</span>
-                                <span class="ko-content font-bold">견적 문의 →</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <h3><span class="en-content">Real Estate Editing</span><span class="ko-content">부동산 영상 편집</span></h3>
+                <p class="desc">
+                    <span class="en-content">Showcase properties with a cinematic touch.<br>Optimized for agent's high-retention property tours.</span>
+                    <span class="ko-content">매물의 가치를 높이는 시네마틱 투어 영상입니다.<br>밴쿠버 럭셔리 매물 시장의 노하우를 담았습니다.</span>
+                </p>
+                <div class="svc-price"><span class="en-content">Starting at $50+</span><span class="ko-content">시작가 $50+</span></div>
+                <a href="real-estate.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
             </div>
 
-            <!-- Service 4: Custom Project -->
-            <div class="service-card flex flex-col">
-                <!-- Video Sample -->
-                <div class="video-preview">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/영상ID_커스텀?autoplay=0&mute=1&controls=0&loop=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <!-- YouTube Content -->
+            <div class="svc-card yt">
+                <div class="svc-thumb">
+                    <iframe src="https://www.youtube.com/embed/anOqaENnlqM?autoplay=0&mute=1&controls=0&loop=1" title="YouTube Content" allowfullscreen></iframe>
                 </div>
-                <div class="p-10 flex flex-col justify-between flex-grow">
-                    <div>
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center text-purple-500 text-2xl">
-                                <i class="fas fa-sparkles"></i>
-                            </div>
-                            <h3 class="text-3xl font-bold">
-                                <span class="en-content">Custom Projects</span>
-                                <span class="ko-content font-bold">커스텀 프로젝트</span>
-                            </h3>
-                        </div>
-                        <p class="text-slate-400 mb-8 font-light leading-relaxed">
-                            <span class="en-content">Music videos, event highlights, or any unique creative vision.<br>
-                                Tailored to your exact needs.</span>
-                            <span class="ko-content font-light">뮤직비디오, 이벤트 하이라이트 등<br>
-                                창의적인 모든 프로젝트를 귀하의 요구에 맞춰 제작합니다.</span>
-                        </p>
-                    </div>
-                    <div class="border-t border-white/5 pt-8 flex justify-between items-end">
-                        <div>
-                            <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Consultation</span>
-                            <span class="text-2xl font-bold">Bespoke</span>
-                        </div>
-                        <div class="text-right">
-                            <a href="contact.html" class="text-purple-500 font-bold hover:underline">
-                                <span class="en-content">Contact Us →</span>
-                                <span class="ko-content font-bold">상담 하기 →</span>
-                            </a>
-                        </div>
-                    </div>
+                <h3><span class="en-content">YouTube Content</span><span class="ko-content">유튜브 콘텐츠 관리</span></h3>
+                <p class="desc">
+                    <span class="en-content">End-to-end editing for creators.<br>Focus on retention, dynamic pacing, and custom motion graphics.</span>
+                    <span class="ko-content">크리에이터를 위한 전문 편집 서비스입니다.<br>시청 지속시간과 다이나믹한 호흡에 집중합니다.</span>
+                </p>
+                <div class="svc-price"><span class="en-content">Price Custom</span><span class="ko-content">가격 별도 협의</span></div>
+                <a href="youtube.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
+            </div>
+
+            <!-- Custom Projects -->
+            <div class="svc-card cu">
+                <div class="svc-thumb">
+                    <iframe src="https://www.youtube.com/embed/VKiz-sVO2-I?autoplay=0&mute=1&controls=0&loop=1" title="Custom Projects" allowfullscreen></iframe>
                 </div>
+                <h3><span class="en-content">Custom Projects</span><span class="ko-content">커스텀 프로젝트</span></h3>
+                <p class="desc">
+                    <span class="en-content">Music videos, event highlights, or any unique creative vision.<br>Tailored to your exact needs.</span>
+                    <span class="ko-content">뮤직비디오, 이벤트 하이라이트 등<br>창의적인 모든 프로젝트를 귀하의 요구에 맞춰 제작합니다.</span>
+                </p>
+                <div class="svc-price"><span class="en-content">Consultation Bespoke</span><span class="ko-content">상담 후 맞춤 견적</span></div>
+                <a href="custom.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
             </div>
 
         </div>
     </section>
 
-    <!-- Footer Area -->
-    <footer class="py-20 text-center border-t border-white/5 bg-slate-950/20">
-        <div class="max-w-4xl mx-auto px-6">
-            <h4 class="text-2xl font-bold mb-10">
-                <span class="en-content">Let's create something extraordinary.</span>
-                <span class="ko-content font-bold">압도적인 결과물을 함께 만드세요.</span>
-            </h4>
-            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-                <a href="contact.html" class="px-10 py-4 bg-blue-600 rounded-2xl font-bold text-white hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20">
-                    <span class="en-content">GET IN TOUCH</span>
-                    <span class="ko-content font-bold">문의하기</span>
-                </a>
-                <a href="index.html" class="px-10 py-4 border border-white/10 rounded-2xl font-bold text-white hover:bg-white/5 transition-all">
-                    <span class="en-content">HOME</span>
-                    <span class="ko-content font-bold">홈으로</span>
-                </a>
-            </div>
-            <p class="text-slate-700 text-[10px] tracking-widest uppercase">© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+    <!-- 3. Contact CTA -->
+    <section id="contact" class="wrap-sm">
+        <h2>
+            <span class="en-content">Let's Create Something Extraordinary</span>
+            <span class="ko-content">압도적인 결과물을 함께 만드세요</span>
+        </h2>
+        <div class="cta-actions">
+            <a href="contact.html" class="cta-btn solid">
+                <span class="en-content">Get in Touch</span><span class="ko-content">문의하기</span>
+            </a>
+            <a href="index.html" class="cta-btn outline">
+                <span class="en-content">Home</span><span class="ko-content">홈으로</span>
+            </a>
         </div>
+    </section>
+
+    <footer>
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.
+            <a href="admin-invoice.html">ADMIN</a>
+        </p>
     </footer>
 
     <script>
-/* EditBay Media Language Manager */
-
 (function() {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
     document.documentElement.className = savedLang + '-mode';
@@ -318,7 +284,6 @@ function changeLang(lang) {
 function updateButtonState(lang) {
     const btnEn = document.getElementById('btn-en');
     const btnKo = document.getElementById('btn-ko');
-
     if (btnEn && btnKo) {
         if (lang === 'ko') {
             btnKo.classList.add('active');
