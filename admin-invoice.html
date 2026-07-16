@@ -1,479 +1,655 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Manager | EditBay Business</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
-        :root {
-            --accent: #3b82f6; 
-            --bg-dark: #050a14;
-            --card-bg: #0f172a;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project DB · EDITBAY MEDIA</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;600;700&display=swap');
 
-        body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: var(--bg-dark);
-            color: #f8fafc;
-        }
+    :root {
+        --accent: #3b82f6;
+        --green: #10b981;
+        --amber: #f59e0b;
+        --red: #ef4444;
+        --bg: #050a14;
+        --panel: rgba(15, 23, 42, 0.5);
+        --line: rgba(255,255,255,0.07);
+        --text: #f8fafc;
+        --text-dim: #94a3b8;
+        --text-faint: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Inter', 'Noto Sans KR', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+    }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 40px 28px 80px; }
 
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+    header.top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+    header.top h1 { font-size: 26px; font-weight: 700; letter-spacing: 0.02em; }
+    header.top .sub { color: var(--text-faint); font-size: 12.5px; margin-top: 4px; }
 
-        input, select, textarea {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            color: white;
-            outline: none;
-            transition: all 0.3s ease;
-        }
+    .notice {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: #fbbf24;
+        font-size: 12.5px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
 
-        input:focus, select:focus {
-            border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.05);
-        }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .toolbar input[type="text"] {
+        background: var(--panel); border: 1px solid var(--line); color: var(--text);
+        padding: 9px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; width: 220px;
+    }
+    .toolbar select {
+        background: var(--panel); border: 1px solid var(--line); color: var(--text);
+        padding: 9px 12px; border-radius: 8px; font-size: 13px; font-family: inherit;
+    }
+    .spacer { flex: 1; }
 
-        /* 인쇄 전용 스타일 */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .glass-panel { border: none !important; background: white !important; box-shadow: none !important; }
-            input, select, textarea { border: none !important; background: transparent !important; color: black !important; padding: 2px !important; }
-            .invoice-container { margin: 0 !important; width: 100% !important; max-width: none !important; }
-            .service-row { border-bottom: 1px solid #eee !important; margin-bottom: 10px !important; }
-            .preset-badge { display: none !important; }
-            .row-total { color: black !important; }
-            #total-display { color: #3b82f6 !important; -webkit-print-color-adjust: exact; }
-            .service-select { display: none !important; }
-            .print-service-label { display: block !important; font-weight: bold; }
-        }
+    .btn {
+        border: none; cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 700;
+        padding: 10px 18px; border-radius: 8px; letter-spacing: 0.02em; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--line); }
+    .btn.danger { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .btn.small { padding: 6px 12px; font-size: 11.5px; }
 
-        .print-service-label { display: none; }
+    .summary-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .summary-card {
+        background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+        padding: 16px 20px; min-width: 150px;
+    }
+    .summary-card .label { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .summary-card .value { font-size: 22px; font-weight: 700; }
 
-        #auth-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-dark);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border-radius: 12px; overflow: hidden; }
+    thead th {
+        text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em;
+        color: var(--text-faint); padding: 12px 16px; border-bottom: 1px solid var(--line);
+        cursor: pointer; user-select: none; white-space: nowrap;
+    }
+    thead th:hover { color: var(--text-dim); }
+    tbody td { padding: 12px 16px; font-size: 13.5px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    tbody tr { cursor: pointer; transition: background .1s; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.selected { background: rgba(59,130,246,0.08); }
 
-        .loader {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--accent);
-            border-radius: 50%;
-            width: 14px;
-            height: 14px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .pill.client { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .pill.status-done { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+    .pill.status-progress { background: rgba(245,158,11,0.12); color: #fcd34d; }
+    .pill.status-cancel { background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .pill .dot.done { background: #10b981; }
+    .pill .dot.progress { background: #f59e0b; }
+    .pill .dot.cancel { background: #ef4444; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-faint); font-size: 13.5px; }
+
+    /* --- Modal --- */
+    .overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+        z-index: 100; align-items: flex-start; justify-content: center; padding: 60px 20px;
+        overflow-y: auto;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+        background: #0a0f1c; border: 1px solid var(--line); border-radius: 16px;
+        width: 100%; max-width: 780px; padding: 28px;
+    }
+    .modal h2 { font-size: 19px; font-weight: 700; margin-bottom: 20px; }
+
+    .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 11.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+    .field input, .field select {
+        background: var(--panel); border: 1px solid var(--line); color: var(--text);
+        padding: 9px 12px; border-radius: 8px; font-size: 13.5px; font-family: inherit;
+    }
+
+    .modal-actions { display: flex; justify-content: space-between; margin-top: 8px; }
+    .modal-actions .right { display: flex; gap: 8px; }
+
+    /* --- Invoice line items inside modal --- */
+    .invoice-section { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 20px; }
+    .invoice-section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 12px; }
+    .invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .invoice-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; color: var(--text-faint); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+    .invoice-table td { padding: 6px 8px; font-size: 13px; border-bottom: 1px solid var(--line); }
+    .invoice-table input { width: 100%; background: transparent; border: none; color: var(--text); font-size: 13px; font-family: inherit; padding: 4px; border-radius: 4px; }
+    .invoice-table input:focus { background: rgba(255,255,255,0.05); outline: 1px solid var(--accent); }
+    .invoice-table .rm-btn { background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 15px; padding: 2px 6px; }
+    .invoice-table .rm-btn:hover { color: #f87171; }
+    .invoice-total { text-align: right; font-size: 14px; font-weight: 700; padding: 8px; }
+
+    footer.note { text-align: center; color: var(--text-faint); font-size: 11px; margin-top: 40px; }
+</style>
 </head>
-<body class="p-4 md:p-10">
+<body>
 
-    <!-- 보안 오버레이 (초기 비번: 2026) -->
-    <div id="auth-overlay">
-        <div class="text-center space-y-6">
-            <img src="logo.png" alt="Logo" class="h-12 mx-auto mb-8">
-            <h2 class="text-xl font-bold tracking-widest text-blue-500">ADMIN ACCESS</h2>
-            <input type="password" id="admin-pass" placeholder="Password" class="text-center w-64 block">
-            <button onclick="checkAuth()" class="bg-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-all">ENTER</button>
-            <p id="auth-error" class="text-red-500 text-sm hidden">Invalid Password</p>
+<div class="wrap">
+    <header class="top">
+        <div>
+            <h1>EDITBAY MEDIA</h1>
+            <div class="sub">Project DB · Invoice Ledger (비공개 관리자 페이지)</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <span id="syncStatus" style="font-size:11.5px; color:var(--text-faint);">연동 안 됨</span>
+            <button class="btn ghost" id="settingsBtn">⚙ Sheets 연동 설정</button>
+            <button class="btn ghost" id="exportBtn">JSON 내보내기</button>
+            <button class="btn ghost" id="importBtn">가져오기</button>
+            <input type="file" id="importFile" accept="application/json" style="display:none;">
+        </div>
+    </header>
+
+    <div class="notice" id="noticeBanner">
+        ⚠ 아직 Google Sheets 연동이 설정되지 않았어요. "⚙ Sheets 연동 설정" 버튼을 눌러 웹 앱 URL을 입력해주세요.
+        설정 전까지는 이 브라우저에만 데이터가 저장돼요 (localStorage).
+    </div>
+
+    <div class="summary-row">
+        <div class="summary-card">
+            <div class="label">전체 매출</div>
+            <div class="value" id="sumTotal">CA$0.00</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">프로젝트 수</div>
+            <div class="value" id="sumCount">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">진행중</div>
+            <div class="value" id="sumProgress">0</div>
         </div>
     </div>
 
-    <div class="max-w-5xl mx-auto invoice-container">
-        
-        <!-- 상단 컨트롤 -->
-        <div class="no-print flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
-            <a href="index.html" class="text-slate-500 hover:text-white transition text-sm">
-                <i class="fas fa-arrow-left mr-2"></i> Back to Site
-            </a>
-            
-            <div class="flex flex-wrap justify-center gap-4">
-                <div class="relative">
-                    <select id="customer-select" onchange="loadCustomerTemplate()" class="bg-blue-600/20 border-blue-500/30 text-blue-400 font-bold px-4 py-2.5">
-                        <option value="">-- Select Registered Client --</option>
-                    </select>
-                </div>
-                
-                <button onclick="saveDraft()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-700 transition">
-                    <i class="fas fa-save mr-2"></i> Save Draft
-                </button>
-                <button id="export-btn" onclick="exportToSheets()" class="bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-600 transition flex items-center">
-                    <i class="fab fa-google-drive mr-2"></i> Export to Sheets
-                </button>
-                <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">
-                    <i class="fas fa-print mr-2"></i> Print to PDF
-                </button>
-            </div>
-        </div>
-
-        <!-- 인보이스 본문 -->
-        <div class="glass-panel rounded-[2.5rem] p-8 md:p-16 shadow-2xl overflow-hidden relative">
-            
-            <!-- 인보이스 헤더 -->
-            <div class="flex flex-col md:flex-row justify-between gap-10 mb-20">
-                <div class="space-y-4">
-                    <img src="logo.png" alt="EditBay Logo" class="h-12 mb-6">
-                    <div class="text-slate-400 text-sm leading-relaxed">
-                        <p class="font-bold text-white uppercase tracking-wider">EditBay Media</p>
-                        <p>editbaymedia@gmail.com</p>
-                        <p>Vancouver, BC, Canada</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <h1 class="text-5xl font-black tracking-tighter mb-4 text-blue-500">INVOICE</h1>
-                    <div class="space-y-2 text-sm">
-                        <p><span class="text-slate-500 uppercase tracking-widest mr-2">Invoice #</span> <input type="text" id="inv-num" value="EB-TEMP-001" class="text-right w-56 font-bold text-white"></p>
-                        <p><span class="text-slate-500 uppercase tracking-widest mr-2">Date</span> <input type="date" id="inv-date" class="text-right"></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 고객 정보 -->
-            <div class="grid md:grid-cols-2 gap-10 mb-16 border-b border-white/5 pb-16">
-                <div>
-                    <h3 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Bill To</h3>
-                    <div class="flex flex-col gap-2">
-                        <input type="text" id="client-name" placeholder="Client Name / Company" class="text-xl font-bold">
-                        <input type="text" id="client-email" placeholder="client@example.com" class="text-sm">
-                        <textarea id="client-note" placeholder="Project details or Address" class="text-sm h-20"></textarea>
-                    </div>
-                </div>
-                <div class="flex flex-col justify-end text-right no-print">
-                    <p class="text-xs text-slate-500 mb-4 uppercase tracking-widest font-bold">Quick Services</p>
-                    <div class="flex flex-wrap justify-end gap-2">
-                        <button onclick="addPreset('AI Branded Film', 1200)" class="preset-badge bg-blue-600/10 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-600 hover:text-white transition">Branded Film ($1.2k)</button>
-                        <button onclick="addPreset('Real Estate Video Tour', 350)" class="preset-badge bg-emerald-600/10 text-emerald-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition">RE Tour ($350)</button>
-                        <!-- 24시간 배송 옵션 버튼 추가 -->
-                        <button onclick="addPreset('24-hour Express Delivery', 50)" class="preset-badge bg-orange-600/10 text-orange-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-orange-500/20 hover:bg-orange-600 hover:text-white transition">Express Delivery ($50)</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 서비스 항목 테이블 -->
-            <div class="mb-12">
-                <div class="grid grid-cols-12 gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-4">
-                    <div class="col-span-6 md:col-span-7 text-left">Description</div>
-                    <div class="col-span-2 text-center">Qty</div>
-                    <div class="col-span-2 text-right">Unit Price</div>
-                    <div class="col-span-2 md:col-span-1 text-right">Total</div>
-                </div>
-
-                <div id="item-list" class="space-y-6">
-                    <!-- 항목이 여기에 동적으로 추가됩니다 -->
-                </div>
-
-                <button onclick="addItem()" class="no-print mt-8 text-sm font-bold text-blue-500 hover:text-white transition flex items-center gap-2">
-                    <i class="fas fa-plus-circle"></i> Add New Item
-                </button>
-            </div>
-
-            <!-- 합계 계산 -->
-            <div class="flex justify-end pt-10 border-t border-white/5">
-                <div class="w-full md:w-80 space-y-4">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-slate-500">Subtotal</span>
-                        <span class="font-bold" id="subtotal-display">$0.00</span>
-                    </div>
-                    <div class="flex justify-between text-sm items-center">
-                        <span class="text-slate-500">Tax (GST/HST)</span>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="tax-rate" value="5" class="w-16 text-right py-1 px-2 text-xs" onchange="calculate()">
-                            <span>%</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center pt-6 border-t border-white/10">
-                        <span class="text-xl font-bold uppercase tracking-tighter">Total Due</span>
-                        <span class="text-3xl font-black text-blue-500" id="total-display">$0.00</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 하단 메모 -->
-            <div class="mt-20">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Payment & Note</h3>
-                <textarea id="payment-info" class="w-full text-xs h-24 bg-transparent border-dashed border-white/10 italic text-slate-500" placeholder="e-Transfer: editbaymedia@gmail.com&#10;Please include the Invoice # in the message field."></textarea>
-            </div>
-
-        </div>
-
-        <footer class="mt-12 text-center text-slate-700 text-[10px] tracking-widest uppercase no-print">
-            <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
-        </footer>
+    <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="프로젝트/클라이언트 검색...">
+        <select id="filterClient"><option value="">전체 클라이언트</option></select>
+        <select id="filterStatus">
+            <option value="">전체 상태</option>
+            <option value="done">완료</option>
+            <option value="progress">진행중</option>
+            <option value="cancel">취소</option>
+        </select>
+        <div class="spacer"></div>
+        <button class="btn primary" id="newProjectBtn">+ New</button>
     </div>
 
-    <script>
-        const ADMIN_PASS = "2026"; 
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxmIY6hmEAWp01vyXDM4TVm7Wd5cJ-VvLMsbadqCkr6YjfZk5fdYT1cle4_EJOX1g0tw/exec"; 
+    <table>
+        <thead>
+            <tr>
+                <th data-sort="date">날짜</th>
+                <th data-sort="name">프로젝트 이름</th>
+                <th data-sort="client">클라이언트</th>
+                <th data-sort="type">프로젝트</th>
+                <th data-sort="price">합계</th>
+                <th data-sort="status">선택</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">아직 등록된 프로젝트가 없어요. "+ New"로 첫 항목을 추가해보세요.</div>
 
-        function checkAuth() {
-            const pass = document.getElementById('admin-pass').value;
-            if(pass === ADMIN_PASS) {
-                document.getElementById('auth-overlay').style.display = 'none';
-            } else {
-                document.getElementById('auth-error').classList.remove('hidden');
-            }
-        }
+    <footer class="note">EDITBAY MEDIA — 비공개 관리자 도구. 검색엔진에 노출되지 않습니다.</footer>
+</div>
 
-        const servicePriceList = {
-            "Basic": 50,
-            "Standard": 100,
-            "AI Photo to Video": 20,
-            "Graphics": 20,
-            "2nd Video": 25,
-            "AI Video": 200,
-            "Premium": 200,
-            "24-hour Express Delivery": 50 // 요청하신 익스프레스 옵션 추가
+<!-- Settings Modal -->
+<div class="overlay" id="settingsOverlay">
+    <div class="modal" style="max-width:520px;">
+        <h2>Google Sheets 연동 설정</h2>
+        <p style="font-size:12.5px; color:var(--text-dim); line-height:1.7; margin-bottom:16px;">
+            Apps Script 웹 앱 배포 후 나온 URL을 붙여넣어주세요.<br>
+            (형식: https://script.google.com/macros/s/.../exec)
+        </p>
+        <div class="field" style="margin-bottom:20px;">
+            <label>Web App URL</label>
+            <input type="text" id="endpointInput" placeholder="https://script.google.com/macros/s/xxxx/exec">
+        </div>
+        <div class="modal-actions">
+            <button class="btn danger" id="clearEndpointBtn">연동 해제</button>
+            <div class="right">
+                <button class="btn ghost" id="settingsCancelBtn">취소</button>
+                <button class="btn primary" id="settingsSaveBtn">저장하고 연결</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay">
+    <div class="modal">
+        <h2 id="modalTitle">New Project</h2>
+
+        <div class="field-grid">
+            <div class="field">
+                <label>날짜</label>
+                <input type="date" id="f_date">
+            </div>
+            <div class="field">
+                <label>선택 (상태)</label>
+                <select id="f_status">
+                    <option value="done">완료</option>
+                    <option value="progress">진행중</option>
+                    <option value="cancel">취소</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>프로젝트 이름</label>
+                <input type="text" id="f_name" placeholder="예: 42 Dingwall Ave">
+            </div>
+            <div class="field">
+                <label>클라이언트</label>
+                <input type="text" id="f_client" placeholder="예: Property Spaces" list="clientList">
+                <datalist id="clientList"></datalist>
+            </div>
+            <div class="field">
+                <label>프로젝트 유형</label>
+                <select id="f_type">
+                    <option>Real Estate</option>
+                    <option>AI Video</option>
+                    <option>YouTube</option>
+                    <option>Custom</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>합계 (인보이스 자동 합산)</label>
+                <input type="text" id="f_price" readonly style="opacity:.6;">
+            </div>
+        </div>
+
+        <div class="invoice-section">
+            <h3>INVOICE</h3>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th style="width:14%;">날짜</th>
+                        <th style="width:14%;">담당자</th>
+                        <th style="width:20%;">Services</th>
+                        <th style="width:18%;">Package</th>
+                        <th style="width:12%;">Price</th>
+                        <th style="width:10%;">갯수</th>
+                        <th style="width:12%;">합계</th>
+                        <th style="width:24px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceBody"></tbody>
+            </table>
+            <button class="btn ghost small" id="addLineBtn">+ 인보이스 항목 추가</button>
+            <div class="invoice-total">합계: <span id="invoiceSum">CA$0.00</span></div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn danger" id="deleteBtn" style="display:none;">프로젝트 삭제</button>
+            <div class="right">
+                <button class="btn ghost" id="cancelBtn">취소</button>
+                <button class="btn primary" id="saveBtn">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+const LOCAL_KEY = 'editbay_ledger_v1';
+const ENDPOINT_KEY = 'editbay_sheet_endpoint';
+
+function getEndpoint() { return (localStorage.getItem(ENDPOINT_KEY) || '').trim(); }
+function setEndpointStorage(url) { localStorage.setItem(ENDPOINT_KEY, url.trim()); }
+function clearEndpointStorage() { localStorage.removeItem(ENDPOINT_KEY); }
+
+function loadLocalCache() {
+    try {
+        const raw = localStorage.getItem(LOCAL_KEY);
+        if (!raw) return { projects: [], invoices: [] };
+        return JSON.parse(raw);
+    } catch (e) { return { projects: [], invoices: [] }; }
+}
+function cacheLocally() { localStorage.setItem(LOCAL_KEY, JSON.stringify(db)); }
+
+function setSyncStatus(text, ok) {
+    const el = document.getElementById('syncStatus');
+    if (el) { el.textContent = text; el.style.color = ok === true ? '#6ee7b7' : ok === false ? '#f87171' : 'var(--text-faint)'; }
+    const banner = document.getElementById('noticeBanner');
+    if (banner) banner.style.display = getEndpoint() ? 'none' : 'block';
+}
+
+function normalizeInvoice(i) {
+    return { ...i, price: Number(i.price) || 0, qty: Number(i.qty) || 1 };
+}
+
+async function fetchRemote() {
+    const url = getEndpoint();
+    if (!url) { db = loadLocalCache(); setSyncStatus('연동 안 됨'); return; }
+    setSyncStatus('불러오는 중...');
+    try {
+        const res = await fetch(url, { cache: 'no-store' });
+        const data = await res.json();
+        db = {
+            projects: (data.projects || []).map(p => ({ ...p, id: String(p.id) })),
+            invoices: (data.invoices || []).map(i => normalizeInvoice({ ...i, id: String(i.id), projectId: String(i.projectId) }))
         };
+        cacheLocally();
+        setSyncStatus('Google Sheets 연동됨 ✓', true);
+    } catch (e) {
+        db = loadLocalCache();
+        setSyncStatus('연동 실패 — 로컬 백업 사용 중 ⚠', false);
+    }
+}
 
-        const customerDB = {
-            "PROPERTY-SPACES": {
-                code: "PS",
-                name: "PropertySpaces Ltd",
-                email: "propertyspaces@gmail.com",
-                note: "33 Harbour Square, Suite 2019, TORONTO ON, M5J 2G2, CANADA",
-                tax: 0,
-                defaultItems: [
-                    { desc: "Standard", detail: "Standard Video Editing", qty: 1, price: 100 },
-                    { desc: "Basic", detail: "Basic Video Editing", qty: 4, price: 50 }
-                ]
-            },
-            "LEON-LI": {
-                code: "LL",
-                name: "Leon Li",
-                email: "leon@slideshowcloud.com",
-                note: "Cloud Solutions & Media Content Project",
-                tax: 5,
-                defaultItems: [
-                    { desc: "Premium", detail: "Custom AI Video Content Creation", qty: 1, price: 200 }
-                ]
-            }
-        };
+async function pushRemote() {
+    cacheLocally();
+    const url = getEndpoint();
+    if (!url) { setSyncStatus('연동 안 됨'); return; }
+    setSyncStatus('저장 중...');
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight on Apps Script
+            body: JSON.stringify(db)
+        });
+        setSyncStatus('Google Sheets 연동됨 ✓', true);
+    } catch (e) {
+        setSyncStatus('저장 실패 — 로컬에만 저장됨 ⚠', false);
+    }
+}
 
-        function initCustomerList() {
-            const select = document.getElementById('customer-select');
-            for (let key in customerDB) {
-                let opt = document.createElement('option');
-                opt.value = key;
-                opt.innerText = customerDB[key].name;
-                select.appendChild(opt);
-            }
+let db = { projects: [], invoices: [] };
+let editingId = null;
+let sortKey = 'date';
+let sortDir = -1;
+
+const fmt = (n) => 'CA$' + (Number(n) || 0).toFixed(2);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+function computeProjectTotal(projectId) {
+    return db.invoices
+        .filter(i => i.projectId === projectId)
+        .reduce((sum, i) => sum + (Number(i.price) || 0) * (Number(i.qty) || 0), 0);
+}
+
+function renderClientOptions() {
+    const clients = [...new Set(db.projects.map(p => p.client).filter(Boolean))].sort();
+    const filterSel = document.getElementById('filterClient');
+    const currentVal = filterSel.value;
+    filterSel.innerHTML = '<option value="">전체 클라이언트</option>' +
+        clients.map(c => `<option value="${c}">${c}</option>`).join('');
+    filterSel.value = currentVal;
+
+    document.getElementById('clientList').innerHTML =
+        clients.map(c => `<option value="${c}">`).join('');
+}
+
+function renderSummary(rows) {
+    const total = rows.reduce((s, p) => s + computeProjectTotal(p.id), 0);
+    document.getElementById('sumTotal').textContent = fmt(total);
+    document.getElementById('sumCount').textContent = rows.length;
+    document.getElementById('sumProgress').textContent = rows.filter(p => p.status === 'progress').length;
+}
+
+function statusLabel(s) {
+    return s === 'done' ? '완료' : s === 'progress' ? '진행중' : '취소';
+}
+
+function renderTable() {
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+    const clientFilter = document.getElementById('filterClient').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+
+    let rows = db.projects.filter(p => {
+        if (search && !(p.name.toLowerCase().includes(search) || (p.client || '').toLowerCase().includes(search))) return false;
+        if (clientFilter && p.client !== clientFilter) return false;
+        if (statusFilter && p.status !== statusFilter) return false;
+        return true;
+    });
+
+    rows.sort((a, b) => {
+        let av = a[sortKey], bv = b[sortKey];
+        if (sortKey === 'price') { av = computeProjectTotal(a.id); bv = computeProjectTotal(b.id); }
+        if (av === undefined) av = '';
+        if (bv === undefined) bv = '';
+        return av > bv ? sortDir : av < bv ? -sortDir : 0;
+    });
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = rows.map(p => `
+        <tr data-id="${p.id}">
+            <td>${p.date || ''}</td>
+            <td>${p.name || ''}</td>
+            <td>${p.client ? `<span class="pill client">${p.client}</span>` : ''}</td>
+            <td>${p.type || ''}</td>
+            <td>${fmt(computeProjectTotal(p.id))}</td>
+            <td><span class="pill status-${p.status}"><span class="dot ${p.status}"></span>${statusLabel(p.status)}</span></td>
+        </tr>
+    `).join('');
+
+    document.getElementById('emptyState').style.display = rows.length ? 'none' : 'block';
+
+    tbody.querySelectorAll('tr').forEach(tr => {
+        tr.addEventListener('click', () => openModal(tr.dataset.id));
+    });
+
+    renderClientOptions();
+    renderSummary(rows);
+}
+
+function renderInvoiceRows() {
+    const items = db.invoices.filter(i => i.projectId === editingId || (editingId === null && i.projectId === '__draft__'));
+    const body = document.getElementById('invoiceBody');
+    body.innerHTML = items.map(item => `
+        <tr data-item-id="${item.id}">
+            <td><input type="date" value="${item.date || ''}" data-field="date"></td>
+            <td><input type="text" value="${item.person || ''}" data-field="person"></td>
+            <td><input type="text" value="${item.service || ''}" data-field="service"></td>
+            <td><input type="text" value="${item.package || ''}" data-field="package"></td>
+            <td><input type="number" step="0.01" value="${item.price || 0}" data-field="price"></td>
+            <td><input type="number" step="1" value="${item.qty || 1}" data-field="qty"></td>
+            <td class="line-total">${fmt((Number(item.price) || 0) * (Number(item.qty) || 0))}</td>
+            <td><button class="rm-btn" data-remove="${item.id}">✕</button></td>
+        </tr>
+    `).join('');
+
+    body.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+            const tr = e.target.closest('tr');
+            const itemId = tr.dataset.itemId;
+            const item = db.invoices.find(i => i.id === itemId);
+            if (!item) return;
+            item[e.target.dataset.field] = e.target.value;
+            tr.querySelector('.line-total').textContent = fmt((Number(item.price) || 0) * (Number(item.qty) || 0));
+            updateInvoiceSum();
+        });
+    });
+    body.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            db.invoices = db.invoices.filter(i => i.id !== btn.dataset.remove);
+            renderInvoiceRows();
+            updateInvoiceSum();
+        });
+    });
+
+    updateInvoiceSum();
+}
+
+function updateInvoiceSum() {
+    const pid = editingId || '__draft__';
+    const sum = db.invoices.filter(i => i.projectId === pid)
+        .reduce((s, i) => s + (Number(i.price) || 0) * (Number(i.qty) || 0), 0);
+    document.getElementById('invoiceSum').textContent = fmt(sum);
+    document.getElementById('f_price').value = fmt(sum);
+}
+
+function openModal(id) {
+    editingId = id || null;
+    const overlay = document.getElementById('overlay');
+    const isNew = !id;
+
+    document.getElementById('modalTitle').textContent = isNew ? 'New Project' : 'Edit Project';
+    document.getElementById('deleteBtn').style.display = isNew ? 'none' : 'inline-block';
+
+    if (isNew) {
+        document.getElementById('f_date').value = new Date().toISOString().slice(0, 10);
+        document.getElementById('f_status').value = 'progress';
+        document.getElementById('f_name').value = '';
+        document.getElementById('f_client').value = '';
+        document.getElementById('f_type').value = 'Real Estate';
+    } else {
+        const p = db.projects.find(p => p.id === id);
+        document.getElementById('f_date').value = p.date || '';
+        document.getElementById('f_status').value = p.status || 'progress';
+        document.getElementById('f_name').value = p.name || '';
+        document.getElementById('f_client').value = p.client || '';
+        document.getElementById('f_type').value = p.type || 'Real Estate';
+    }
+
+    renderInvoiceRows();
+    overlay.classList.add('open');
+}
+
+function closeModal() {
+    // clean up any draft invoice items if a new project was cancelled
+    if (editingId === null) {
+        db.invoices = db.invoices.filter(i => i.projectId !== '__draft__');
+    }
+    document.getElementById('overlay').classList.remove('open');
+}
+
+document.getElementById('newProjectBtn').addEventListener('click', () => openModal(null));
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('overlay').addEventListener('click', (e) => { if (e.target.id === 'overlay') closeModal(); });
+
+document.getElementById('addLineBtn').addEventListener('click', () => {
+    const pid = editingId || '__draft__';
+    db.invoices.push({ id: uid(), projectId: pid, date: document.getElementById('f_date').value, person: '', service: '', package: '', price: 0, qty: 1 });
+    renderInvoiceRows();
+});
+
+document.getElementById('saveBtn').addEventListener('click', () => {
+    const name = document.getElementById('f_name').value.trim();
+    if (!name) { alert('프로젝트 이름을 입력해주세요.'); return; }
+
+    const fields = {
+        date: document.getElementById('f_date').value,
+        status: document.getElementById('f_status').value,
+        name: name,
+        client: document.getElementById('f_client').value.trim(),
+        type: document.getElementById('f_type').value,
+    };
+
+    if (editingId === null) {
+        const newId = uid();
+        db.projects.push({ id: newId, ...fields });
+        // reassign draft invoice items to the real project id
+        db.invoices.forEach(i => { if (i.projectId === '__draft__') i.projectId = newId; });
+    } else {
+        const p = db.projects.find(p => p.id === editingId);
+        Object.assign(p, fields);
+    }
+
+    pushRemote();
+    closeModal();
+    editingId = null;
+    renderTable();
+});
+
+document.getElementById('deleteBtn').addEventListener('click', () => {
+    if (!editingId) return;
+    if (!confirm('이 프로젝트와 관련 인보이스를 삭제할까요?')) return;
+    db.projects = db.projects.filter(p => p.id !== editingId);
+    db.invoices = db.invoices.filter(i => i.projectId !== editingId);
+    pushRemote();
+    editingId = null;
+    document.getElementById('overlay').classList.remove('open');
+    renderTable();
+});
+
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('filterClient').addEventListener('change', renderTable);
+document.getElementById('filterStatus').addEventListener('change', renderTable);
+
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+        const key = th.dataset.sort;
+        if (sortKey === key) { sortDir *= -1; } else { sortKey = key; sortDir = 1; }
+        renderTable();
+    });
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `editbay-ledger-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const parsed = JSON.parse(reader.result);
+            if (!parsed.projects || !parsed.invoices) throw new Error('invalid format');
+            if (!confirm('현재 데이터를 덮어쓸까요? (백업 파일을 불러옵니다)')) return;
+            db = parsed;
+            pushRemote();
+            renderTable();
+        } catch (err) {
+            alert('파일을 읽을 수 없어요. 올바른 백업 JSON 파일인지 확인해주세요.');
         }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+});
 
-        function loadCustomerTemplate() {
-            const key = document.getElementById('customer-select').value;
-            if (!key) return;
+// --- Settings modal wiring ---
+document.getElementById('settingsBtn').addEventListener('click', () => {
+    document.getElementById('endpointInput').value = getEndpoint();
+    document.getElementById('settingsOverlay').classList.add('open');
+});
+document.getElementById('settingsCancelBtn').addEventListener('click', () => {
+    document.getElementById('settingsOverlay').classList.remove('open');
+});
+document.getElementById('settingsOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'settingsOverlay') document.getElementById('settingsOverlay').classList.remove('open');
+});
+document.getElementById('settingsSaveBtn').addEventListener('click', async () => {
+    const url = document.getElementById('endpointInput').value.trim();
+    if (!url) { alert('URL을 입력해주세요.'); return; }
+    setEndpointStorage(url);
+    document.getElementById('settingsOverlay').classList.remove('open');
+    await fetchRemote();
+    renderTable();
+});
+document.getElementById('clearEndpointBtn').addEventListener('click', () => {
+    if (!confirm('Google Sheets 연동을 해제할까요? (로컬 백업 데이터는 유지됩니다)')) return;
+    clearEndpointStorage();
+    document.getElementById('settingsOverlay').classList.remove('open');
+    db = loadLocalCache();
+    setSyncStatus('연동 안 됨');
+    renderTable();
+});
 
-            const client = customerDB[key];
-            document.getElementById('client-name').value = client.name;
-            document.getElementById('client-email').value = client.email;
-            document.getElementById('client-note').value = client.note;
-            document.getElementById('tax-rate').value = client.tax;
-
-            const today = new Date().toISOString().slice(0,10).replace(/-/g, "");
-            document.getElementById('inv-num').value = `EB-${client.code}-${today}`;
-
-            document.getElementById('item-list').innerHTML = '';
-            client.defaultItems.forEach(item => {
-                addItem(item.desc, item.qty, item.price, item.detail);
-            });
-
-            calculate();
-        }
-
-        // 프리셋 간편 추가 함수
-        function addPreset(serviceName, price) {
-            addItem(serviceName, 1, price, serviceName === '24-hour Express Delivery' ? 'RUSH ORDER: 24h turnaround' : '');
-        }
-
-        function addItem(serviceName = '', qty = 1, price = 0, detail = '') {
-            const container = document.getElementById('item-list');
-            const rowId = 'row-' + Math.random().toString(36).substr(2, 9);
-            
-            let optionsHtml = `<option value="">-- Choose Item --</option>`;
-            for (let name in servicePriceList) {
-                optionsHtml += `<option value="${name}" ${serviceName === name ? 'selected' : ''}>${name}</option>`;
-            }
-
-            const html = `
-                <div class="grid grid-cols-12 gap-4 items-start service-row group relative" id="${rowId}">
-                    <div class="col-span-6 md:col-span-7 flex flex-col gap-2">
-                        <span class="print-service-label text-sm">${serviceName}</span>
-                        <select class="service-select text-xs font-bold text-blue-400 no-print" onchange="handleServiceChange(this)">
-                            ${optionsHtml}
-                            <option value="Custom" ${serviceName === "Custom" ? 'selected' : ''}>Custom Service</option>
-                        </select>
-                        <input type="text" class="w-full detail-input text-xs opacity-80" placeholder="Details or notes" value="${detail}">
-                    </div>
-                    <div class="col-span-2">
-                        <input type="number" class="w-full text-center qty-input text-sm" value="${qty}" oninput="calculate()">
-                    </div>
-                    <div class="col-span-2">
-                        <input type="number" class="w-full text-right price-input text-sm" value="${price}" oninput="calculate()">
-                    </div>
-                    <div class="col-span-2 md:col-span-1 text-right font-bold row-total text-sm pt-2">
-                        $0.00
-                    </div>
-                    <div class="no-print opacity-0 group-hover:opacity-100 absolute -right-8 transition-opacity pt-2">
-                        <button onclick="removeRow('${rowId}')" class="text-red-500 hover:text-red-400">
-                            <i class="fas fa-times-circle"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-            calculate();
-        }
-
-        function handleServiceChange(select) {
-            const row = select.closest('.service-row');
-            const serviceName = select.value;
-            const priceInput = row.querySelector('.price-input');
-            const label = row.querySelector('.print-service-label');
-            
-            if (serviceName && servicePriceList[serviceName]) {
-                priceInput.value = servicePriceList[serviceName];
-                label.innerText = serviceName;
-            } else if (serviceName === "Custom") {
-                label.innerText = "Custom Service";
-            } else {
-                label.innerText = "";
-            }
-            calculate();
-        }
-
-        function removeRow(id) {
-            document.getElementById(id).remove();
-            calculate();
-        }
-
-        function calculate() {
-            const rows = document.querySelectorAll('.service-row');
-            let subtotal = 0;
-
-            rows.forEach(row => {
-                const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
-                const price = parseFloat(row.querySelector('.price-input').value) || 0;
-                const total = qty * price;
-                subtotal += total;
-                row.querySelector('.row-total').innerText = '$' + total.toLocaleString(undefined, {minimumFractionDigits: 2});
-            });
-
-            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
-            const taxAmount = subtotal * (taxRate / 100);
-            const finalTotal = subtotal + taxAmount;
-
-            document.getElementById('subtotal-display').innerText = '$' + subtotal.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('total-display').innerText = '$' + finalTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
-        }
-
-        function saveDraft() {
-            const draft = {
-                invNum: document.getElementById('inv-num').value,
-                invDate: document.getElementById('inv-date').value,
-                clientName: document.getElementById('client-name').value,
-                clientEmail: document.getElementById('client-email').value,
-                clientNote: document.getElementById('client-note').value,
-                taxRate: document.getElementById('tax-rate').value,
-                paymentInfo: document.getElementById('payment-info').value,
-                items: []
-            };
-            
-            document.querySelectorAll('.service-row').forEach(row => {
-                draft.items.push({
-                    service: row.querySelector('.service-select').value,
-                    detail: row.querySelector('.detail-input').value,
-                    qty: row.querySelector('.qty-input').value,
-                    price: row.querySelector('.price-input').value
-                });
-            });
-
-            localStorage.setItem('eb_invoice_draft', JSON.stringify(draft));
-            alert('초안이 브라우저에 안전하게 저장되었습니다.');
-        }
-
-        async function exportToSheets() {
-            if (!GOOGLE_SCRIPT_URL) {
-                alert("구글 앱스 스크립트 URL이 설정되지 않았습니다.");
-                return;
-            }
-
-            const btn = document.getElementById('export-btn');
-            const originalHtml = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = `<span class="loader"></span> Sending...`;
-
-            const data = {
-                invNum: document.getElementById('inv-num').value,
-                invDate: document.getElementById('inv-date').value,
-                clientName: document.getElementById('client-name').value,
-                totalAmount: document.getElementById('total-display').innerText.replace('$', '').replace(',', ''),
-                items: []
-            };
-
-            document.querySelectorAll('.service-row').forEach(row => {
-                data.items.push({
-                    service: row.querySelector('.service-select').value || "Custom",
-                    detail: row.querySelector('.detail-input').value,
-                    total: row.querySelector('.row-total').innerText
-                });
-            });
-
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                alert('전송 완료! 구글 시트를 확인해주세요.');
-            } catch (error) {
-                console.error("Export error:", error);
-                alert('전송 중 오류가 발생했습니다.');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
-            }
-        }
-
-        window.onload = () => {
-            initCustomerList();
-            const saved = localStorage.getItem('eb_invoice_draft');
-            if(saved) {
-                const data = JSON.parse(saved);
-                document.getElementById('inv-num').value = data.invNum || '';
-                document.getElementById('inv-date').value = data.invDate || new Date().toISOString().slice(0, 10);
-                document.getElementById('client-name').value = data.clientName || '';
-                document.getElementById('client-email').value = data.clientEmail || '';
-                document.getElementById('client-note').value = data.clientNote || '';
-                document.getElementById('tax-rate').value = data.taxRate || 5;
-                document.getElementById('payment-info').value = data.paymentInfo || '';
-                document.getElementById('item-list').innerHTML = '';
-                if (data.items && data.items.length > 0) {
-                    data.items.forEach(item => addItem(item.service, item.qty, item.price, item.detail));
-                } else { addItem(); }
-            } else {
-                document.getElementById('inv-date').valueAsDate = new Date();
-                addItem();
-            }
-            calculate();
-        }
-    </script>
+// --- Initial load ---
+(async () => {
+    await fetchRemote();
+    renderTable();
+})();
+</script>
 </body>
 </html>
