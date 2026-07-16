@@ -4,240 +4,274 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact | EditBay Media</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
+
         :root {
-            --accent: #3b82f6; 
+            --accent: #3b82f6;
             --bg-dark: #050a14;
             --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --text-faint: #64748b;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
-        /* 언어 제어 */
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .wrap-md { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+        .wrap-sm { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+        /* --- 언어 제어 로직 --- */
         .en-content, .ko-content { display: none !important; }
         .en-mode .en-content { display: block !important; }
         .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
         .ko-mode .ko-content { display: block !important; }
         .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
 
+        /* --- Nav --- */
         .glass-nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
             background: rgba(5, 10, 20, 0.85);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
+        .nav-logo:hover img { opacity: .8; }
+        .nav-right { display: flex; align-items: center; gap: 32px; }
+        .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
+        .nav-links a { transition: color .2s; }
+        .nav-links a:hover { color: #60a5fa; }
+        @media (max-width: 767px) { .nav-links { display: none; } }
 
-        .contact-card {
+        .lang-switch {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 12px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+        }
+        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; opacity: 0.4; color: var(--text-main); transition: opacity .3s; }
+        .lang-btn.active { opacity: 1; color: var(--accent); }
+        .lang-divider { color: rgba(255,255,255,0.1); font-size: 10px; }
+
+        /* --- Hero --- */
+        #hero { padding: 160px 0 56px; text-align: center; }
+        #hero h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; letter-spacing: -0.02em; color: #fff; }
+        #hero p { margin-top: 16px; color: var(--text-dim); font-size: clamp(16px, 2vw, 18px); font-weight: 300; }
+
+        /* --- Shared card --- */
+        .video-card {
             background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
+            overflow: hidden;
             transition: all 0.4s ease;
         }
-        .contact-card:hover {
-            border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.05);
-            transform: translateY(-5px);
-        }
+        .video-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(59,130,246,0.25); }
 
-        .lang-btn {
-            font-size: 0.75rem;
-            font-weight: 600;
-            opacity: 0.4;
-            transition: opacity 0.3s;
-        }
-        .lang-btn.active {
-            opacity: 1;
-            color: var(--accent);
-        }
+        .icon { width: 26px; height: 26px; color: #60a5fa; margin-bottom: 16px; }
+
+        /* --- Direct channels --- */
+        #channels { padding: 0 0 80px; }
+        .section-label { text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #60a5fa; margin-bottom: 40px; }
+
+        .channel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        @media (max-width: 767px) { .channel-grid { grid-template-columns: 1fr; } }
+        .channel-card { padding: 32px; text-align: center; }
+        .channel-card h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .channel-card a.link { font-size: 13.5px; color: var(--text-dim); word-break: break-all; }
+        .channel-card a.link:hover { color: #60a5fa; }
+        .channel-card .tag { display: block; font-size: 11.5px; color: var(--text-faint); margin-top: 12px; }
+
+        /* --- Expertise --- */
+        #expertise { padding: 0 0 96px; }
+        #expertise h2 { text-align: center; font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 40px; }
+
+        .expertise-list { display: flex; flex-direction: column; gap: 20px; }
+        .expertise-item { padding: 24px; display: flex; gap: 16px; align-items: flex-start; }
+        .expertise-item .icon { margin-bottom: 0; margin-top: 2px; flex-shrink: 0; width: 22px; height: 22px; }
+        .expertise-item h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .expertise-item p { font-size: 13.5px; color: var(--text-dim); font-weight: 300; }
+
+        .reply-note { text-align: center; color: var(--text-faint); font-size: 13.5px; margin-top: 40px; }
+
+        footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+        footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
+        footer a:hover { opacity: 1; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-    <!-- 네비게이션 -->
-    <nav class="fixed w-full z-50 glass-nav">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center">
-                <div class="text-xl font-bold tracking-tighter text-white">EDIT<span class="text-blue-500">BAY</span></div>
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-inner wrap">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="EditBay Logo">
             </a>
-            
-            <div class="flex items-center gap-8">
-                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
-                    <a href="works.html" class="en-content hover:text-blue-400 transition">WORKS</a>
-                    <a href="works.html" class="ko-content hover:text-blue-400 transition">작업물</a>
-                    
-                    <a href="services.html" class="en-content hover:text-blue-400 transition">SERVICES</a>
-                    <a href="services.html" class="ko-content hover:text-blue-400 transition">서비스</a>
-
-                    <a href="contact.html" class="en-content text-blue-400 font-bold">CONTACT</a>
-                    <a href="contact.html" class="ko-content text-blue-400 font-bold">문의하기</a>
+            <div class="nav-right">
+                <!-- Navigation Menu (SERVICES - CONTACT, WORKS 제거) -->
+                <div class="nav-links">
+                    <a href="services.html" class="en-content">SERVICES</a>
+                    <a href="services.html" class="ko-content">서비스</a>
+                    <a href="contact.html" class="en-content">CONTACT</a>
+                    <a href="contact.html" class="ko-content">문의하기</a>
                 </div>
-                
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                <div class="lang-switch">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <span class="text-white/10 text-[10px]">|</span>
+                    <span class="lang-divider">|</span>
                     <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- 헤더 -->
-    <header class="pt-48 pb-16 text-center">
-        <div class="max-w-4xl mx-auto px-6">
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8">
-                <span class="en-content">Get in <span class="text-blue-500">Touch</span></span>
-                <span class="ko-content">제작 <span class="text-blue-500">문의하기</span></span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl font-light">
-                <span class="en-content">Ready to elevate your brand? Contact us through any channel below.</span>
-                <span class="ko-content">브랜드를 한 단계 더 높일 준비가 되셨나요? 아래 채널을 통해 문의해 주세요.</span>
-            </p>
+    <!-- 1. Hero -->
+    <section id="hero" class="wrap-sm">
+        <div class="en-content">
+            <h1>Get in Touch</h1>
+            <p>Ready to elevate your brand? Contact us through any channel below.</p>
         </div>
-    </header>
+        <div class="ko-content">
+            <h1>제작 문의하기</h1>
+            <p>브랜드를 한 단계 더 높일 준비가 되셨나요? 아래 채널을 통해 문의해 주세요.</p>
+        </div>
+    </section>
 
-    <!-- 메인 콘텐츠 -->
-    <main class="max-w-5xl mx-auto px-6 pb-32">
-        <div class="grid md:grid-cols-2 gap-8 items-stretch">
-            
-            <!-- 연락처 정보 카드 -->
-            <div class="contact-card p-10 md:p-12 space-y-10">
-                <h2 class="text-2xl font-bold border-b border-white/5 pb-6">
-                    <span class="en-content">Direct Channels</span>
-                    <span class="ko-content font-bold">다이렉트 채널</span>
-                </h2>
-                
-                <div class="space-y-8">
-                    <!-- 이메일 -->
-                    <div class="flex items-start gap-6 group">
-                        <div class="w-14 h-14 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-500 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                            <i class="fas fa-envelope text-2xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest mb-1">Email</p>
-                            <a href="mailto:editbaymedia@gmail.com" class="text-lg md:text-xl font-bold hover:text-blue-400 transition break-all">editbaymedia@gmail.com</a>
-                        </div>
-                    </div>
+    <!-- 2. Direct Channels -->
+    <section id="channels" class="wrap-md">
+        <div class="section-label">
+            <span class="en-content">Direct Channels</span>
+            <span class="ko-content">다이렉트 채널</span>
+        </div>
 
-                    <!-- 인스타그램 1: 부동산/일반 -->
-                    <div class="flex items-start gap-6 group">
-                        <div class="w-14 h-14 bg-pink-600/10 rounded-xl flex items-center justify-center text-pink-500 shrink-0 group-hover:bg-pink-600 group-hover:text-white transition-all">
-                            <i class="fab fa-instagram text-2xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest mb-1">
-                                <span class="en-content">Real Estate & General</span>
-                                <span class="ko-content">부동산 및 일반 영상</span>
-                            </p>
-                            <a href="https://instagram.com/editbaymedia" target="_blank" class="text-lg md:text-xl font-bold hover:text-pink-400 transition">@editbaymedia</a>
-                        </div>
-                    </div>
-
-                    <!-- 인스타그램 2: AI Lab (아이콘 변경됨) -->
-                    <div class="flex items-start gap-6 group">
-                        <div class="w-14 h-14 bg-purple-600/10 rounded-2xl flex items-center justify-center text-purple-500 shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                            <i class="fab fa-instagram text-2xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest mb-1">
-                                <span class="en-content">AI Video Lab</span>
-                                <span class="ko-content">AI 영상 크리에이티브</span>
-                            </p>
-                            <a href="https://instagram.com/editbay.ai" target="_blank" class="text-lg md:text-xl font-bold hover:text-purple-400 transition">@editbay.ai</a>
-                        </div>
-                    </div>
-                </div>
+        <div class="channel-grid">
+            <div class="video-card channel-card">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 16px;">
+                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                    <path d="M3 7l9 6 9-6"/>
+                </svg>
+                <h3>Email</h3>
+                <a href="mailto:editbaymedia@gmail.com" class="link">editbaymedia@gmail.com</a>
+                <span class="tag"><span class="en-content">Real Estate &amp; General</span><span class="ko-content">부동산 및 일반 영상</span></span>
             </div>
 
-            <!-- Why EditBay? 섹션 -->
-            <div class="contact-card p-10 md:p-12 bg-blue-600/5 flex flex-col justify-center">
-                <h3 class="text-2xl font-bold mb-8 text-blue-400">
-                    <span class="en-content tracking-tight">Expertise You Can Trust</span>
-                    <span class="ko-content font-bold">신뢰할 수 있는 전문성</span>
-                </h3>
-                <ul class="space-y-6 text-slate-300">
-                    <li class="flex items-start gap-4">
-                        <i class="fas fa-check-circle text-blue-500 mt-1 shrink-0"></i>
-                        <div>
-                            <p class="font-bold text-white mb-1"><span class="en-content">Tailored AI video solutions</span><span class="ko-content">맞춤형 AI 비디오 솔루션</span></p>
-                            <p class="text-sm text-slate-400 font-light"><span class="en-content">Leveraging Kling AI, Midjourney for unique visuals.</span><span class="ko-content">Kling AI, Midjourney 등을 활용한 독창적 비주얼.</span></p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <i class="fas fa-check-circle text-blue-500 mt-1 shrink-0"></i>
-                        <div>
-                            <p class="font-bold text-white mb-1"><span class="en-content">Real Estate Specialists</span><span class="ko-content">부동산 영상 전문가</span></p>
-                            <p class="text-sm text-slate-400 font-light"><span class="en-content">6+ Years of Professional Video Editing expertise.</span><span class="ko-content">6년 이상의 프로페셔널 영상 편집 노하우.</span></p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <i class="fas fa-check-circle text-blue-500 mt-1 shrink-0"></i>
-                        <div>
-                            <p class="font-bold text-white mb-1"><span class="en-content">Strategic Editing</span><span class="ko-content">전략적 영상 편집</span></p>
-                            <p class="text-sm text-slate-400 font-light"><span class="en-content">Fast delivery & High quality.</span><span class="ko-content">빠른 제작 기간 및 고품질 결과물.</span></p>
-                        </div>
-                    </li>
-                </ul>
-                
-                <div class="mt-12 pt-8 border-t border-white/5">
-                    <p class="text-sm text-slate-500 italic">
-                        <span class="en-content">Typically replies within 24 hours.</span>
-                        <span class="ko-content">보통 24시간 이내에 답변을 드립니다.</span>
-                    </p>
-                </div>
+            <div class="video-card channel-card">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 16px;">
+                    <rect x="3" y="3" width="18" height="18" rx="5"/>
+                    <circle cx="12" cy="12" r="4"/>
+                    <circle cx="17.5" cy="6.5" r="1"/>
+                </svg>
+                <h3>Instagram</h3>
+                <a href="https://instagram.com/editbaymedia" target="_blank" class="link">@editbaymedia</a>
+                <span class="tag"><span class="en-content">Real Estate &amp; General</span><span class="ko-content">부동산 및 일반 영상</span></span>
             </div>
 
+            <div class="video-card channel-card">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 16px;">
+                    <rect x="3" y="3" width="18" height="18" rx="5"/>
+                    <circle cx="12" cy="12" r="4"/>
+                    <circle cx="17.5" cy="6.5" r="1"/>
+                </svg>
+                <h3><span class="en-content">AI Video Lab</span><span class="ko-content">AI 영상 크리에이티브</span></h3>
+                <a href="https://instagram.com/editbay.ai" target="_blank" class="link">@editbay.ai</a>
+                <span class="tag"><span class="en-content">AI Video Lab</span><span class="ko-content">AI 영상 크리에이티브</span></span>
+            </div>
         </div>
-    </main>
+    </section>
 
-    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase border-t border-white/5">
-        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
+    <!-- 3. Expertise -->
+    <section id="expertise" class="wrap-sm">
+        <h2>
+            <span class="en-content">Expertise You Can Trust</span>
+            <span class="ko-content">신뢰할 수 있는 전문성</span>
+        </h2>
+
+        <div class="expertise-list">
+            <div class="video-card expertise-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 20 15 9"/>
+                    <path d="M14 8l1.5-1.5L14 5l1.5-1.5L17 5l1.5-1.5"/>
+                    <path d="M18 13l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/>
+                </svg>
+                <div>
+                    <h4><span class="en-content">Tailored AI Video Solutions</span><span class="ko-content">맞춤형 AI 비디오 솔루션</span></h4>
+                    <p><span class="en-content">Leveraging Kling AI, Midjourney for unique visuals.</span><span class="ko-content">Kling AI, Midjourney 등을 활용한 독창적 비주얼.</span></p>
+                </div>
+            </div>
+            <div class="video-card expertise-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 11l9-7 9 7"/>
+                    <path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/>
+                </svg>
+                <div>
+                    <h4><span class="en-content">Real Estate Specialists</span><span class="ko-content">부동산 영상 전문가</span></h4>
+                    <p><span class="en-content">6+ Years of Professional Video Editing expertise.</span><span class="ko-content">6년 이상의 프로페셔널 영상 편집 노하우.</span></p>
+                </div>
+            </div>
+            <div class="video-card expertise-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/>
+                </svg>
+                <div>
+                    <h4><span class="en-content">Strategic Editing</span><span class="ko-content">전략적 영상 편집</span></h4>
+                    <p><span class="en-content">Fast delivery &amp; High quality.</span><span class="ko-content">빠른 제작 기간 및 고품질 결과물.</span></p>
+                </div>
+            </div>
+        </div>
+
+        <p class="reply-note">
+            <span class="en-content">Typically replies within 24 hours.</span>
+            <span class="ko-content">보통 24시간 이내에 답변을 드립니다.</span>
+        </p>
+    </section>
+
+    <footer>
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.
+            <a href="admin-invoice.html">ADMIN</a>
+        </p>
     </footer>
 
     <script>
-        /* EditBay Media Language Manager */
+(function() {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    document.documentElement.className = savedLang + '-mode';
+})();
 
-        // 1. 페이지 로드 시 즉시 실행
-        (function() {
-            const savedLang = localStorage.getItem('editbay_lang') || 'en';
-            document.documentElement.className = savedLang + '-mode';
-        })();
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    updateButtonState(savedLang);
+});
 
-        // 2. DOM 로드 후 상태 업데이트
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('editbay_lang') || 'en';
-            updateButtonState(savedLang);
-        });
+function changeLang(lang) {
+    localStorage.setItem('editbay_lang', lang);
+    document.documentElement.className = lang + '-mode';
+    updateButtonState(lang);
+}
 
-        // 3. 언어 변경 함수
-        function changeLang(lang) {
-            localStorage.setItem('editbay_lang', lang);
-            document.documentElement.className = lang + '-mode';
-            updateButtonState(lang);
+function updateButtonState(lang) {
+    const btnEn = document.getElementById('btn-en');
+    const btnKo = document.getElementById('btn-ko');
+    if (btnEn && btnKo) {
+        if (lang === 'ko') {
+            btnKo.classList.add('active');
+            btnEn.classList.remove('active');
+        } else {
+            btnEn.classList.add('active');
+            btnKo.classList.remove('active');
         }
-
-        // 4. 버튼 활성화 표시
-        function updateButtonState(lang) {
-            const btnEn = document.getElementById('btn-en');
-            const btnKo = document.getElementById('btn-ko');
-
-            if (btnEn && btnKo) {
-                if (lang === 'ko') {
-                    btnKo.classList.add('active');
-                    btnEn.classList.remove('active');
-                } else {
-                    btnEn.classList.add('active');
-                    btnKo.classList.remove('active');
-                }
-            }
-        }
+    }
+}
     </script>
 </body>
 </html>

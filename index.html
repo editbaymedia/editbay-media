@@ -4,23 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services & Portfolio | EditBay Media</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
+
         :root {
-            --accent: #3b82f6; 
+            --accent: #3b82f6;
             --bg-dark: #050a14;
             --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+
+            --c-ai: #60a5fa;
+            --c-re: #34d399;
+            --c-yt: #f87171;
+            --c-cu: #c084fc;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
+
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .wrap-sm { max-width: 896px; margin: 0 auto; padding: 0 24px; }
 
         /* --- 언어 제어 로직 --- */
         .en-content, .ko-content { display: none !important; }
@@ -29,390 +42,304 @@
         .ko-mode .ko-content { display: block !important; }
         .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
 
+        /* --- Nav --- */
         .glass-nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
             background: rgba(5, 10, 20, 0.85);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
+        .nav-logo:hover img { opacity: .8; }
+        .nav-right { display: flex; align-items: center; gap: 32px; }
+        .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
+        .nav-links a { transition: color .2s; }
+        .nav-links a:hover { color: var(--c-ai); }
+        @media (max-width: 767px) { .nav-links { display: none; } }
+
+        .lang-switch {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 12px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+        }
+        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; opacity: 0.4; color: var(--text-main); transition: opacity .3s; }
+        .lang-btn.active { opacity: 1; color: var(--accent); }
+        .lang-divider { color: rgba(255,255,255,0.1); font-size: 10px; }
+
+        /* --- Hero video --- */
+        #hero { padding-top: 80px; }
+        .hero-video-wrap {
+            position: relative; width: 100%; aspect-ratio: 16/9; max-height: 100vh;
+            overflow: hidden; background: #000;
+        }
+        .hero-video-wrap video {
+            position: absolute; top: 50%; left: 50%; width: 100%; height: 100%;
+            object-fit: cover; transform: translate(-50%, -50%);
+        }
+        .hero-text { max-width: 720px; margin: 0 auto; padding: 64px 24px; text-align: center; }
+        .hero-text h1 { font-size: clamp(40px, 7vw, 72px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #fff; }
+        .hero-text h1 .accent { color: var(--accent); }
+        .hero-text p { margin-top: 20px; color: var(--text-dim); font-size: clamp(17px, 2vw, 20px); font-weight: 300; line-height: 1.7; }
+        .hero-btn {
+            display: inline-block; margin-top: 32px;
+            padding: 20px 40px; border-radius: 16px;
+            background: var(--accent); color: #fff; font-weight: 700; font-size: 18px;
+            box-shadow: 0 10px 30px rgba(59,130,246,0.3);
+            transition: background .2s;
+        }
+        .hero-btn:hover { background: #2563eb; }
+
+        /* --- Services list --- */
+        #services-list { background: rgba(2, 6, 23, 0.5); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 40px 0; }
+        .category-title { text-align: center; margin: 80px 0 64px; }
+        .category-title:first-child { margin-top: 40px; }
+        .category-title h2 { font-size: clamp(28px, 4vw, 36px); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+        .category-title h2 .ko-content { text-transform: none; letter-spacing: normal; }
+        .cat-ai h2 { color: var(--c-ai); }
+        .cat-re h2 { color: var(--c-re); }
+        .cat-yt h2 { color: var(--c-yt); }
+        .cat-cu h2 { color: var(--c-cu); }
 
         .video-card {
             background: rgba(15, 23, 42, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.03);
             border-radius: 2rem;
             overflow: hidden;
+            padding: 24px;
+            display: flex; flex-direction: column;
             transition: all 0.4s ease;
         }
-        .video-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
-        }
+        .cat-ai .video-card { border-color: rgba(96,165,250,0.15); }
+        .cat-re .video-card { border-color: rgba(52,211,153,0.1); }
+        .cat-yt .video-card { border-color: rgba(248,113,113,0.1); }
+        .cat-cu .video-card { border-color: rgba(192,132,252,0.1); }
+        .cat-ai .video-card:hover { border-color: var(--c-ai); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(96,165,250,0.3); }
+        .cat-re .video-card:hover { border-color: var(--c-re); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(52,211,153,0.3); }
+        .cat-yt .video-card:hover { border-color: var(--c-yt); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(248,113,113,0.3); }
+        .cat-cu .video-card:hover { border-color: var(--c-cu); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(192,132,252,0.3); }
 
-        .lang-btn {
-            font-size: 0.75rem;
-            font-weight: 600;
-            opacity: 0.4;
-            transition: opacity 0.3s;
-        }
-        .lang-btn.active {
-            opacity: 1;
-            color: var(--accent);
-        }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-bottom: 32px; }
+        @media (max-width: 767px) { .card-grid { grid-template-columns: 1fr; } }
 
-        /* 히어로 풀와이드 영상 (1920x1080 / 16:9) */
-        .hero-video-wrap {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            max-height: 100vh;
-            overflow: hidden;
-            background: #000;
-        }
-        .hero-video-wrap video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 1920x1080 소스를 영역에 꽉 차게, 잘림 허용 */
-            transform: translate(-50%, -50%);
-        }
+        .thumb { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .thumb.vcenter { display: flex; justify-content: center; }
+        .thumb iframe { width: 100%; height: 100%; border: 0; }
+        .thumb.vcenter iframe { width: auto; aspect-ratio: 9/16; height: 100%; }
+        .thumb .ph-note { display: flex; align-items: center; justify-content: center; width: 100%; color: var(--text-dim); font-size: 12px; text-align: center; padding: 12px; }
+
+        .video-card h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .video-card p { color: var(--text-dim); font-size: 13.5px; font-weight: 300; line-height: 1.7; }
+
+        /* --- Final Contact CTA --- */
+        #contact { padding: 96px 0; }
+        .cta-box { background: var(--accent); border-radius: 48px; padding: 48px 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(59,130,246,0.3); }
+        @media (min-width: 768px) { .cta-box { padding: 80px; } }
+        .cta-box h2 { font-size: 34px; font-weight: 700; color: #fff; margin-bottom: 32px; }
+        .cta-inner { max-width: 448px; margin: 0 auto; }
+        .cta-email { color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+        .cta-btn { display: block; width: 100%; background: #fff; color: var(--accent); font-weight: 700; padding: 16px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.08em; text-align: center; transition: background .2s; }
+        .cta-btn:hover { background: #f1f5f9; }
+
+        footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+        footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
+        footer a:hover { opacity: 1; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-nav">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Left: Logo -->
-            <a href="index.html" class="flex items-center">
-                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+    <nav class="glass-nav">
+        <div class="nav-inner wrap">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="EditBay Logo">
             </a>
-            
-            <div class="flex items-center gap-8">
-                <!-- Navigation Menu (WORKS - SERVICES - CONTACT 순서 고정) -->
-                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
-                    <!-- 1. WORKS -->
-                    <a href="works.html" class="en-content hover:text-blue-400 transition">WORKS</a>
-                    <a href="works.html" class="ko-content hover:text-blue-400 transition">작업물</a>
-                    
-                    <!-- 2. SERVICES -->
-                    <a href="services.html" class="en-content hover:text-blue-400 transition">SERVICES</a>
-                    <a href="services.html" class="ko-content hover:text-blue-400 transition">서비스</a>
-
-                    <!-- 3. CONTACT -->
-                    <a href="contact.html" class="en-content hover:text-blue-400 transition">CONTACT</a>
-                    <a href="contact.html" class="ko-content hover:text-blue-400 transition font-medium text-sm">문의하기</a>
+            <div class="nav-right">
+                <!-- Navigation Menu (SERVICES - CONTACT, WORKS 제거) -->
+                <div class="nav-links">
+                    <a href="services.html" class="en-content">SERVICES</a>
+                    <a href="services.html" class="ko-content">서비스</a>
+                    <a href="contact.html" class="en-content">CONTACT</a>
+                    <a href="contact.html" class="ko-content">문의하기</a>
                 </div>
-                
-                <!-- Language Switcher -->
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                <div class="lang-switch">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <span class="text-white/10 text-[10px]">|</span>
+                    <span class="lang-divider">|</span>
                     <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- 1. Hero Section (풀와이드 1920x1080 루프 영상 + 하단 텍스트) -->
-    <section id="hero" class="relative pt-20">
-
-        <!-- Full-width 1920x1080 Looping Showreel Video (self-hosted MP4) -->
+    <!-- 1. Hero -->
+    <section id="hero">
         <div class="hero-video-wrap">
             <video autoplay muted loop playsinline preload="auto" poster="showreel-poster.jpg">
                 <source src="2026 SHOWREEL_15sec_25mb.mp4" type="video/mp4">
-                <!-- 브라우저가 video 태그를 지원하지 않을 경우 대체 텍스트 -->
                 Your browser does not support the video tag.
             </video>
         </div>
 
-        <!-- 텍스트: 영상 아래로 이동 -->
-        <div class="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
-            <!-- English Main Text -->
-            <div class="en-content space-y-6">
-                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight text-white">
-                    Unrivaled Ads <br>
-                    <span class="text-blue-500">Built by AI</span>
-                </h1>
-                <p class="text-slate-400 text-lg md:text-xl max-w-lg mx-auto leading-relaxed font-light">
-                    Elevate your brand with high-end AI storytelling.<br>
-                    No filming required.
-                </p>
+        <div class="hero-text">
+            <div class="en-content">
+                <h1>Unrivaled Ads<br><span class="accent">Built by AI</span></h1>
+                <p>Elevate your brand with high-end AI storytelling.<br>No filming required.</p>
+            </div>
+            <div class="ko-content">
+                <h1>독보적인 광고<br><span class="accent">AI로 완성하다</span></h1>
+                <p>촬영 없이 AI 스토리텔링만으로<br>귀하의 브랜드를 고품격 영상으로 재탄생시킵니다.</p>
+            </div>
+            <a href="services.html" class="hero-btn">
+                <span class="en-content">Explore Services</span>
+                <span class="ko-content">서비스 둘러보기</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. Services List -->
+    <main id="services-list">
+        <div class="wrap">
+
+            <!-- A. AI Video Solutions -->
+            <div class="category-title cat-ai">
+                <h2><span class="en-content">AI Video Solutions</span><span class="ko-content">핵심 AI 비디오 솔루션</span></h2>
+            </div>
+            <div class="card-grid cat-ai">
+                <div class="video-card">
+                    <div class="thumb"><iframe src="https://www.youtube.com/embed/C8WePt4gmkc" title="AI Branded Film" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">AI Branded Film</span><span class="ko-content">AI 브랜디드 필름</span></h3>
+                    <p>
+                        <span class="en-content">Premium cinematic AI visuals that define your brand identity.<br>Perfect for high-end commercials.</span>
+                        <span class="ko-content">귀하의 브랜드 가치를 시네마틱한 AI 비주얼로 정의합니다.<br>프리미엄 광고 및 기업 스토리텔링에 최적화된 하이엔드 영상 솔루션입니다.</span>
+                    </p>
+                </div>
+                <div class="video-card">
+                    <div class="thumb vcenter"><iframe src="https://www.youtube.com/embed/Yrpg-fsi-6A" title="AI Short Form Contents" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">AI Short Form Contents</span><span class="ko-content">AI 숏폼 콘텐츠</span></h3>
+                    <p>
+                        <span class="en-content">Viral vertical content optimized for social media engagement.<br>Captivate viewers in seconds.</span>
+                        <span class="ko-content">SNS 성장을 위해 설계된 고효율 세로형 콘텐츠입니다.<br>AI 기술을 활용한 감각적인 편집으로 시선을 사로잡습니다.</span>
+                    </p>
+                </div>
             </div>
 
-            <!-- Korean Main Text -->
-            <div class="ko-content space-y-6">
-                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight text-white">
-                    독보적인 광고 <br>
-                    <span class="text-blue-500">AI로 완성하다</span>
-                </h1>
-                <p class="text-slate-400 text-lg md:text-xl max-w-lg mx-auto leading-relaxed font-light">
-                    촬영 없이 AI 스토리텔링만으로<br>
-                    귀하의 브랜드를 고품격 영상으로 재탄생시킵니다.
-                </p>
+            <!-- B. Real Estate -->
+            <div class="category-title cat-re">
+                <h2><span class="en-content">Real Estate Video Editing</span><span class="ko-content">부동산 영상 편집 솔루션</span></h2>
+            </div>
+            <div class="card-grid cat-re">
+                <div class="video-card">
+                    <div class="thumb"><iframe src="https://www.youtube.com/embed/WVIgJEfBmig" title="Cinematic Property Tour" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">Cinematic Property Tour</span><span class="ko-content">시네마틱 매물 투어 (가로형)</span></h3>
+                    <p>
+                        <span class="en-content">Horizontal tours that capture the full essence of the property.<br>High-end transitions and color grading.</span>
+                        <span class="ko-content">매물의 본질과 공간감을 완벽하게 담아내는 몰입형 가로 영상입니다.<br>하이엔드 트랜지션과 고급 컬러 그레이딩이 포함됩니다.</span>
+                    </p>
+                </div>
+                <div class="video-card">
+                    <div class="thumb vcenter"><iframe src="https://www.youtube.com/embed/W5WlU9QpfJg" title="Social Media Showcase" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">Social Media Showcase</span><span class="ko-content">소셜 미디어 쇼케이스 (세로형)</span></h3>
+                    <p>
+                        <span class="en-content">Snappy, vertical walkthroughs tailored for Instagram Reels and TikTok.<br>Optimized for social discovery.</span>
+                        <span class="ko-content">인스타그램 릴스와 틱톡에 최적화된 감각적인 세로형 영상입니다.<br>높은 조회수와 빠른 정보 전달에 최적화되어 있습니다.</span>
+                    </p>
+                </div>
             </div>
 
-            <div class="pt-8">
-                <a href="works.html" class="px-10 py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/30 text-white inline-block">
-                    <span class="en-content">Explore Portfolio</span>
-                    <span class="ko-content font-bold">포트폴리오 둘러보기</span>
+            <!-- C. YouTube -->
+            <div class="category-title cat-yt">
+                <h2><span class="en-content">YouTube Video Editing</span><span class="ko-content">유튜브 영상 편집 솔루션</span></h2>
+            </div>
+            <div class="card-grid cat-yt">
+                <div class="video-card">
+                    <div class="thumb"><iframe src="https://www.youtube.com/embed/anOqaENnlqM" title="Professional Main Video" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">Professional Main Video</span><span class="ko-content">전문 메인 콘텐츠 (가로형)</span></h3>
+                    <p>
+                        <span class="en-content">High-quality long-form content focused on viewer retention.<br>Storytelling to motion graphics.</span>
+                        <span class="ko-content">시청 지속시간에 집중한 고품질 롱폼 콘텐츠입니다.<br>스토리텔링부터 모션 그래픽까지 모든 과정을 전문적으로 관리합니다.</span>
+                    </p>
+                </div>
+                <div class="video-card">
+                    <div class="thumb vcenter">
+                        <span class="ph-note">Add Video ID<br>영상 ID를 넣어주세요</span>
+                    </div>
+                    <h3><span class="en-content">Viral Shorts &amp; Teasers</span><span class="ko-content">바이럴 쇼츠 &amp; 티저 (세로형)</span></h3>
+                    <p>
+                        <span class="en-content">Captivating YouTube Shorts and promotional teasers.<br>Designed to grab attention instantly.</span>
+                        <span class="ko-content">시선을 사로잡는 유튜브 쇼츠와 홍보용 티저 영상입니다.<br>신규 시청자의 유입과 전환율을 극대화하도록 설계되었습니다.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- D. Custom Project -->
+            <div class="category-title cat-cu">
+                <h2><span class="en-content">Custom Project</span><span class="ko-content">커스텀 프로젝트</span></h2>
+            </div>
+            <div class="card-grid cat-cu">
+                <div class="video-card">
+                    <div class="thumb"><iframe src="https://www.youtube.com/embed/-C6HhWm9_Jk" title="Cinematic Event Highlights" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">Cinematic Event Highlights</span><span class="ko-content">시네마틱 이벤트 하이라이트 (가로형)</span></h3>
+                    <p>
+                        <span class="en-content">Capture the energy of your special events.<br>From corporate conferences to celebrations.</span>
+                        <span class="ko-content">특별한 순간의 에너지와 분위기를 담아냅니다.<br>기업 컨퍼런스부터 개인 기념일까지 시네마틱한 영상을 제작합니다.</span>
+                    </p>
+                </div>
+                <div class="video-card">
+                    <div class="thumb vcenter"><iframe src="https://www.youtube.com/embed/VKiz-sVO2-I" title="Engagement-Driven Short Drama" allowfullscreen></iframe></div>
+                    <h3><span class="en-content">Engagement-Driven Short Drama</span><span class="ko-content">몰입형 숏드라마 (세로형)</span></h3>
+                    <p>
+                        <span class="en-content">Next-level storytelling for mobile-first audiences.<br>Compelling narratives in vertical format.</span>
+                        <span class="ko-content">모바일에 최적화된 차세대 스토리텔링입니다.<br>탄탄한 구성의 세로형 내러티브 영상을 제작합니다.</span>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 3. Final Contact CTA -->
+    <section id="contact" class="wrap-sm">
+        <div class="cta-box">
+            <h2>
+                <span class="en-content">Ready to Start?</span>
+                <span class="ko-content">프로젝트를 시작할까요?</span>
+            </h2>
+            <div class="cta-inner">
+                <div class="cta-email">editbaymedia@gmail.com</div>
+                <a href="mailto:editbaymedia@gmail.com" class="cta-btn">
+                    <span class="en-content">Send Email</span><span class="ko-content">이메일 보내기</span>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Services Sections List (Showcase) -->
-    <main id="services-list" class="bg-slate-950/50 border-y border-white/5 py-10">
-        <div class="max-w-7xl mx-auto px-6">
-            
-            <!-- A. AI Video Solutions -->
-            <div class="text-center mt-20 mb-16">
-                <h2 class="text-4xl font-bold mb-4">
-                    <span class="en-content text-blue-400 uppercase tracking-widest">AI Video Solutions</span>
-                    <span class="ko-content text-blue-400 text-3xl md:text-4xl font-bold">핵심 AI 비디오 솔루션</span>
-                </h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-10 mb-32">
-                <!-- Branded Film -->
-                <div class="video-card p-6 bg-blue-900/5 border-blue-500/20 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/C8WePt4gmkc" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">AI Branded Film</span>
-                            <span class="ko-content font-bold">AI 브랜디드 필름</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Premium cinematic AI visuals that define your brand identity.<br>
-                                Perfect for high-end commercials.</span>
-                            <span class="ko-content font-light">귀하의 브랜드 가치를 시네마틱한 AI 비주얼로 정의합니다.<br>
-                                프리미엄 광고 및 기업 스토리텔링에 최적화된 하이엔드 영상 솔루션입니다.</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- AI Short Form -->
-                <div class="video-card p-6 bg-cyan-900/5 border-cyan-500/20 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black flex justify-center">
-                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/Yrpg-fsi-6A" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">AI Short Form Contents</span>
-                            <span class="ko-content font-bold">AI 숏폼 콘텐츠</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Viral vertical content optimized for social media engagement.<br>
-                                Captivate viewers in seconds.</span>
-                            <span class="ko-content font-light">SNS 성장을 위해 설계된 고효율 세로형 콘텐츠입니다.<br>
-                                AI 기술을 활용한 감각적인 편집으로 시선을 사로잡습니다.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- B. Real Estate Video Editing -->
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">
-                    <span class="en-content text-emerald-400 uppercase tracking-widest">Real Estate Video Editing</span>
-                    <span class="ko-content text-emerald-400 text-3xl md:text-4xl font-bold">부동산 영상 편집 솔루션</span>
-                </h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-10 mb-32">
-                <!-- Cinematic Property Tour -->
-                <div class="video-card p-6 bg-slate-900/40 border-emerald-500/10 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/WVIgJEfBmig" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">Cinematic Property Tour</span>
-                            <span class="ko-content font-bold">시네마틱 매물 투어 (가로형)</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Horizontal tours that capture the full essence of the property.<br>
-                                High-end transitions and color grading.</span>
-                            <span class="ko-content font-light">매물의 본질과 공간감을 완벽하게 담아내는 몰입형 가로 영상입니다.<br>
-                                하이엔드 트랜지션과 고급 컬러 그레이딩이 포함됩니다.</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Social Media Showcase -->
-                <div class="video-card p-6 bg-slate-900/40 border-emerald-500/10 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black flex justify-center">
-                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/W5WlU9QpfJg" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">Social Media Showcase</span>
-                            <span class="ko-content font-bold">소셜 미디어 쇼케이스 (세로형)</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Snappy, vertical walkthroughs tailored for Instagram Reels and TikTok.<br>
-                                Optimized for social discovery.</span>
-                            <span class="ko-content font-light">인스타그램 릴스와 틱톡에 최적화된 감각적인 세로형 영상입니다.<br>
-                                높은 조회수와 빠른 정보 전달에 최적화되어 있습니다.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- C. YouTube Video Editing -->
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">
-                    <span class="en-content text-red-500 uppercase tracking-widest">YouTube Video Editing</span>
-                    <span class="ko-content text-red-500 text-3xl md:text-4xl font-bold">유튜브 영상 편집 솔루션</span>
-                </h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-10 mb-32">
-                <!-- Professional Main Video -->
-                <div class="video-card p-6 bg-slate-900/40 border-red-500/10 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/anOqaENnlqM" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">Professional Main Video</span>
-                            <span class="ko-content font-bold">전문 메인 콘텐츠 (가로형)</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">High-quality long-form content focused on viewer retention.<br>
-                                Storytelling to motion graphics.</span>
-                            <span class="ko-content font-light">시청 지속시간에 집중한 고품질 롱폼 콘텐츠입니다.<br>
-                                스토리텔링부터 모션 그래픽까지 모든 과정을 전문적으로 관리합니다.</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Viral Shorts & Teasers -->
-                <div class="video-card p-6 bg-slate-900/40 border-red-500/10 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black flex justify-center">
-                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/유튜브_쇼츠_영상_ID" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">Viral Shorts & Teasers</span>
-                            <span class="ko-content font-bold">바이럴 쇼츠 & 티저 (세로형)</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Captivating YouTube Shorts and promotional teasers.<br>
-                                Designed to grab attention instantly.</span>
-                            <span class="ko-content font-light">시선을 사로잡는 유튜브 쇼츠와 홍보용 티저 영상입니다.<br>
-                                신규 시청자의 유입과 전환율을 극대화하도록 설계되었습니다.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- D. Custom Project -->
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">
-                    <span class="en-content text-purple-400 uppercase tracking-widest">Custom Project</span>
-                    <span class="ko-content text-purple-400 text-3xl md:text-4xl font-bold">커스텀 프로젝트</span>
-                </h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-10 mb-20">
-                <!-- Cinematic Event Highlights -->
-                <div class="video-card p-6 bg-slate-900/40 border-purple-500/10 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/-C6HhWm9_Jk" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">Cinematic Event Highlights</span>
-                            <span class="ko-content font-bold">시네마틱 이벤트 하이라이트 (가로형)</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Capture the energy of your special events.<br>
-                                From corporate conferences to celebrations.</span>
-                            <span class="ko-content font-light">특별한 순간의 에너지와 분위기를 담아냅니다.<br>
-                                기업 컨퍼런스부터 개인 기념일까지 시네마틱한 영상을 제작합니다.</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Engagement-Driven Short Drama -->
-                <div class="video-card p-6 bg-slate-900/40 border-purple-500/10 flex flex-col">
-                    <div class="aspect-video rounded-2xl overflow-hidden mb-6 shadow-lg bg-black flex justify-center">
-                        <iframe class="h-full aspect-[9/16]" src="https://www.youtube.com/embed/VKiz-sVO2-I" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex-grow space-y-4">
-                        <h3 class="text-2xl font-bold text-white">
-                            <span class="en-content">Engagement-Driven Short Drama</span>
-                            <span class="ko-content font-bold">몰입형 숏드라마 (세로형)</span>
-                        </h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light text-slate-400">
-                            <span class="en-content">Next-level storytelling for mobile-first audiences.<br>
-                                Compelling narratives in vertical format.</span>
-                            <span class="ko-content font-light">모바일에 최적화된 차세대 스토리텔링입니다.<br>
-                                탄탄한 구성의 세로형 내러티브 영상을 제작합니다.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Final Contact Area -->
-    <section id="contact" class="py-32">
-        <div class="max-w-4xl mx-auto px-6">
-            <div class="bg-blue-600 rounded-[3rem] p-12 md:p-20 text-center shadow-2xl shadow-blue-600/30">
-                <h2 class="text-4xl font-bold mb-8 text-white">
-                    <span class="en-content tracking-tighter">Ready to Start?</span>
-                    <span class="ko-content font-bold">프로젝트를 시작할까요?</span>
-                </h2>
-                <div class="space-y-4 max-w-md mx-auto text-center">
-                    <div class="text-white text-xl font-bold select-all mb-6">editbaymedia@gmail.com</div>
-                    <a href="mailto:editbaymedia@gmail.com" class="block w-full bg-white text-blue-600 font-bold py-4 rounded-xl hover:bg-slate-100 transition-all uppercase tracking-widest text-center">
-                        <span class="en-content">Send Email</span><span class="ko-content font-bold">이메일 보내기</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <footer>
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.
+            <a href="admin-invoice.html">ADMIN</a>
+        </p>
+    </footer>
 
     <script>
-/* 
-   EditBay Media Language Manager 
-   로컬 스토리지를 사용하여 페이지 이동 시에도 언어 설정을 유지합니다.
-*/
-
-// 1. 페이지 로드 시 즉시 실행하여 깜빡임 최소화
 (function() {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
     document.documentElement.className = savedLang + '-mode';
 })();
 
-// 2. DOM이 완전히 로드된 후 버튼 상태 업데이트
 document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
     updateButtonState(savedLang);
 });
 
-// 3. 언어 변경 함수 (버튼 클릭 시 호출)
 function changeLang(lang) {
-    // 로컬 스토리지에 저장
     localStorage.setItem('editbay_lang', lang);
-    
-    // HTML 클래스 교체
     document.documentElement.className = lang + '-mode';
-    
-    // 버튼 UI 업데이트
     updateButtonState(lang);
 }
 
-// 4. 버튼 활성화 상태 표시 함수
 function updateButtonState(lang) {
     const btnEn = document.getElementById('btn-en');
     const btnKo = document.getElementById('btn-ko');
-
     if (btnEn && btnKo) {
         if (lang === 'ko') {
             btnKo.classList.add('active');
@@ -423,31 +350,6 @@ function updateButtonState(lang) {
         }
     }
 }
-    </script>
-        <!-- Footer: 관리자 숨김 링크 추가 -->
-    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase">
-        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED. 
-            <!-- 마우스를 올려야만 보이는 투명한 관리자 링크 -->
-            <a href="admin-invoice.html" class="ml-2 opacity-0 hover:opacity-100 transition-opacity cursor-default">ADMIN</a>
-        </p>
-    </footer>
-
-    <script>
-        function changeLang(lang) {
-            const html = document.documentElement;
-            const btnEn = document.getElementById('btn-en');
-            const btnKo = document.getElementById('btn-ko');
-
-            if(lang === 'ko') {
-                html.className = 'ko-mode';
-                btnKo.classList.add('active');
-                btnEn.classList.remove('active');
-            } else {
-                html.className = 'en-mode';
-                btnEn.classList.add('active');
-                btnKo.classList.remove('active');
-            }
-        }
     </script>
 </body>
 </html>
