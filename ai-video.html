@@ -4,378 +4,479 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video Pricing | EditBay Media</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
+
         :root {
-            --accent: #3b82f6; 
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.1);
             --bg-dark: #050a14;
             --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --text-faint: #64748b;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
+
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+        ul { list-style: none; }
+
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .wrap-md { max-width: 1024px; margin: 0 auto; padding: 0 24px; }
+        .wrap-sm { max-width: 896px; margin: 0 auto; padding: 0 24px; }
 
         /* --- 언어 제어 로직 --- */
         .en-content, .ko-content { display: none !important; }
         .en-mode .en-content { display: block !important; }
-        .en-mode span.en-content, .en-mode a.en-content, .en-mode div.en-content { display: block !important; }
         .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
         .ko-mode .ko-content { display: block !important; }
-        .ko-mode span.ko-content, .ko-mode a.ko-content, .ko-mode div.ko-content { display: block !important; }
         .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
 
+        /* --- Nav --- */
         .glass-nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
             background: rgba(5, 10, 20, 0.85);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
+        .nav-logo:hover img { opacity: .8; }
+        .nav-right { display: flex; align-items: center; gap: 32px; }
+        .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
+        .nav-links a { transition: color .2s; }
+        .nav-links a:hover { color: #60a5fa; }
+        @media (max-width: 767px) { .nav-links { display: none; } }
 
-        .price-card {
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2.5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .lang-switch {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 12px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
         }
-        .price-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-10px);
-            background: rgba(59, 130, 246, 0.05);
-            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.2);
-        }
+        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; opacity: 0.4; color: var(--text-main); transition: opacity .3s; }
+        .lang-btn.active { opacity: 1; color: var(--accent); }
+        .lang-divider { color: rgba(255,255,255,0.1); font-size: 10px; }
 
-        .lang-btn {
-            font-size: 0.75rem;
-            font-weight: 600;
-            opacity: 0.4;
-            transition: opacity 0.3s;
-        }
-        .lang-btn.active {
-            opacity: 1;
+        /* --- Hero --- */
+        #hero { padding: 160px 0 72px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .hero-badge {
+            display: inline-block; margin-bottom: 24px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
             color: var(--accent);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 999px; padding: 6px 16px;
         }
+        .hero-text h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #fff; }
+        .hero-text p { margin-top: 20px; color: var(--text-dim); font-size: clamp(16px, 2vw, 19px); font-weight: 300; line-height: 1.7; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+        /* --- Pricing --- */
+        #pricing { padding: 80px 0 24px; }
+        .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
+        @media (max-width: 900px) { .price-grid { grid-template-columns: 1fr; } }
+
+        .video-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .video-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(59,130,246,0.25); }
+
+        .price-card { padding: 40px 32px; position: relative; display: flex; flex-direction: column; }
+        .price-card.popular { border-color: rgba(59,130,246,0.4); }
+        .price-card-wrap { position: relative; height: 100%; }
+        .price-card-wrap.popular { padding-top: 16px; display: flex; flex-direction: column; }
+        .price-card-wrap.popular .video-card { flex: 1; }
+        .popular-badge {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            z-index: 2;
+            background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: 999px;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+        }
+        .price-card h3 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .price-card .desc { color: var(--text-dim); font-size: 13.5px; font-weight: 300; margin-bottom: 24px; min-height: 40px; }
+        .price-card .amount { font-size: 34px; font-weight: 700; color: #fff; }
+        .price-card .amount .kr-price { display: block; font-size: 13px; color: var(--text-faint); font-weight: 400; margin-top: 4px; }
+        .price-card ul { margin: 24px 0 32px; flex-grow: 1; }
+        .price-card li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5; }
+        .price-card li i { color: var(--accent); font-size: 12px; margin-top: 3px; }
+        .price-card .btn {
+            display: block; text-align: center; padding: 14px; border-radius: 12px;
+            background: var(--accent); color: #fff; font-weight: 700; font-size: 13px;
+            letter-spacing: 0.05em; text-transform: uppercase; transition: background .2s;
+        }
+        .price-card .btn:hover { background: #2563eb; }
+
+        .price-note {
+            max-width: 720px; margin: 40px auto 0; text-align: center;
+            color: var(--text-faint); font-size: 13px; font-weight: 300; line-height: 1.8;
+        }
+
+        /* --- Process --- */
+        #process { padding: 96px 0 64px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .section-title { text-align: center; margin-bottom: 56px; }
+        .section-title h2 { font-size: 32px; font-weight: 700; color: #fff; }
+        .section-title h2 .ko-content { font-size: 28px; }
+
+        .process-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .process-grid { grid-template-columns: repeat(2, 1fr); } }
+        .process-step { text-align: center; }
+        .process-step .num { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 12px; }
+        .process-step p { font-size: 13.5px; color: var(--text-dim); font-weight: 300; line-height: 1.6; }
+
+        .process-footnote {
+            max-width: 640px; margin: 40px auto 0; text-align: center;
+            color: var(--text-faint); font-size: 12.5px; font-style: italic; line-height: 1.7;
+        }
+
+        /* --- Turnaround --- */
+        #turnaround { padding: 56px 0; }
+        .info-box { padding: 36px 40px; }
+        .info-box h3 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .info-box p { font-size: 13.5px; color: var(--text-dim); font-weight: 300; line-height: 1.8; }
+
+        /* --- Add-ons --- */
+        #addons { padding: 24px 0 96px; }
+        .addon-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media (max-width: 700px) { .addon-grid { grid-template-columns: 1fr; } }
+        .addon-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 24px; border-radius: 16px;
+        }
+        .addon-item span.name { font-size: 14px; color: var(--text-main); font-weight: 500; }
+        .addon-item span.price { font-size: 14px; color: var(--accent); font-weight: 700; }
+
+        /* --- Portfolio --- */
+        #portfolio { padding: 40px 0 96px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .group-label { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+        .group-label span { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; }
+        .group-label .rule { height: 1px; background: rgba(255,255,255,0.05); flex-grow: 1; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-bottom: 64px; }
+        @media (max-width: 767px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .card-h { padding: 24px; }
+        .card-h .thumb { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .card-v { padding: 16px; max-width: 320px; }
+        .card-v .thumb { aspect-ratio: 9/16; border-radius: 16px; overflow: hidden; margin-bottom: 16px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .thumb iframe { width: 100%; height: 100%; border: 0; }
+        .card-h h3 { font-size: 18px; font-weight: 700; color: #fff; }
+        .card-v h3 { font-size: 14px; font-weight: 700; color: #fff; }
+        .card-tag { display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #60a5fa; }
+
+        .grid-4v { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .grid-4v { grid-template-columns: repeat(2, 1fr); } }
+        .card-v.placeholder { border-style: dashed; border-color: rgba(255,255,255,0.1); }
+        .card-v.placeholder .thumb { display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 12px; text-align: center; padding: 12px; }
+
+        /* --- Contact CTA --- */
+        #contact { padding: 0 0 96px; }
+        .cta-box { background: var(--accent); border-radius: 48px; padding: 48px 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(59,130,246,0.3); }
+        @media (min-width: 768px) { .cta-box { padding: 80px; } }
+        .cta-box h2 { font-size: 34px; font-weight: 700; color: #fff; margin-bottom: 32px; }
+        .cta-inner { max-width: 448px; margin: 0 auto; }
+        .cta-email { color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+        .cta-btn { display: block; width: 100%; background: #fff; color: var(--accent); font-weight: 700; padding: 16px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.08em; text-align: center; transition: background .2s; }
+        .cta-btn:hover { background: #f1f5f9; }
+        .cta-btn.ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.4); margin-top: 12px; }
+        .cta-btn.ghost:hover { background: rgba(255,255,255,0.1); }
+
+        footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+        footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
+        footer a:hover { opacity: 1; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-nav">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center">
-                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+    <nav class="glass-nav">
+        <div class="nav-inner wrap">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="EditBay Logo">
             </a>
-            
-            <div class="flex items-center gap-8">
-                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
-                    <a href="works.html" class="en-content hover:text-blue-400 transition">WORKS</a>
-                    <a href="works.html" class="ko-content hover:text-blue-400 transition">작업물</a>
-                    
-                    <a href="services.html" class="en-content text-blue-400 transition">SERVICES</a>
-                    <a href="services.html" class="ko-content text-blue-400 transition">서비스</a>
-
-                    <a href="contact.html" class="en-content hover:text-blue-400 transition">CONTACT</a>
-                    <a href="contact.html" class="ko-content hover:text-blue-400 transition font-medium text-sm">문의하기</a>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="services.html" class="en-content">SERVICES</a>
+                    <a href="services.html" class="ko-content">서비스</a>
+                    <a href="contact.html" class="en-content">CONTACT</a>
+                    <a href="contact.html" class="ko-content">문의하기</a>
                 </div>
-                
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                <div class="lang-switch">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <span class="text-white/10 text-[10px]">|</span>
+                    <span class="lang-divider">|</span>
                     <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="pt-40 pb-16 text-center">
-        <div class="max-w-4xl mx-auto px-6">
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8">
-                <span class="en-content">AI Video <span class="text-blue-500">Pricing</span></span>
-                <span class="ko-content">AI 비디오 <span class="text-blue-500">가격 안내</span></span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl font-light">
-                <span class="en-content">Cutting-edge AI visuals to redefine your brand storytelling.</span>
-                <span class="ko-content">최첨단 AI 비주얼로 브랜드 스토리텔링의 한계를 넓히세요.</span>
-            </p>
+    <!-- 1. Hero -->
+    <section id="hero" class="wrap-sm">
+        <div class="hero-badge">
+            <span class="en-content">Services / AI Video Solutions</span>
+            <span class="ko-content">서비스 / AI 비디오 솔루션</span>
         </div>
-    </header>
-
-    <!-- Pricing Grid -->
-    <main class="max-w-7xl mx-auto px-6 pb-20">
-        <div class="grid lg:grid-cols-3 gap-8">
-            
-            <!-- Plan 1: Basic -->
-            <div class="price-card p-10 flex flex-col">
-                <div class="mb-8">
-                    <h3 class="text-2xl font-bold mb-2">Basic</h3>
-                    <p class="text-slate-500 text-sm">
-                        <span class="en-content">Quick, punchy AI videos for short messages.</span>
-                        <span class="ko-content">짧은 메시지 전달에 적합한 간결한 AI 영상입니다.</span>
-                    </p>
-                </div>
-                <div class="mb-8">
-                    <div class="en-content">
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                        <span class="text-4xl font-bold text-white">$100</span>
-                    </div>
-                    <div class="ko-content">
-                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                        <span class="text-4xl font-bold text-white">$100</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">~15 Seconds</span><span class="ko-content">15초 내외</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Ideal for Short, Punchy Messages</span><span class="ko-content">짧은 메시지 전달에 적합</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Simple Story Structure</span><span class="ko-content">간단한 스토리 구성</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
-                </ul>
-                <a href="contact.html" class="w-full py-4 text-center border border-blue-500/30 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all uppercase tracking-widest text-xs">
-                    <span class="en-content">Select Plan</span><span class="ko-content font-bold">선택하기</span>
-                </a>
+        <div class="hero-text">
+            <div class="en-content">
+                <h1>AI Video Pricing</h1>
+                <p>Cutting-edge AI visuals to redefine your brand storytelling.</p>
             </div>
-
-            <!-- Plan 2: Standard -->
-            <div class="price-card p-10 flex flex-col border-blue-500/50 bg-blue-500/5 relative scale-105 z-10">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-4 py-1 rounded-full tracking-widest uppercase">Most Popular</div>
-                <div class="mb-8">
-                    <h3 class="text-2xl font-bold mb-2">Standard</h3>
-                    <p class="text-slate-500 text-sm">
-                        <span class="en-content">AI-narrated videos with branded polish.</span>
-                        <span class="ko-content">AI 나레이션과 브랜드 맞춤 효과가 포함된 영상입니다.</span>
-                    </p>
-                </div>
-                <div class="mb-8">
-                    <div class="en-content">
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                        <span class="text-4xl font-bold text-white">$300</span>
-                    </div>
-                    <div class="ko-content">
-                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                        <span class="text-4xl font-bold text-white">$300</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-200 font-light">
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">~30 Seconds</span><span class="ko-content">30초 내외</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
-                </ul>
-                <a href="contact.html" class="w-full py-4 text-center bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20 uppercase tracking-widest text-xs">
-                    <span class="en-content">Select Plan</span><span class="ko-content font-bold">선택하기</span>
-                </a>
+            <div class="ko-content">
+                <h1>AI 비디오 가격 안내</h1>
+                <p>최첨단 AI 비주얼로 브랜드 스토리텔링의 한계를 넓히세요.</p>
             </div>
-
-            <!-- Plan 3: Premium -->
-            <div class="price-card p-10 flex flex-col">
-                <div class="mb-8">
-                    <h3 class="text-2xl font-bold mb-2">Premium</h3>
-                    <p class="text-slate-500 text-sm">
-                        <span class="en-content">Extended AI storytelling for deeper brand impact.</span>
-                        <span class="ko-content">더 깊은 브랜드 임팩트를 위한 확장형 AI 스토리텔링입니다.</span>
-                    </p>
-                </div>
-                <div class="mb-8">
-                    <div class="en-content">
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                        <span class="text-4xl font-bold text-white">$500</span>
-                    </div>
-                    <div class="ko-content">
-                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                        <span class="text-4xl font-bold text-white">$500</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">~60 Seconds</span><span class="ko-content">1분 내외</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-blue-500"></i> <span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
-                </ul>
-                <a href="contact.html" class="w-full py-4 text-center border border-blue-500/30 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all uppercase tracking-widest text-xs">
-                    <span class="en-content">Select Plan</span><span class="ko-content font-bold">선택하기</span>
-                </a>
-            </div>
-        </div>
-
-        <p class="text-center text-slate-500 text-xs mt-10 uppercase tracking-widest">
-            <span class="en-content">All plans include Licensed AI Music and 2 Rounds of Revisions. Available in Horizontal or Vertical format, delivered in 1080p.</span>
-            <span class="ko-content">모든 플랜에 라이센스드 AI 음악 및 수정 2회가 공통으로 포함됩니다. 가로형/세로형 모두 제작 가능하며, 1080p 화질로 제공됩니다.</span>
-        </p>
-    </main>
-
-    <!-- Production Process -->
-    <section class="mb-32">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold uppercase tracking-[0.2em] mb-4">
-                    <span class="en-content">Production <span class="text-blue-500">Process</span></span>
-                    <span class="ko-content">제작 <span class="text-blue-500">프로세스</span></span>
-                </h2>
-                <div class="h-1 w-20 bg-blue-600 mx-auto"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
-                <!-- Step 1 -->
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-slate-900 border border-white/10 rounded-full flex items-center justify-center mx-auto text-blue-500 shadow-xl">
-                        <i class="fas fa-comments text-xl"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm mb-2">01</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed px-2">
-                            <span class="en-content">Discuss your desired style and concept.</span>
-                            <span class="ko-content">원하시는 스타일 및 콘셉트 논의</span>
-                        </p>
-                    </div>
-                </div>
-                <!-- Step 2 -->
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-slate-900 border border-white/10 rounded-full flex items-center justify-center mx-auto text-blue-500 shadow-xl">
-                        <i class="fas fa-images text-xl"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm mb-2">02</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed px-2">
-                            <span class="en-content">Storyboard and draft AI model images delivered.</span>
-                            <span class="ko-content">스토리보드 및 AI 모델 이미지 초안 전달</span>
-                        </p>
-                    </div>
-                </div>
-                <!-- Step 3 -->
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-slate-900 border border-white/10 rounded-full flex items-center justify-center mx-auto text-blue-500 shadow-xl">
-                        <i class="fas fa-pen-to-square text-xl"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm mb-2">03</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed px-2">
-                            <span class="en-content">Revisions applied based on your feedback.</span>
-                            <span class="ko-content">피드백 반영해서 수정</span>
-                        </p>
-                    </div>
-                </div>
-                <!-- Step 4 -->
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-slate-900 border border-white/10 rounded-full flex items-center justify-center mx-auto text-blue-500 shadow-xl">
-                        <i class="fas fa-clapperboard text-xl"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm mb-2">04</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed px-2">
-                            <span class="en-content">Video production based on the finalized images.</span>
-                            <span class="ko-content">최종 확정 이미지 기반 영상화 또는 활용 포맷 제작</span>
-                        </p>
-                    </div>
-                </div>
-                <!-- Step 5 -->
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-blue-600 border border-blue-400 rounded-full flex items-center justify-center mx-auto text-white shadow-xl shadow-blue-600/30">
-                        <i class="fas fa-cloud-arrow-down text-xl"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm mb-2 text-blue-400 uppercase">05</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed px-2">
-                            <span class="en-content">Final deliverable handover.</span>
-                            <span class="ko-content">최종 결과물 전달</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-center text-slate-500 text-xs mt-10 italic max-w-2xl mx-auto">
-                <span class="en-content">*Once images are finalized, video production begins and further image changes cannot be made.</span>
-                <span class="ko-content">*이미지 확정 후에는 영상화 작업이 진행되며, 이후 이미지 변경은 불가합니다.</span>
-            </p>
         </div>
     </section>
 
-    <!-- Turnaround Time -->
-    <section class="max-w-4xl mx-auto px-6 pb-20">
-        <div class="bg-white/5 rounded-[2.5rem] p-10 border border-white/5 text-center">
-            <h3 class="text-xl font-bold mb-6 uppercase tracking-widest text-blue-400">
-                <span class="en-content">Turnaround Time</span>
-                <span class="ko-content">작업 기간 안내</span>
-            </h3>
-            <p class="text-slate-400 text-sm leading-relaxed font-light">
+    <!-- 2. Pricing -->
+    <section id="pricing" class="wrap">
+        <div class="price-grid">
+            <div class="video-card price-card">
+                <h3><span class="en-content">Basic</span><span class="ko-content">베이직</span></h3>
+                <p class="desc">
+                    <span class="en-content">Quick, punchy AI videos for short messages.</span>
+                    <span class="ko-content">짧은 메시지 전달에 적합한 간결한 AI 영상입니다.</span>
+                </p>
+                <div class="amount">$100+<span class="kr-price">시작가 $100</span></div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">~15 Seconds</span><span class="ko-content">15초 내외</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">Ideal for Short, Punchy Messages</span><span class="ko-content">짧은 메시지 전달에 적합</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">Simple Story Structure</span><span class="ko-content">간단한 스토리 구성</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
+                </ul>
+                <a href="contact.html" class="btn"><span class="en-content">Select Plan</span><span class="ko-content">선택하기</span></a>
+            </div>
+
+            <div class="price-card-wrap popular">
+                <span class="popular-badge"><span class="en-content">Most Popular</span><span class="ko-content">인기</span></span>
+                <div class="video-card price-card popular">
+                    <h3><span class="en-content">Standard</span><span class="ko-content">스탠다드</span></h3>
+                    <p class="desc">
+                        <span class="en-content">AI-narrated videos with branded polish.</span>
+                        <span class="ko-content">AI 나레이션과 브랜드 맞춤 효과가 포함된 영상입니다.</span>
+                    </p>
+                    <div class="amount">$300+<span class="kr-price">시작가 $300</span></div>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i><span class="en-content">~30 Seconds</span><span class="ko-content">30초 내외</span></li>
+                        <li><i class="fa-solid fa-check"></i><span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
+                        <li><i class="fa-solid fa-check"></i><span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
+                        <li><i class="fa-solid fa-check"></i><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
+                        <li><i class="fa-solid fa-check"></i><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
+                    </ul>
+                    <a href="contact.html" class="btn"><span class="en-content">Select Plan</span><span class="ko-content">선택하기</span></a>
+                </div>
+            </div>
+
+            <div class="video-card price-card">
+                <h3><span class="en-content">Premium</span><span class="ko-content">프리미엄</span></h3>
+                <p class="desc">
+                    <span class="en-content">Extended AI storytelling for deeper brand impact.</span>
+                    <span class="ko-content">더 깊은 브랜드 임팩트를 위한 확장형 AI 스토리텔링입니다.</span>
+                </p>
+                <div class="amount">$500+<span class="kr-price">시작가 $500</span></div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">~60 Seconds</span><span class="ko-content">1분 내외</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
+                    <li><i class="fa-solid fa-check"></i><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
+                </ul>
+                <a href="contact.html" class="btn"><span class="en-content">Select Plan</span><span class="ko-content">선택하기</span></a>
+            </div>
+        </div>
+
+        <p class="price-note">
+            <span class="en-content">All plans include Licensed AI Music and 2 Rounds of Revisions.<br>Available in Horizontal or Vertical format, delivered in 1080p.</span>
+            <span class="ko-content">모든 플랜에 라이센스드 AI 음악 및 수정 2회가 공통으로 포함됩니다.<br>가로형/세로형 모두 제작 가능하며, 1080p 화질로 제공됩니다.</span>
+        </p>
+    </section>
+
+    <!-- 3. Production Process -->
+    <section id="process" class="wrap-md">
+        <div class="section-title">
+            <h2><span class="en-content">Production Process</span><span class="ko-content">제작 프로세스</span></h2>
+        </div>
+        <div class="process-grid">
+            <div class="process-step">
+                <div class="num">01</div>
+                <p><span class="en-content">Discuss your desired style and concept.</span><span class="ko-content">원하시는 스타일 및 콘셉트 논의</span></p>
+            </div>
+            <div class="process-step">
+                <div class="num">02</div>
+                <p><span class="en-content">Storyboard and draft AI model images delivered.</span><span class="ko-content">스토리보드 및 AI 모델 이미지 초안 전달</span></p>
+            </div>
+            <div class="process-step">
+                <div class="num">03</div>
+                <p><span class="en-content">Revisions applied based on your feedback.</span><span class="ko-content">피드백 반영해서 수정</span></p>
+            </div>
+            <div class="process-step">
+                <div class="num">04</div>
+                <p><span class="en-content">Video production based on the finalized images.</span><span class="ko-content">최종 확정 이미지 기반 영상화 또는 활용 포맷 제작</span></p>
+            </div>
+            <div class="process-step">
+                <div class="num">05</div>
+                <p><span class="en-content">Final deliverable handover.</span><span class="ko-content">최종 결과물 전달</span></p>
+            </div>
+        </div>
+        <p class="process-footnote">
+            <span class="en-content">*Once images are finalized, video production begins and further image changes cannot be made.</span>
+            <span class="ko-content">*이미지 확정 후에는 영상화 작업이 진행되며, 이후 이미지 변경은 불가합니다.</span>
+        </p>
+    </section>
+
+    <!-- 4. Turnaround -->
+    <section id="turnaround" class="wrap-md">
+        <div class="video-card info-box">
+            <h3><span class="en-content">Turnaround Time</span><span class="ko-content">작업 기간 안내</span></h3>
+            <p>
                 <span class="en-content">Each stage of the process is delivered within 2-3 business days, with the full project typically completed in about 7 business days.<br>Feedback review time and revision turnaround may extend this timeline, so the overall schedule can vary depending on the situation.</span>
                 <span class="ko-content">각 프로세스 별로 작업일 2~3일 내의 결과물 전달을 원칙으로 하며, 전체 프로젝트는 업무일 기준 약 7일 내외로 예상됩니다.<br>피드백 대기 시간 및 수정 반영 일정은 별도로 소요될 수 있어, 상황에 따라 전체 일정은 유동적으로 조정될 수 있습니다.</span>
             </p>
         </div>
     </section>
 
-    <!-- Additional AI Options -->
-    <section class="max-w-4xl mx-auto px-6 pb-32">
-        <div class="bg-white/5 rounded-[2.5rem] p-10 border border-white/5">
-            <h3 class="text-xl font-bold mb-8 text-center uppercase tracking-widest text-blue-400">AI Add-on Services</h3>
-            <div class="grid md:grid-cols-2 gap-6 text-sm">
-                <div class="flex justify-between p-4 border-b border-white/5">
-                    <span class="text-slate-400">AI Avatar Creation</span>
-                    <span class="font-bold">+$200</span>
-                </div>
-                <div class="flex justify-between p-4 border-b border-white/5">
-                    <span class="text-slate-400">Multilingual AI Voice Dubbing</span>
-                    <span class="font-bold">+$150</span>
-                </div>
-                <div class="flex justify-between p-4 border-b border-white/5">
-                    <span class="text-slate-400">AI Upscaling to 4K/8K</span>
-                    <span class="font-bold">+$100</span>
-                </div>
-                <div class="flex justify-between p-4 border-b border-white/5">
-                    <span class="text-slate-400">Custom AI Scriptwriting</span>
-                    <span class="font-bold">+$50</span>
-                </div>
+    <!-- 5. Add-ons -->
+    <section id="addons" class="wrap-md">
+        <div class="section-title" style="margin-bottom:32px;">
+            <h2 style="font-size:22px;"><span class="en-content">AI Add-on Services</span><span class="ko-content">AI 부가 서비스</span></h2>
+        </div>
+        <div class="addon-grid">
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">AI Avatar Creation</span><span class="ko-content">AI 아바타 제작</span></span>
+                <span class="price">+$200</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">Multilingual AI Voice Dubbing</span><span class="ko-content">다국어 AI 더빙</span></span>
+                <span class="price">+$150</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">AI Upscaling to 4K/8K</span><span class="ko-content">AI 4K/8K 업스케일링</span></span>
+                <span class="price">+$100</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">Custom AI Scriptwriting</span><span class="ko-content">커스텀 AI 스크립트 작성</span></span>
+                <span class="price">+$50</span>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase border-t border-white/5">
-        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
-        <div class="mt-4">
-            <a href="services.html" class="text-slate-500 hover:text-blue-500 transition lowercase italic">← back to services</a>
+    <!-- 6. Portfolio -->
+    <main id="portfolio" class="wrap">
+        <div class="section-title">
+            <h2><span class="en-content">Related Work</span><span class="ko-content">관련 작업물</span></h2>
         </div>
+
+        <div class="group-label">
+            <span><span class="en-content">Branded Film</span><span class="ko-content">브랜디드 필름</span></span>
+            <div class="rule"></div>
+        </div>
+        <div class="grid-2">
+            <div class="video-card card-h">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/-yapoXm91tw" title="AI Branded Film 01" allowfullscreen></iframe></div>
+                <h3>AI Branded Film 01</h3>
+                <span class="card-tag">AI Creative</span>
+            </div>
+            <div class="video-card card-h">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/xOZfN9Vf-88" title="AI Branded Film 02" allowfullscreen></iframe></div>
+                <h3>AI Branded Film 02</h3>
+                <span class="card-tag">AI Creative</span>
+            </div>
+        </div>
+
+        <div class="group-label">
+            <span><span class="en-content">Short Form Ads</span><span class="ko-content">숏폼 광고</span></span>
+            <div class="rule"></div>
+        </div>
+        <div class="grid-4v">
+            <div class="video-card card-v">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/aGynKYvXTwY" title="AI Short Form AD 01" allowfullscreen></iframe></div>
+                <h3>AI Short Form AD 01</h3>
+                <span class="card-tag">AI Creative</span>
+            </div>
+            <div class="video-card card-v">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/yS5tJiP8I2M" title="AI Short Form AD 02" allowfullscreen></iframe></div>
+                <h3>AI Short Form AD 02</h3>
+                <span class="card-tag">AI Creative</span>
+            </div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3>AI Short Form AD 03</h3>
+                <span class="card-tag">AI Creative</span>
+            </div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3>AI Short Form AD 04</h3>
+                <span class="card-tag">AI Creative</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- 7. Contact CTA -->
+    <section id="contact" class="wrap-sm">
+        <div class="cta-box">
+            <h2><span class="en-content">Let's Create Something Extraordinary</span><span class="ko-content">압도적인 결과물을 함께 만드세요</span></h2>
+            <div class="cta-inner">
+                <div class="cta-email">editbaymedia@gmail.com</div>
+                <a href="mailto:editbaymedia@gmail.com" class="cta-btn">
+                    <span class="en-content">Send Email</span><span class="ko-content">이메일 보내기</span>
+                </a>
+                <a href="services.html" class="cta-btn ghost">
+                    <span class="en-content">← Back to Services</span><span class="ko-content">← 서비스로 돌아가기</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.
+            <a href="admin-invoice.html">ADMIN</a>
+        </p>
     </footer>
 
     <script>
-        /* EditBay Media Language Manager */
-        (function() {
-            const savedLang = localStorage.getItem('editbay_lang') || 'en';
-            document.documentElement.className = savedLang + '-mode';
-        })();
+(function() {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    document.documentElement.className = savedLang + '-mode';
+})();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('editbay_lang') || 'en';
-            updateButtonState(savedLang);
-        });
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    updateButtonState(savedLang);
+});
 
-        function changeLang(lang) {
-            localStorage.setItem('editbay_lang', lang);
-            document.documentElement.className = lang + '-mode';
-            updateButtonState(lang);
+function changeLang(lang) {
+    localStorage.setItem('editbay_lang', lang);
+    document.documentElement.className = lang + '-mode';
+    updateButtonState(lang);
+}
+
+function updateButtonState(lang) {
+    const btnEn = document.getElementById('btn-en');
+    const btnKo = document.getElementById('btn-ko');
+    if (btnEn && btnKo) {
+        if (lang === 'ko') {
+            btnKo.classList.add('active');
+            btnEn.classList.remove('active');
+        } else {
+            btnEn.classList.add('active');
+            btnKo.classList.remove('active');
         }
-
-        function updateButtonState(lang) {
-            const btnEn = document.getElementById('btn-en');
-            const btnKo = document.getElementById('btn-ko');
-
-            if (btnEn && btnKo) {
-                if (lang === 'ko') {
-                    btnKo.classList.add('active');
-                    btnEn.classList.remove('active');
-                } else {
-                    btnEn.classList.add('active');
-                    btnKo.classList.remove('active');
-                }
-            }
-        }
+    }
+}
     </script>
 </body>
 </html>
