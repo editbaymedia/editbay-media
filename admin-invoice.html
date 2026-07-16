@@ -276,16 +276,16 @@
                     <tr>
                         <th style="width:14%;">날짜</th>
                         <th style="width:14%;">담당자</th>
-                        <th style="width:20%;">Services</th>
-                        <th style="width:18%;">Package</th>
-                        <th style="width:12%;">Price</th>
+                        <th style="width:32%;">항목</th>
+                        <th style="width:14%;">Price</th>
                         <th style="width:10%;">갯수</th>
-                        <th style="width:12%;">합계</th>
+                        <th style="width:14%;">합계</th>
                         <th style="width:24px;"></th>
                     </tr>
                 </thead>
                 <tbody id="invoiceBody"></tbody>
             </table>
+            <datalist id="itemPresets"></datalist>
             <button class="btn ghost small" id="addLineBtn">+ 인보이스 항목 추가</button>
             <div class="invoice-total">합계: <span id="invoiceSum">CA$0.00</span></div>
         </div>
@@ -325,8 +325,24 @@ function setSyncStatus(text, ok) {
     if (banner) banner.style.display = getEndpoint() ? 'none' : 'block';
 }
 
+const DEFAULT_ITEM_PRESETS = ['Basic', 'Standard', 'Premium', 'AI photo to video'];
+
 function normalizeInvoice(i) {
-    return { ...i, price: Number(i.price) || 0, qty: Number(i.qty) || 1 };
+    let item = i.item;
+    if (!item && (i.service || i.package)) {
+        item = [i.service, i.package].filter(Boolean).join(' - ');
+    }
+    return { ...i, item: item || '', price: Number(i.price) || 0, qty: Number(i.qty) || 1 };
+}
+
+function getItemPresets() {
+    const used = db.invoices.map(i => i.item).filter(Boolean);
+    return [...new Set([...DEFAULT_ITEM_PRESETS, ...used])].sort();
+}
+
+function renderItemPresets() {
+    document.getElementById('itemPresets').innerHTML =
+        getItemPresets().map(v => `<option value="${v}">`).join('');
 }
 
 async function fetchRemote() {
@@ -451,14 +467,15 @@ function renderInvoiceRows() {
         <tr data-item-id="${item.id}">
             <td><input type="date" value="${item.date || ''}" data-field="date"></td>
             <td><input type="text" value="${item.person || ''}" data-field="person"></td>
-            <td><input type="text" value="${item.service || ''}" data-field="service"></td>
-            <td><input type="text" value="${item.package || ''}" data-field="package"></td>
+            <td><input type="text" value="${item.item || ''}" data-field="item" list="itemPresets" placeholder="Basic / Standard / 직접 입력..."></td>
             <td><input type="number" step="0.01" value="${item.price || 0}" data-field="price"></td>
             <td><input type="number" step="1" value="${item.qty || 1}" data-field="qty"></td>
             <td class="line-total">${fmt((Number(item.price) || 0) * (Number(item.qty) || 0))}</td>
             <td><button class="rm-btn" data-remove="${item.id}">✕</button></td>
         </tr>
     `).join('');
+
+    renderItemPresets();
 
     body.querySelectorAll('input').forEach(inp => {
         inp.addEventListener('input', (e) => {
@@ -531,7 +548,7 @@ document.getElementById('overlay').addEventListener('click', (e) => { if (e.targ
 
 document.getElementById('addLineBtn').addEventListener('click', () => {
     const pid = editingId || '__draft__';
-    db.invoices.push({ id: uid(), projectId: pid, date: document.getElementById('f_date').value, person: '', service: '', package: '', price: 0, qty: 1 });
+    db.invoices.push({ id: uid(), projectId: pid, date: document.getElementById('f_date').value, person: '', item: '', price: 0, qty: 1 });
     renderInvoiceRows();
 });
 
