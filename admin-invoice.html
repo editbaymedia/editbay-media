@@ -135,6 +135,59 @@
     .invoice-total { text-align: right; font-size: 14px; font-weight: 700; padding: 8px; }
 
     footer.note { text-align: center; color: var(--text-faint); font-size: 11px; margin-top: 40px; }
+
+    /* --- Tabs --- */
+    .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .tab-btn {
+        background: none; border: none; cursor: pointer; font-family: inherit;
+        color: var(--text-faint); font-size: 13.5px; font-weight: 600;
+        padding: 10px 16px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+        transition: color .15s;
+    }
+    .tab-btn:hover { color: var(--text-dim); }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+    /* --- Stats view --- */
+    .stats-section { margin-bottom: 32px; }
+    .stats-section h2 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--text-dim); }
+    .stats-table { width: 100%; border-collapse: collapse; background: var(--panel); border-radius: 12px; overflow: hidden; }
+    .stats-table th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-faint); padding: 10px 16px; border-bottom: 1px solid var(--line); }
+    .stats-table td { padding: 10px 16px; font-size: 13.5px; border-bottom: 1px solid var(--line); }
+    .stats-table tr:last-child td { border-bottom: none; }
+    .stats-table .bar-cell { position: relative; }
+    .bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-top: 6px; width: 100%; max-width: 220px; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+
+    /* --- Invoice builder --- */
+    .invoice-builder-controls {
+        display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+        padding: 16px; margin-bottom: 20px;
+    }
+    .invoice-builder-controls select, .invoice-builder-controls input[type="date"] {
+        background: rgba(255,255,255,0.03); border: 1px solid var(--line); color: var(--text);
+        padding: 9px 12px; border-radius: 8px; font-size: 13px; font-family: inherit;
+    }
+    .preset-btns { display: flex; gap: 6px; }
+    .preset-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--text-dim); font-size: 12px; padding: 7px 12px; border-radius: 7px; cursor: pointer; font-family: inherit; }
+    .preset-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    .invoice-preview { background: #fff; color: #0a0a0a; border-radius: 14px; padding: 40px; }
+    .invoice-preview .inv-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #111; }
+    .invoice-preview .inv-head h2 { font-size: 22px; font-weight: 700; }
+    .invoice-preview .inv-head .meta { text-align: right; font-size: 12.5px; color: #555; line-height: 1.7; }
+    .invoice-preview table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .invoice-preview th { text-align: left; font-size: 11px; text-transform: uppercase; color: #777; padding: 8px 6px; border-bottom: 1px solid #ddd; }
+    .invoice-preview td { padding: 8px 6px; font-size: 13px; border-bottom: 1px solid #eee; }
+    .invoice-preview .proj-row td { font-weight: 700; background: #f7f7f7; }
+    .invoice-preview .grand-total { text-align: right; font-size: 18px; font-weight: 700; margin-top: 10px; }
+    .invoice-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 60px 20px; }
+
+    @media print {
+        body * { visibility: hidden; }
+        .invoice-preview, .invoice-preview * { visibility: visible; }
+        .invoice-preview { position: absolute; top: 0; left: 0; width: 100%; }
+    }
 </style>
 </head>
 <body>
@@ -159,6 +212,13 @@
         설정 전까지는 이 브라우저에만 데이터가 저장돼요 (localStorage).
     </div>
 
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="ledger">장부</button>
+        <button class="tab-btn" data-tab="stats">통계</button>
+        <button class="tab-btn" data-tab="invoice">인보이스 발행</button>
+    </div>
+
+    <div id="viewLedger">
     <div class="summary-row">
         <div class="summary-card">
             <div class="label">전체 매출</div>
@@ -196,11 +256,43 @@
                 <th data-sort="type">프로젝트</th>
                 <th data-sort="price">합계</th>
                 <th data-sort="status">선택</th>
+                <th>청구</th>
             </tr>
         </thead>
         <tbody id="tableBody"></tbody>
     </table>
     <div class="empty-state" id="emptyState" style="display:none;">아직 등록된 프로젝트가 없어요. "+ New"로 첫 항목을 추가해보세요.</div>
+    </div>
+
+    <div id="viewStats" style="display:none;">
+        <div class="stats-section">
+            <h2>월별 매출</h2>
+            <table class="stats-table" id="monthlyStatsTable"></table>
+        </div>
+        <div class="stats-section">
+            <h2>클라이언트별 통계</h2>
+            <table class="stats-table" id="clientStatsTable"></table>
+        </div>
+    </div>
+
+    <div id="viewInvoice" style="display:none;">
+        <div class="invoice-builder-controls">
+            <select id="invClientSelect"><option value="">클라이언트 선택</option></select>
+            <div class="preset-btns">
+                <button class="preset-btn" id="presetFirstHalf">이번달 1~15일</button>
+                <button class="preset-btn" id="presetSecondHalf">이번달 16~말일</button>
+            </div>
+            <input type="date" id="invStart">
+            <span style="color:var(--text-faint); font-size:12px;">~</span>
+            <input type="date" id="invEnd">
+            <button class="btn primary small" id="genInvoiceBtn">미리보기 생성</button>
+            <div class="spacer"></div>
+            <button class="btn ghost small" id="printInvoiceBtn" style="display:none;">🖨 인쇄/PDF</button>
+            <button class="btn ghost small" id="copyInvoiceBtn" style="display:none;">📋 텍스트 복사</button>
+            <button class="btn danger small" id="markInvoicedBtn" style="display:none;">✓ 청구완료로 표시</button>
+        </div>
+        <div id="invoicePreviewWrap"></div>
+    </div>
 
     <footer class="note">EDITBAY MEDIA — 비공개 관리자 도구. 검색엔진에 노출되지 않습니다.</footer>
 </div>
@@ -361,7 +453,7 @@ async function fetchRemote() {
         if (!('projects' in data) || !('invoices' in data)) throw new Error('예상과 다른 응답 형식: ' + text.slice(0, 200));
 
         db = {
-            projects: (data.projects || []).map(p => ({ ...p, id: String(p.id) })),
+            projects: (data.projects || []).map(p => ({ ...p, id: String(p.id), invoiced: p.invoiced === true || p.invoiced === 'TRUE' || p.invoiced === 'true' })),
             invoices: (data.invoices || []).map(i => normalizeInvoice({ ...i, id: String(i.id), projectId: String(i.projectId) }))
         };
         cacheLocally();
@@ -466,18 +558,221 @@ function renderTable() {
             <td>${p.type || ''}</td>
             <td>${fmt(computeProjectTotal(p.id))}</td>
             <td><span class="pill status-${p.status}"><span class="dot ${p.status}"></span>${statusLabel(p.status)}</span></td>
+            <td><span class="pill invoiced-toggle" data-toggle-invoiced="${p.id}" style="cursor:pointer; background:${p.invoiced ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.05)'}; color:${p.invoiced ? '#6ee7b7' : 'var(--text-faint)'};">${p.invoiced ? '청구완료' : '미청구'}</span></td>
         </tr>
     `).join('');
 
     document.getElementById('emptyState').style.display = rows.length ? 'none' : 'block';
 
     tbody.querySelectorAll('tr').forEach(tr => {
-        tr.addEventListener('click', () => openModal(tr.dataset.id));
+        tr.addEventListener('click', (e) => {
+            if (e.target.closest('[data-toggle-invoiced]')) return;
+            openModal(tr.dataset.id);
+        });
+    });
+    tbody.querySelectorAll('[data-toggle-invoiced]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const p = db.projects.find(p => p.id === el.dataset.toggleInvoiced);
+            if (!p) return;
+            p.invoiced = !p.invoiced;
+            pushRemote();
+            renderTable();
+        });
     });
 
     renderClientOptions();
     renderSummary(rows);
 }
+
+/* ============ Tabs ============ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        document.getElementById('viewLedger').style.display = tab === 'ledger' ? 'block' : 'none';
+        document.getElementById('viewStats').style.display = tab === 'stats' ? 'block' : 'none';
+        document.getElementById('viewInvoice').style.display = tab === 'invoice' ? 'block' : 'none';
+        if (tab === 'stats') renderStats();
+        if (tab === 'invoice') renderInvoiceClientOptions();
+    });
+});
+
+/* ============ Stats ============ */
+function monthKey(dateStr) { return (dateStr || '').slice(0, 7); }
+
+function renderStats() {
+    const monthMap = {};
+    db.projects.forEach(p => {
+        const key = monthKey(p.date) || '미상';
+        monthMap[key] = (monthMap[key] || 0) + computeProjectTotal(p.id);
+    });
+    const months = Object.keys(monthMap).sort().reverse();
+    const maxMonthVal = Math.max(1, ...Object.values(monthMap));
+    const monthlyTable = document.getElementById('monthlyStatsTable');
+    monthlyTable.innerHTML = `
+        <thead><tr><th>월</th><th>매출</th><th></th></tr></thead>
+        <tbody>
+        ${months.length ? months.map(m => `
+            <tr>
+                <td>${m}</td>
+                <td>${fmt(monthMap[m])}</td>
+                <td class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(monthMap[m] / maxMonthVal * 100).toFixed(0)}%"></div></div></td>
+            </tr>
+        `).join('') : `<tr><td colspan="3" style="color:var(--text-faint);">데이터가 없어요.</td></tr>`}
+        </tbody>`;
+
+    const clientMap = {};
+    db.projects.forEach(p => {
+        const key = p.client || '(미지정)';
+        if (!clientMap[key]) clientMap[key] = { total: 0, count: 0 };
+        clientMap[key].total += computeProjectTotal(p.id);
+        clientMap[key].count += 1;
+    });
+    const clients = Object.keys(clientMap).sort((a, b) => clientMap[b].total - clientMap[a].total);
+    const maxClientVal = Math.max(1, ...Object.values(clientMap).map(c => c.total));
+    const clientTable = document.getElementById('clientStatsTable');
+    clientTable.innerHTML = `
+        <thead><tr><th>클라이언트</th><th>프로젝트 수</th><th>총 매출</th><th></th></tr></thead>
+        <tbody>
+        ${clients.length ? clients.map(c => `
+            <tr>
+                <td>${c}</td>
+                <td>${clientMap[c].count}</td>
+                <td>${fmt(clientMap[c].total)}</td>
+                <td class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(clientMap[c].total / maxClientVal * 100).toFixed(0)}%"></div></div></td>
+            </tr>
+        `).join('') : `<tr><td colspan="4" style="color:var(--text-faint);">데이터가 없어요.</td></tr>`}
+        </tbody>`;
+}
+
+/* ============ Invoice Builder ============ */
+function renderInvoiceClientOptions() {
+    const clients = [...new Set(db.projects.map(p => p.client).filter(Boolean))].sort();
+    const sel = document.getElementById('invClientSelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">클라이언트 선택</option>' + clients.map(c => `<option value="${c}">${c}</option>`).join('');
+    sel.value = cur;
+}
+
+const pad2 = (n) => String(n).padStart(2, '0');
+
+document.getElementById('presetFirstHalf').addEventListener('click', () => {
+    const d = new Date();
+    const y = d.getFullYear(), m = d.getMonth() + 1;
+    document.getElementById('invStart').value = `${y}-${pad2(m)}-01`;
+    document.getElementById('invEnd').value = `${y}-${pad2(m)}-15`;
+});
+document.getElementById('presetSecondHalf').addEventListener('click', () => {
+    const d = new Date();
+    const y = d.getFullYear(), m = d.getMonth() + 1;
+    const lastDay = new Date(y, m, 0).getDate();
+    document.getElementById('invStart').value = `${y}-${pad2(m)}-16`;
+    document.getElementById('invEnd').value = `${y}-${pad2(m)}-${pad2(lastDay)}`;
+});
+
+let currentInvoiceProjectIds = [];
+
+document.getElementById('genInvoiceBtn').addEventListener('click', () => {
+    const client = document.getElementById('invClientSelect').value;
+    const start = document.getElementById('invStart').value;
+    const end = document.getElementById('invEnd').value;
+    const wrap = document.getElementById('invoicePreviewWrap');
+    const printBtn = document.getElementById('printInvoiceBtn');
+    const copyBtn = document.getElementById('copyInvoiceBtn');
+    const markBtn = document.getElementById('markInvoicedBtn');
+
+    if (!client) { alert('클라이언트를 선택해주세요.'); return; }
+    if (!start || !end) { alert('기간을 선택해주세요.'); return; }
+
+    const matched = db.projects
+        .filter(p => p.client === client && p.date >= start && p.date <= end && !p.invoiced)
+        .sort((a, b) => a.date > b.date ? 1 : -1);
+
+    if (!matched.length) {
+        wrap.innerHTML = '<div class="invoice-empty">해당 기간에 미청구 프로젝트가 없어요.<br>(이미 "청구완료"로 표시된 건은 제외됩니다)</div>';
+        printBtn.style.display = 'none';
+        copyBtn.style.display = 'none';
+        markBtn.style.display = 'none';
+        currentInvoiceProjectIds = [];
+        return;
+    }
+
+    currentInvoiceProjectIds = matched.map(p => p.id);
+    let grandTotal = 0;
+    let rowsHtml = '';
+    matched.forEach(p => {
+        const items = db.invoices.filter(i => i.projectId === p.id);
+        const projTotal = computeProjectTotal(p.id);
+        grandTotal += projTotal;
+        rowsHtml += `<tr class="proj-row"><td colspan="3">${p.date} · ${p.name}</td><td>${fmt(projTotal)}</td></tr>`;
+        items.forEach(i => {
+            rowsHtml += `<tr><td style="padding-left:20px; color:#777;">${i.item || ''}</td><td>${i.person || ''}</td><td>${fmt(i.price)} × ${i.qty}</td><td>${fmt((Number(i.price) || 0) * (Number(i.qty) || 0))}</td></tr>`;
+        });
+    });
+
+    wrap.innerHTML = `
+        <div class="invoice-preview" id="invoicePrintArea">
+            <div class="inv-head">
+                <div>
+                    <h2>EDITBAY MEDIA</h2>
+                    <div style="font-size:12px; color:#666; margin-top:4px;">editbaymedia@gmail.com</div>
+                </div>
+                <div class="meta">
+                    <div><b>Invoice To:</b> ${client}</div>
+                    <div>기간: ${start} ~ ${end}</div>
+                    <div>발행일: ${new Date().toISOString().slice(0, 10)}</div>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>항목</th><th>담당자</th><th>단가 × 수량</th><th>금액</th></tr></thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+            <div class="grand-total">합계: ${fmt(grandTotal)}</div>
+        </div>
+    `;
+
+    printBtn.style.display = 'inline-block';
+    copyBtn.style.display = 'inline-block';
+    markBtn.style.display = 'inline-block';
+});
+
+document.getElementById('printInvoiceBtn').addEventListener('click', () => window.print());
+
+document.getElementById('copyInvoiceBtn').addEventListener('click', () => {
+    const client = document.getElementById('invClientSelect').value;
+    const start = document.getElementById('invStart').value;
+    const end = document.getElementById('invEnd').value;
+    const matched = db.projects.filter(p => currentInvoiceProjectIds.includes(p.id));
+    let text = `EDITBAY MEDIA — Invoice\nTo: ${client}\n기간: ${start} ~ ${end}\n\n`;
+    let grandTotal = 0;
+    matched.forEach(p => {
+        const items = db.invoices.filter(i => i.projectId === p.id);
+        const projTotal = computeProjectTotal(p.id);
+        grandTotal += projTotal;
+        text += `${p.date}  ${p.name}  —  ${fmt(projTotal)}\n`;
+        items.forEach(i => {
+            text += `   - ${i.item || ''} (${i.person || ''}) ${fmt(i.price)} x ${i.qty} = ${fmt((Number(i.price) || 0) * (Number(i.qty) || 0))}\n`;
+        });
+    });
+    text += `\n합계: ${fmt(grandTotal)}`;
+    navigator.clipboard.writeText(text)
+        .then(() => alert('클립보드에 복사됐어요.'))
+        .catch(() => alert('복사에 실패했어요. 수동으로 선택해서 복사해주세요.'));
+});
+
+document.getElementById('markInvoicedBtn').addEventListener('click', () => {
+    if (!currentInvoiceProjectIds.length) return;
+    if (!confirm(currentInvoiceProjectIds.length + '개 프로젝트를 청구완료로 표시할까요?')) return;
+    currentInvoiceProjectIds.forEach(id => {
+        const p = db.projects.find(p => p.id === id);
+        if (p) p.invoiced = true;
+    });
+    pushRemote();
+    renderTable();
+    document.getElementById('genInvoiceBtn').click();
+});
 
 function renderInvoiceRows() {
     const items = db.invoices.filter(i => i.projectId === editingId || (editingId === null && i.projectId === '__draft__'));
@@ -585,7 +880,7 @@ document.getElementById('saveBtn').addEventListener('click', () => {
 
     if (editingId === null) {
         const newId = uid();
-        db.projects.push({ id: newId, ...fields });
+        db.projects.push({ id: newId, invoiced: false, ...fields });
         // reassign draft invoice items to the real project id
         db.invoices.forEach(i => { if (i.projectId === '__draft__') i.projectId = newId; });
     } else {
