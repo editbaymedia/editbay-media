@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video Pricing | EditBay Media</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
 
@@ -108,11 +107,11 @@
         }
         .price-card h3 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
         .price-card .desc { color: var(--text-dim); font-size: 13.5px; font-weight: 300; margin-bottom: 24px; min-height: 40px; }
-        .price-card .amount { font-size: 34px; font-weight: 700; color: #fff; }
-        .price-card .amount .kr-price { display: block; font-size: 13px; color: var(--text-faint); font-weight: 400; margin-top: 4px; }
+        .amount-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+        .amount-value { font-size: 32px; font-weight: 700; color: #fff; }
         .price-card ul { margin: 24px 0 32px; flex-grow: 1; }
         .price-card li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5; }
-        .price-card li i { color: var(--accent); font-size: 12px; margin-top: 3px; }
+        .check-icon { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; color: var(--accent); }
         .price-card .btn {
             display: block; text-align: center; padding: 14px; border-radius: 12px;
             background: var(--accent); color: #fff; font-weight: 700; font-size: 13px;
@@ -250,13 +249,19 @@
                     <span class="en-content">Quick, punchy AI videos for short messages.</span>
                     <span class="ko-content">짧은 메시지 전달에 적합한 간결한 AI 영상입니다.</span>
                 </p>
-                <div class="amount">$100+<span class="kr-price">시작가 $100</span></div>
+                <div class="amount">
+                    <div class="amount-label">
+                        <span class="en-content">Starting at</span>
+                        <span class="ko-content">시작가</span>
+                    </div>
+                    <div class="amount-value">$100+</div>
+                </div>
                 <ul>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">~15 Seconds</span><span class="ko-content">15초 내외</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">Ideal for Short, Punchy Messages</span><span class="ko-content">짧은 메시지 전달에 적합</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">Simple Story Structure</span><span class="ko-content">간단한 스토리 구성</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">~15 Seconds</span><span class="ko-content">15초 내외</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Ideal for Short, Punchy Messages</span><span class="ko-content">짧은 메시지 전달에 적합</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Simple Story Structure</span><span class="ko-content">간단한 스토리 구성</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
                 </ul>
                 <a href="contact.html" class="btn"><span class="en-content">Select Plan</span><span class="ko-content">선택하기</span></a>
             </div>
@@ -269,13 +274,19 @@
                         <span class="en-content">AI-narrated videos with branded polish.</span>
                         <span class="ko-content">AI 나레이션과 브랜드 맞춤 효과가 포함된 영상입니다.</span>
                     </p>
-                    <div class="amount">$300+<span class="kr-price">시작가 $300</span></div>
+                    <div class="amount">
+                        <div class="amount-label">
+                            <span class="en-content">Starting at</span>
+                            <span class="ko-content">시작가</span>
+                        </div>
+                        <div class="amount-value">$300+</div>
+                    </div>
                     <ul>
-                        <li><i class="fa-solid fa-check"></i><span class="en-content">~30 Seconds</span><span class="ko-content">30초 내외</span></li>
-                        <li><i class="fa-solid fa-check"></i><span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
-                        <li><i class="fa-solid fa-check"></i><span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
-                        <li><i class="fa-solid fa-check"></i><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
-                        <li><i class="fa-solid fa-check"></i><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">~30 Seconds</span><span class="ko-content">30초 내외</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
                     </ul>
                     <a href="contact.html" class="btn"><span class="en-content">Select Plan</span><span class="ko-content">선택하기</span></a>
                 </div>
@@ -287,13 +298,19 @@
                     <span class="en-content">Extended AI storytelling for deeper brand impact.</span>
                     <span class="ko-content">더 깊은 브랜드 임팩트를 위한 확장형 AI 스토리텔링입니다.</span>
                 </p>
-                <div class="amount">$500+<span class="kr-price">시작가 $500</span></div>
+                <div class="amount">
+                    <div class="amount-label">
+                        <span class="en-content">Starting at</span>
+                        <span class="ko-content">시작가</span>
+                    </div>
+                    <div class="amount-value">$500+</div>
+                </div>
                 <ul>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">~60 Seconds</span><span class="ko-content">1분 내외</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
-                    <li><i class="fa-solid fa-check"></i><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">~60 Seconds</span><span class="ko-content">1분 내외</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">AI Narration</span><span class="ko-content">AI 나레이션</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Branded Subtitles & Effects Included</span><span class="ko-content">브랜드 맞춤 자막 및 효과 포함</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Licensed AI Music</span><span class="ko-content">라이센스드 AI 음악 사용</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">2 Rounds of Revisions</span><span class="ko-content">수정 횟수 2회</span></li>
                 </ul>
                 <a href="contact.html" class="btn"><span class="en-content">Select Plan</span><span class="ko-content">선택하기</span></a>
             </div>

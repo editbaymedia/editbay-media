@@ -4,318 +4,433 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Estate Pricing | EditBay Media</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
+
         :root {
-            --accent: #10b981; 
+            --accent: #10b981;
+            --accent-dim: rgba(16, 185, 129, 0.1);
             --bg-dark: #050a14;
             --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --text-faint: #64748b;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
-        /* --- Language Control Logic --- */
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+        ul { list-style: none; }
+
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .wrap-md { max-width: 1024px; margin: 0 auto; padding: 0 24px; }
+        .wrap-sm { max-width: 896px; margin: 0 auto; padding: 0 24px; }
+
+        /* --- 언어 제어 로직 --- */
         .en-content, .ko-content { display: none !important; }
         .en-mode .en-content { display: block !important; }
-        .en-mode span.en-content, .en-mode a.en-content, .en-mode div.en-content { display: block !important; }
         .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
         .ko-mode .ko-content { display: block !important; }
-        .ko-mode span.ko-content, .ko-mode a.ko-content, .ko-mode div.ko-content { display: block !important; }
         .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
 
+        /* --- Nav --- */
         .glass-nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
             background: rgba(5, 10, 20, 0.85);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
+        .nav-logo:hover img { opacity: .8; }
+        .nav-right { display: flex; align-items: center; gap: 32px; }
+        .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
+        .nav-links a { transition: color .2s; }
+        .nav-links a:hover { color: #34d399; }
+        @media (max-width: 767px) { .nav-links { display: none; } }
 
-        .price-card {
+        .lang-switch {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 12px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+        }
+        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; opacity: 0.4; color: var(--text-main); transition: opacity .3s; }
+        .lang-btn.active { opacity: 1; color: var(--accent); }
+        .lang-divider { color: rgba(255,255,255,0.1); font-size: 10px; }
+
+        /* --- Hero --- */
+        #hero { padding: 160px 0 72px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .hero-badge {
+            display: inline-block; margin-bottom: 24px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--accent);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 999px; padding: 6px 16px;
+        }
+        .hero-text h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #fff; }
+        .hero-text p { margin-top: 20px; color: var(--text-dim); font-size: clamp(16px, 2vw, 19px); font-weight: 300; line-height: 1.7; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+        /* --- Pricing --- */
+        #pricing { padding: 80px 0 24px; }
+        .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
+        @media (max-width: 900px) { .price-grid { grid-template-columns: 1fr; } }
+
+        .video-card {
             background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2.5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
         }
-        .price-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-10px);
-            background: rgba(16, 185, 129, 0.05);
-            box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.2);
+        .video-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(16,185,129,0.25); }
+
+        .price-card { padding: 40px 32px; position: relative; display: flex; flex-direction: column; }
+        .price-card.popular { border-color: rgba(16,185,129,0.4); }
+        .price-card-wrap { position: relative; height: 100%; }
+        .price-card-wrap.popular { padding-top: 16px; display: flex; flex-direction: column; }
+        .price-card-wrap.popular .video-card { flex: 1; }
+        .popular-badge {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            z-index: 2;
+            background: var(--accent); color: #04150f; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: 999px;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+        }
+        .price-card .tier { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        .price-card h3 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+        .amount-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+        .amount-value { font-size: 32px; font-weight: 700; color: #fff; }
+        .price-card ul { margin: 24px 0 32px; flex-grow: 1; }
+        .price-card li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5; }
+        .check-icon { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+        .price-card .btn {
+            display: block; text-align: center; padding: 14px; border-radius: 12px;
+            background: var(--accent); color: #04150f; font-weight: 700; font-size: 13px;
+            letter-spacing: 0.05em; text-transform: uppercase; transition: background .2s;
+        }
+        .price-card .btn:hover { background: #0ea271; }
+
+        /* --- Add-ons --- */
+        #addons { padding: 64px 0 16px; }
+        .addon-list { display: flex; flex-direction: column; gap: 12px; }
+        .addon-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 28px; border-radius: 16px;
+        }
+        .addon-item span.name { font-size: 14px; color: var(--text-main); font-weight: 500; }
+        .addon-item span.price { font-size: 14px; color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+        .addon-note {
+            max-width: 720px; margin: 32px auto 0; text-align: center;
+            color: var(--text-faint); font-size: 12.5px; font-style: italic; line-height: 1.7;
         }
 
-        .lang-btn {
-            font-size: 0.75rem;
-            font-weight: 600;
-            opacity: 0.4;
-            transition: opacity 0.3s;
-        }
-        .lang-btn.active {
-            opacity: 1;
-            color: var(--accent);
-        }
+        /* --- Portfolio --- */
+        #portfolio { padding: 40px 0 96px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 64px; }
+        .section-title { text-align: center; margin-bottom: 56px; }
+        .section-title h2 { font-size: 32px; font-weight: 700; color: #fff; }
+        .section-title h2 .ko-content { font-size: 28px; }
 
-        .revision-badge {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+        .group-label { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+        .group-label span { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; }
+        .group-label .rule { height: 1px; background: rgba(255,255,255,0.05); flex-grow: 1; }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 64px; }
+        @media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } }
+
+        .grid-4v { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .grid-4v { grid-template-columns: repeat(2, 1fr); } }
+        .card-v.placeholder { border-style: dashed; border-color: rgba(255,255,255,0.1); }
+        .card-v.placeholder .thumb { display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 12px; text-align: center; padding: 12px; }
+
+        .card-h { padding: 24px; }
+        .card-h .thumb { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .card-v { padding: 16px; }
+        .card-v .thumb { aspect-ratio: 9/16; border-radius: 16px; overflow: hidden; margin-bottom: 16px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .thumb iframe { width: 100%; height: 100%; border: 0; }
+        .card-h h3 { font-size: 17px; font-weight: 700; color: #fff; }
+        .card-v h3 { font-size: 14px; font-weight: 700; color: #fff; }
+        .card-tag { display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #34d399; }
+
+        /* --- Contact CTA --- */
+        #contact { padding: 0 0 96px; }
+        .cta-box { background: var(--accent); border-radius: 48px; padding: 48px 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(16,185,129,0.3); }
+        @media (min-width: 768px) { .cta-box { padding: 80px; } }
+        .cta-box h2 { font-size: 34px; font-weight: 700; color: #04150f; margin-bottom: 32px; }
+        .cta-inner { max-width: 448px; margin: 0 auto; }
+        .cta-email { color: #04150f; font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+        .cta-btn { display: block; width: 100%; background: #04150f; color: #fff; font-weight: 700; padding: 16px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.08em; text-align: center; transition: background .2s; }
+        .cta-btn:hover { background: #0a2a20; }
+        .cta-btn.ghost { background: transparent; color: #04150f; border: 1px solid rgba(4,21,15,0.4); margin-top: 12px; }
+        .cta-btn.ghost:hover { background: rgba(4,21,15,0.1); }
+
+        footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+        footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
+        footer a:hover { opacity: 1; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-nav">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center">
-                <img src="logo.png" alt="EditBay Logo" class="h-10 w-auto hover:opacity-80 transition">
+    <nav class="glass-nav">
+        <div class="nav-inner wrap">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="EditBay Logo">
             </a>
-            
-            <div class="flex items-center gap-8">
-                <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest text-white">
-                    <a href="works.html" class="en-content hover:text-emerald-400 transition">WORKS</a>
-                    <a href="works.html" class="ko-content hover:text-emerald-400 transition font-bold">작업물</a>
-                    
-                    <a href="services.html" class="en-content text-emerald-400 transition">SERVICES</a>
-                    <a href="services.html" class="ko-content text-emerald-400 transition font-bold">서비스</a>
-
-                    <a href="contact.html" class="en-content hover:text-emerald-400 transition">CONTACT</a>
-                    <a href="contact.html" class="ko-content hover:text-emerald-400 transition font-bold">문의하기</a>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="services.html" class="en-content">SERVICES</a>
+                    <a href="services.html" class="ko-content">서비스</a>
+                    <a href="contact.html" class="en-content">CONTACT</a>
+                    <a href="contact.html" class="ko-content">문의하기</a>
                 </div>
-                
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                <div class="lang-switch">
                     <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <span class="text-white/10 text-[10px]">|</span>
+                    <span class="lang-divider">|</span>
                     <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="pt-48 pb-16 text-center">
-        <div class="max-w-4xl mx-auto px-6">
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-white">
-                <span class="en-content">Real Estate <span class="text-emerald-500">Pricing</span></span>
-                <span class="ko-content">부동산 영상 <span class="text-emerald-500">가격 정책</span></span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl font-light">
-                <span class="en-content">High-retention property tours for the modern luxury market.</span>
-                <span class="ko-content">럭셔리 부동산 시장의 가치를 극대화하는 고효율 시네마틱 솔루션입니다.</span>
-            </p>
+    <!-- 1. Hero -->
+    <section id="hero" class="wrap-sm">
+        <div class="hero-badge">
+            <span class="en-content">Services / Real Estate Editing</span>
+            <span class="ko-content">서비스 / 부동산 영상 편집</span>
         </div>
-    </header>
+        <div class="hero-text">
+            <div class="en-content">
+                <h1>Real Estate Pricing</h1>
+                <p>High-retention property tours for the modern luxury market.</p>
+            </div>
+            <div class="ko-content">
+                <h1>부동산 영상 가격 정책</h1>
+                <p>럭셔리 부동산 시장의 가치를 극대화하는 고효율 시네마틱 솔루션입니다.</p>
+            </div>
+        </div>
+    </section>
 
-    <!-- Pricing Grid -->
-    <main class="max-w-7xl mx-auto px-6 pb-20">
-        <div class="grid lg:grid-cols-3 gap-8">
-            
-            <!-- Plan 1: Basic Edit -->
-            <div class="price-card p-10 flex flex-col">
-                <div class="mb-6 flex justify-between items-start">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-1">Basic</h3>
-                        <p class="text-slate-500 text-xs uppercase tracking-widest">Entry Level</p>
+    <!-- 2. Pricing -->
+    <section id="pricing" class="wrap">
+        <div class="price-grid">
+            <div class="video-card price-card">
+                <div class="tier"><span class="en-content">Entry Level</span><span class="ko-content">엔트리 레벨</span></div>
+                <h3><span class="en-content">Basic</span><span class="ko-content">베이직</span></h3>
+                <div class="amount">
+                    <div class="amount-label">
+                        <span class="en-content">Fixed Price</span>
+                        <span class="ko-content">정찰제</span>
                     </div>
+                    <div class="amount-value">$50</div>
                 </div>
-                <div class="mb-8">
-                    <div class="en-content">
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Fixed Price</span>
-                        <span class="text-4xl font-bold text-white">$50</span>
-                    </div>
-                    <div class="ko-content">
-                        <span class="text-xs text-slate-500 block mb-1">정찰제</span>
-                        <span class="text-4xl font-bold text-white">$50</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Essential Cut Editing</span><span class="ko-content">기본 컷 편집</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Simple Title Graphics</span><span class="ko-content">심플 타이틀 그래픽</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Licensed Background Music</span><span class="ko-content">라이센스 배경음악</span></li>
-                    <li class="flex items-center gap-3 text-slate-500"><i class="fas fa-info-circle"></i> <span class="en-content">Up to 1 Revision</span><span class="ko-content">수정 1회 제한</span></li>
+                <ul>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Essential Cut Editing</span><span class="ko-content">기본 컷 편집</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Simple Title Graphics</span><span class="ko-content">심플 타이틀 그래픽</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Licensed Background Music</span><span class="ko-content">라이센스 배경음악</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Up to 1 Revision</span><span class="ko-content">수정 1회 제한</span></li>
                 </ul>
-                <a href="contact.html" class="w-full py-4 text-center border border-emerald-500/30 rounded-2xl font-bold hover:bg-emerald-600 hover:text-white transition-all uppercase tracking-widest text-xs">
-                    <span class="en-content">Select Basic</span><span class="ko-content font-bold">베이직 선택</span>
-                </a>
+                <a href="contact.html" class="btn"><span class="en-content">Select Basic</span><span class="ko-content">베이직 선택</span></a>
             </div>
 
-            <!-- Plan 2: Standard Showcase -->
-            <div class="price-card p-10 flex flex-col border-emerald-500/50 bg-emerald-500/5 relative scale-105 z-10 shadow-2xl shadow-emerald-500/10">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-4 py-1 rounded-full tracking-widest uppercase">Most Popular</div>
-                <div class="mb-6 flex justify-between items-start">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-1">Standard</h3>
-                        <p class="text-slate-500 text-xs uppercase tracking-widest">Professional</p>
+            <div class="price-card-wrap popular">
+                <span class="popular-badge"><span class="en-content">Most Popular</span><span class="ko-content">인기</span></span>
+                <div class="video-card price-card popular">
+                    <div class="tier"><span class="en-content">Professional</span><span class="ko-content">프로페셔널</span></div>
+                    <h3><span class="en-content">Standard</span><span class="ko-content">스탠다드</span></h3>
+                    <div class="amount">
+                        <div class="amount-label">
+                            <span class="en-content">Starting at</span>
+                            <span class="ko-content">시작가</span>
+                        </div>
+                        <div class="amount-value">$100+</div>
                     </div>
+                    <ul>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Advanced Motion Titles</span><span class="ko-content">어드밴스드 모션 타이틀</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Speed Ramping & Transitions</span><span class="ko-content">스피드 조절 및 트랜지션</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Audio (Mic) & SFX Enhancement</span><span class="ko-content">마이크 음성 및 효과음 보정</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Cinematic Color Grading</span><span class="ko-content">시네마틱 컬러그레이딩</span></li>
+                        <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Up to 2 Revisions</span><span class="ko-content">수정 2회 제한</span></li>
+                    </ul>
+                    <a href="contact.html" class="btn"><span class="en-content">Select Standard</span><span class="ko-content">스탠다드 선택</span></a>
                 </div>
-                <div class="mb-8">
-                    <div class="en-content">
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                        <span class="text-4xl font-bold text-white">$100+</span>
-                    </div>
-                    <div class="ko-content">
-                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                        <span class="text-4xl font-bold text-white">$100+</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-200">
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Advanced Motion Titles</span><span class="ko-content">어드밴스드 모션 타이틀</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Speed Ramping & Transitions</span><span class="ko-content">스피드 조절 및 트랜지션</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Audio (Mic) & SFX Enhancement</span><span class="ko-content">마이크 음성 및 효과음 보정</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-check text-emerald-500"></i> <span class="en-content">Cinematic Color Grading</span><span class="ko-content">시네마틱 컬러그레이딩</span></li>
-                    <li class="flex items-center gap-3 text-slate-500"><i class="fas fa-info-circle"></i> <span class="en-content">Up to 2 Revision</span><span class="ko-content">수정 2회 제한</span></li>
-                </ul>
-                <a href="contact.html" class="w-full py-4 text-center bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 uppercase tracking-widest text-xs text-white">
-                    <span class="en-content font-bold">Select Standard</span><span class="ko-content font-bold">스탠다드 선택</span>
-                </a>
             </div>
 
-            <!-- Plan 3: Premium AI Cinematic -->
-            <div class="price-card p-10 flex flex-col">
-                <div class="mb-6 flex justify-between items-start">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-1">Premium</h3>
-                        <p class="text-slate-500 text-xs uppercase tracking-widest">Innovation</p>
+            <div class="video-card price-card">
+                <div class="tier"><span class="en-content">Innovation</span><span class="ko-content">이노베이션</span></div>
+                <h3><span class="en-content">Premium</span><span class="ko-content">프리미엄</span></h3>
+                <div class="amount">
+                    <div class="amount-label">
+                        <span class="en-content">Starting at</span>
+                        <span class="ko-content">시작가</span>
                     </div>
+                    <div class="amount-value">$200+</div>
                 </div>
-                <div class="mb-8">
-                    <div class="en-content">
-                        <span class="text-xs text-slate-500 uppercase tracking-widest block mb-1">Starting at</span>
-                        <span class="text-4xl font-bold text-white">$200+</span>
-                    </div>
-                    <div class="ko-content">
-                        <span class="text-xs text-slate-500 block mb-1">시작가</span>
-                        <span class="text-4xl font-bold text-white">$200+</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-10 flex-grow text-sm text-slate-300 font-light">
-                    <li class="flex items-center gap-3"><i class="fas fa-sparkles text-emerald-500"></i> <span class="en-content">Standard Content Included</span><span class="ko-content">스탠다드 모든 기능 포함</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-sparkles text-emerald-500"></i> <span class="en-content">Premium Motion Graphics</span><span class="ko-content">프리미엄 모션 그래픽</span></li>
-                    <li class="flex items-center gap-3"><i class="fas fa-sparkles text-emerald-500"></i> <span class="en-content">AI Visual Upgrade (Sky/Season)</span><span class="ko-content">AI 비주얼 업그레이드 (계절 변환 등)</span></li>
-                    <li class="flex items-center gap-3 text-slate-500"><i class="fas fa-info-circle"></i> <span class="en-content">2 Revision + α</span><span class="ko-content">수정 2회 + α</span></li>
+                <ul>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Standard Content Included</span><span class="ko-content">스탠다드 모든 기능 포함</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">Premium Motion Graphics</span><span class="ko-content">프리미엄 모션 그래픽</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">AI Visual Upgrade (Sky/Season)</span><span class="ko-content">AI 비주얼 업그레이드 (계절 변환 등)</span></li>
+                    <li><svg class="check-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="en-content">2 Revisions + α</span><span class="ko-content">수정 2회 + α</span></li>
                 </ul>
-                <a href="contact.html" class="w-full py-4 text-center border border-emerald-500/30 rounded-2xl font-bold hover:bg-emerald-600 hover:text-white transition-all uppercase tracking-widest text-xs">
-                    <span class="en-content">Select Premium</span><span class="ko-content font-bold">프리미엄 선택</span>
-                </a>
+                <a href="contact.html" class="btn"><span class="en-content">Select Premium</span><span class="ko-content">프리미엄 선택</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Custom Add-ons -->
+    <section id="addons" class="wrap-md">
+        <div class="section-title" style="margin-bottom:32px;">
+            <h2 style="font-size:22px;"><span class="en-content">Custom Add-ons</span><span class="ko-content">커스텀 부가 옵션</span></h2>
+        </div>
+        <div class="addon-list">
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">AI Visual Enhancements</span><span class="ko-content">AI 비주얼 업그레이드</span></span>
+                <span class="price"><span class="en-content">$20 / scene</span><span class="ko-content">씬당 $20</span></span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">2nd Video (Variation)</span><span class="ko-content">두 번째 영상 (베리에이션)</span></span>
+                <span class="price">$25</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">Additional Revision Request</span><span class="ko-content">추가 수정 요청</span></span>
+                <span class="price">$25</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">Map / Community Highlights</span><span class="ko-content">지도 및 주변 커뮤니티 강조</span></span>
+                <span class="price">$50</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">24-hour Express Delivery</span><span class="ko-content">24시간 내 초고속 납기</span></span>
+                <span class="price">$50</span>
+            </div>
+            <div class="video-card addon-item">
+                <span class="name"><span class="en-content">Bilingual Subtitles (EN/KR)</span><span class="ko-content">한/영 이중 자막 작업</span></span>
+                <span class="price">$30</span>
+            </div>
+        </div>
+        <p class="addon-note">
+            <span class="en-content">*Note: Revisions are counted as a consolidated batch of feedback.</span>
+            <span class="ko-content">*참고: 수정 사항은 하나의 통합된 피드백 묶음으로 계산됩니다.</span>
+        </p>
+    </section>
+
+    <!-- 4. Portfolio -->
+    <main id="portfolio" class="wrap">
+        <div class="section-title">
+            <h2><span class="en-content">Related Work</span><span class="ko-content">관련 작업물</span></h2>
+        </div>
+
+        <div class="group-label">
+            <span><span class="en-content">Property Tours</span><span class="ko-content">매물 투어</span></span>
+            <div class="rule"></div>
+        </div>
+        <div class="grid-3">
+            <div class="video-card card-h">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/6aDCxezccow" title="Real Estate Video 01" allowfullscreen></iframe></div>
+                <h3>Real Estate Video 01</h3>
+                <span class="card-tag">Real Estate</span>
+            </div>
+            <div class="video-card card-h">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/WVIgJEfBmig" title="Real Estate Video 02" allowfullscreen></iframe></div>
+                <h3>Real Estate Video 02</h3>
+                <span class="card-tag">Real Estate</span>
+            </div>
+            <div class="video-card card-h">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/bdEyUkXHGIE" title="Real Estate with AI" allowfullscreen></iframe></div>
+                <h3>Real Estate with AI</h3>
+                <span class="card-tag">Real Estate</span>
+            </div>
+        </div>
+
+        <div class="group-label">
+            <span><span class="en-content">Social Media — Vertical</span><span class="ko-content">소셜 미디어 — 세로형</span></span>
+            <div class="rule"></div>
+        </div>
+        <div class="grid-4v">
+            <div class="video-card card-v">
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/fLAxMlUxwgg" title="Real Estate Vertical Video 01" allowfullscreen></iframe></div>
+                <h3>Real Estate Vertical Video 01</h3>
+                <span class="card-tag">Real Estate</span>
+            </div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3>Real Estate Vertical Video 02</h3>
+                <span class="card-tag">Real Estate</span>
+            </div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3>Real Estate Vertical Video 03</h3>
+                <span class="card-tag">Real Estate</span>
+            </div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3>Real Estate Vertical Video 04</h3>
+                <span class="card-tag">Real Estate</span>
             </div>
         </div>
     </main>
 
-    <!-- Real Estate Add-on Services -->
-    <section class="max-w-4xl mx-auto px-6 pb-32">
-        <div class="bg-white/5 rounded-[2.5rem] p-10 border border-white/5">
-            <h3 class="text-xl font-bold mb-8 text-center uppercase tracking-widest text-emerald-400">Custom Add-ons</h3>
-            <div class="grid md:grid-cols-2 gap-6 text-sm">
-                <!-- AI Visual Enhancements -->
-                <div class="flex justify-between items-center p-4 border-b border-white/5">
-                    <span class="text-slate-400">
-                        <span class="en-content">AI Visual Enhancements</span>
-                        <span class="ko-content">AI 비주얼 업그레이드</span>
-                    </span>
-                    <span class="font-bold text-white">
-                        <span class="en-content">$20 / scene</span>
-                        <span class="ko-content">씬당 $20</span>
-                    </span>
-                </div>
-                <!-- 2nd Video -->
-                <div class="flex justify-between items-center p-4 border-b border-white/5">
-                    <span class="text-slate-400">
-                        <span class="en-content">2nd Video (Variation)</span>
-                        <span class="ko-content">두 번째 영상 (베리에이션)</span>
-                    </span>
-                    <span class="font-bold text-white">$25</span>
-                </div>
-                <!-- Additional Revision -->
-                <div class="flex justify-between items-center p-4 border-b border-white/5">
-                    <span class="text-slate-400">
-                        <span class="en-content">Additional Revision Request</span>
-                        <span class="ko-content">추가 수정 요청</span>
-                    </span>
-                    <span class="font-bold text-white">$25</span>
-                </div>
-                <!-- Map / Community Highlights -->
-                <div class="flex justify-between items-center p-4 border-b border-white/5">
-                    <span class="text-slate-400">
-                        <span class="en-content">Map / Community Highlights</span>
-                        <span class="ko-content">지도 및 주변 커뮤니티 강조</span>
-                    </span>
-                    <span class="font-bold text-white">$50</span>
-                </div>
-                <!-- 24h Delivery -->
-                <div class="flex justify-between items-center p-4 border-b border-white/5">
-                    <span class="text-slate-400">
-                        <span class="en-content italic">24-hour Express Delivery</span>
-                        <span class="ko-content italic">24시간 내 초고속 납기</span>
-                    </span>
-                    <span class="font-bold text-emerald-400">$50</span>
-                </div>
-                <!-- Bilingual Subtitles -->
-                <div class="flex justify-between items-center p-4 border-b border-white/5">
-                    <span class="text-slate-400">
-                        <span class="en-content">Bilingual Subtitles (EN/KR)</span>
-                        <span class="ko-content">한/영 이중 자막 작업</span>
-                    </span>
-                    <span class="font-bold text-white">$30</span>
-                </div>
+    <!-- 5. Contact CTA -->
+    <section id="contact" class="wrap-sm">
+        <div class="cta-box">
+            <h2><span class="en-content">Showcase Your Next Listing</span><span class="ko-content">다음 매물을 특별하게 완성하세요</span></h2>
+            <div class="cta-inner">
+                <div class="cta-email">editbaymedia@gmail.com</div>
+                <a href="mailto:editbaymedia@gmail.com" class="cta-btn">
+                    <span class="en-content">Send Email</span><span class="ko-content">이메일 보내기</span>
+                </a>
+                <a href="services.html" class="cta-btn ghost">
+                    <span class="en-content">← Back to Services</span><span class="ko-content">← 서비스로 돌아가기</span>
+                </a>
             </div>
-            <p class="mt-8 text-[10px] text-center text-slate-500 uppercase tracking-widest">
-                <span class="en-content">Note: Revisions are counted as a consolidated batch of feedback.</span>
-                <span class="ko-content">참고: 수정 사항은 하나의 통합된 피드백 묶음으로 계산됩니다.</span>
-            </p>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-12 text-center text-slate-700 text-[10px] tracking-widest uppercase border-t border-white/5">
-        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.</p>
-        <div class="mt-4">
-            <a href="services.html" class="text-slate-500 hover:text-emerald-500 transition lowercase italic">← back to services</a>
-        </div>
+    <footer>
+        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.
+            <a href="admin-invoice.html">ADMIN</a>
+        </p>
     </footer>
 
     <script>
-        /* EditBay Media Language Manager */
-        (function() {
-            const savedLang = localStorage.getItem('editbay_lang') || 'en';
-            document.documentElement.className = savedLang + '-mode';
-        })();
+(function() {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    document.documentElement.className = savedLang + '-mode';
+})();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('editbay_lang') || 'en';
-            updateButtonState(savedLang);
-        });
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('editbay_lang') || 'en';
+    updateButtonState(savedLang);
+});
 
-        function changeLang(lang) {
-            localStorage.setItem('editbay_lang', lang);
-            document.documentElement.className = lang + '-mode';
-            updateButtonState(lang);
+function changeLang(lang) {
+    localStorage.setItem('editbay_lang', lang);
+    document.documentElement.className = lang + '-mode';
+    updateButtonState(lang);
+}
+
+function updateButtonState(lang) {
+    const btnEn = document.getElementById('btn-en');
+    const btnKo = document.getElementById('btn-ko');
+    if (btnEn && btnKo) {
+        if (lang === 'ko') {
+            btnKo.classList.add('active');
+            btnEn.classList.remove('active');
+        } else {
+            btnEn.classList.add('active');
+            btnKo.classList.remove('active');
         }
-
-        function updateButtonState(lang) {
-            const btnEn = document.getElementById('btn-en');
-            const btnKo = document.getElementById('btn-ko');
-
-            if (btnEn && btnKo) {
-                if (lang === 'ko') {
-                    btnKo.classList.add('active');
-                    btnEn.classList.remove('active');
-                } else {
-                    btnEn.classList.add('active');
-                    btnKo.classList.remove('active');
-                }
-            }
-        }
+    }
+}
     </script>
 </body>
 </html>
