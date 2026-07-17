@@ -1287,7 +1287,9 @@ document.getElementById('csvInvoiceImportFile').addEventListener('change', (e) =
             const unmatched = [];
 
             dataRows.forEach(r => {
-                const projectName = (r[idxProject] || '').trim();
+                const projectName = (r[idxProject] || '')
+                    .replace(/\s*\(https?:\/\/[^)]*\)\s*$/, '') // Notion rollup export appends " (url)" — strip it
+                    .trim();
                 if (!projectName) return;
                 const project = db.projects.find(p => p.name.trim().toLowerCase() === projectName.toLowerCase());
                 if (!project) { unmatched.push(projectName); return; }
