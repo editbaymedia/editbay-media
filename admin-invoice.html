@@ -227,6 +227,10 @@
             <button class="btn ghost" id="exportBtn">JSON 내보내기</button>
             <button class="btn ghost" id="importBtn">가져오기</button>
             <input type="file" id="importFile" accept="application/json" style="display:none;">
+            <button class="btn ghost" id="csvImportBtn">📥 Notion CSV 가져오기 (Project DB)</button>
+            <input type="file" id="csvImportFile" accept=".csv" style="display:none;">
+            <button class="btn ghost" id="csvInvoiceImportBtn">📥 Notion CSV 가져오기 (INVOICE)</button>
+            <input type="file" id="csvInvoiceImportFile" accept=".csv" style="display:none;">
         </div>
     </header>
 
@@ -1131,6 +1135,210 @@ document.getElementById('importFile').addEventListener('change', (e) => {
     reader.readAsText(file);
     e.target.value = '';
 });
+
+/* ============ Notion CSV Import ============ */
+function parseCSV(text) {
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+            if (c === '"') {
+                if (text[i + 1] === '"') { field += '"'; i++; }
+                else { inQuotes = false; }
+            } else field += c;
+        } else {
+            if (c === '"') inQuotes = true;
+            else if (c === ',') { row.push(field); field = ''; }
+            else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+            else if (c === '\r') { /* skip */ }
+            else field += c;
+        }
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.length > 1 || (r.length === 1 && r[0].trim()));
+}
+
+function findCol(headers, candidates) {
+    for (const cand of candidates) {
+        const idx = headers.findIndex(h => h.trim() === cand);
+        if (idx !== -1) return idx;
+    }
+    for (const cand of candidates) {
+        const idx = headers.findIndex(h => h.trim().includes(cand));
+        if (idx !== -1) return idx;
+    }
+    return -1;
+}
+
+function parseNotionDate(str) {
+    str = (str || '').trim();
+    if (!str) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10);
+    if (/^\d{4}\/\d{2}\/\d{2}/.test(str)) return str.slice(0, 10).replace(/\//g, '-');
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    return '';
+}
+
+function mapNotionStatus(str) {
+    str = (str || '').trim();
+    if (str.includes('완료') || /done/i.test(str)) return 'done';
+    if (str.includes('진행') || /progress/i.test(str)) return 'progress';
+    if (str.includes('취소') || /cancel/i.test(str)) return 'cancel';
+    return 'done';
+}
+
+document.getElementById('csvImportBtn').addEventListener('click', () => document.getElementById('csvImportFile').click());
+document.getElementById('csvImportFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const rows = parseCSV(reader.result);
+            if (!rows.length) { alert('CSV가 비어있어요.'); return; }
+            const headers = rows[0];
+
+            const idxDate = findCol(headers, ['날짜', 'Date']);
+            const idxName = findCol(headers, ['프로젝트 이름', 'Name', '이름']);
+            const idxClient = findCol(headers, ['클라이언트', 'Client']);
+            const idxType = findCol(headers, ['프로젝트', 'Type', 'Project']);
+            const idxTotal = findCol(headers, ['합계', 'Total', 'Price']);
+            const idxStatus = findCol(headers, ['선택', 'Status', '상태']);
+
+            if (idxName === -1) {
+                alert('"프로젝트 이름" 컬럼을 찾을 수 없어요. CSV 헤더를 확인해주세요:\n' + headers.join(', '));
+                return;
+            }
+
+            const dataRows = rows.slice(1).filter(r => r.some(c => c && c.trim()));
+            const newProjects = [];
+            const newInvoices = [];
+
+            dataRows.forEach(r => {
+                const name = (r[idxName] || '').trim();
+                if (!name) return;
+                const pid = uid();
+                const dateVal = idxDate !== -1 ? parseNotionDate(r[idxDate]) : '';
+                const totalRaw = idxTotal !== -1 ? (r[idxTotal] || '').replace(/[^0-9.\-]/g, '') : '';
+                const total = parseFloat(totalRaw) || 0;
+
+                newProjects.push({
+                    id: pid,
+                    date: dateVal,
+                    name: name,
+                    client: idxClient !== -1 ? (r[idxClient] || '').trim() : '',
+                    type: (idxType !== -1 ? (r[idxType] || '').trim() : '') || 'Real Estate',
+                    status: idxStatus !== -1 ? mapNotionStatus(r[idxStatus]) : 'done',
+                    invoiced: true // 과거 기록은 이미 청구된 것으로 간주 — 아니면 장부에서 "청구" 뱃지 눌러 미청구로 바꿀 수 있음
+                });
+                if (total > 0) {
+                    newInvoices.push({ id: uid(), projectId: pid, date: dateVal, person: '', item: 'Imported', price: total, qty: 1 });
+                    // 참고: '인보이스 CSV 가져오기'로 실제 항목별 내역을 나중에 가져오면 이 placeholder는 자동으로 대체됩니다.
+                }
+            });
+
+            if (!newProjects.length) { alert('가져올 데이터를 찾지 못했어요.'); return; }
+            if (!confirm(`${newProjects.length}개 프로젝트를 가져올까요?\n(기존 장부에 추가되며, 전부 "청구완료" 상태로 들어가요. 실제 미청구 건이 있으면 나중에 개별로 바꿔주세요.)`)) return;
+
+            db.projects.push(...newProjects);
+            db.invoices.push(...newInvoices);
+            pushRemote();
+            renderTable();
+            alert(`${newProjects.length}개 프로젝트를 가져왔어요.`);
+        } catch (err) {
+            console.error(err);
+            alert('CSV 파일을 읽는 중 오류가 발생했어요: ' + err.message);
+        }
+    };
+    reader.readAsText(file, 'utf-8');
+    e.target.value = '';
+});
+
+/* ============ Notion INVOICE (detail) CSV Import ============ */
+document.getElementById('csvInvoiceImportBtn').addEventListener('click', () => document.getElementById('csvInvoiceImportFile').click());
+document.getElementById('csvInvoiceImportFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const rows = parseCSV(reader.result);
+            if (!rows.length) { alert('CSV가 비어있어요.'); return; }
+            const headers = rows[0];
+
+            const idxDate = findCol(headers, ['날짜', 'Date']);
+            const idxPerson = findCol(headers, ['선택', '담당자', 'Person']);
+            const idxProject = findCol(headers, ['롤업', '프로젝트 이름', 'Rollup', 'Project']);
+            const idxService = findCol(headers, ['Services', 'Service']);
+            const idxPackage = findCol(headers, ['Package']);
+            const idxPrice = findCol(headers, ['Price', '단가']);
+            const idxQty = findCol(headers, ['갯수', 'Qty', 'Quantity']);
+
+            if (idxProject === -1) {
+                alert('프로젝트를 연결할 컬럼("롤업" 등)을 찾을 수 없어요. CSV 헤더를 확인해주세요:\n' + headers.join(', '));
+                return;
+            }
+
+            const dataRows = rows.slice(1).filter(r => r.some(c => c && c.trim()));
+            const newInvoices = [];
+            const touchedProjectIds = new Set();
+            const unmatched = [];
+
+            dataRows.forEach(r => {
+                const projectName = (r[idxProject] || '').trim();
+                if (!projectName) return;
+                const project = db.projects.find(p => p.name.trim().toLowerCase() === projectName.toLowerCase());
+                if (!project) { unmatched.push(projectName); return; }
+
+                const service = idxService !== -1 ? (r[idxService] || '').trim() : '';
+                const pkg = idxPackage !== -1 ? (r[idxPackage] || '').trim() : '';
+                const item = pkg || service || '';
+                const priceRaw = idxPrice !== -1 ? (r[idxPrice] || '').replace(/[^0-9.\-]/g, '') : '';
+                const price = parseFloat(priceRaw) || 0;
+                const qtyRaw = idxQty !== -1 ? (r[idxQty] || '').replace(/[^0-9.\-]/g, '') : '';
+                const qty = parseFloat(qtyRaw) || 1;
+
+                touchedProjectIds.add(project.id);
+                newInvoices.push({
+                    id: uid(),
+                    projectId: project.id,
+                    date: idxDate !== -1 ? parseNotionDate(r[idxDate]) : project.date,
+                    person: idxPerson !== -1 ? (r[idxPerson] || '').trim() : '',
+                    item: item,
+                    price: price,
+                    qty: qty
+                });
+            });
+
+            if (!newInvoices.length) {
+                alert('가져올 인보이스 항목을 찾지 못했어요.' + (unmatched.length ? `\n\n매칭 안 된 프로젝트명 예시:\n${[...new Set(unmatched)].slice(0, 10).join('\n')}` : ''));
+                return;
+            }
+
+            let msg = `${newInvoices.length}개 인보이스 항목을 가져올까요?\n(연결된 ${touchedProjectIds.size}개 프로젝트의 기존 "Imported" placeholder는 자동으로 지워지고 실제 항목으로 대체돼요.)`;
+            if (unmatched.length) {
+                msg += `\n\n⚠ 매칭 안 된 프로젝트명 ${[...new Set(unmatched)].length}개는 건너뜁니다:\n${[...new Set(unmatched)].slice(0, 10).join('\n')}`;
+            }
+            if (!confirm(msg)) return;
+
+            // remove placeholder 'Imported' lines for touched projects to avoid double-counting
+            db.invoices = db.invoices.filter(i => !(touchedProjectIds.has(i.projectId) && i.item === 'Imported'));
+            db.invoices.push(...newInvoices);
+
+            pushRemote();
+            renderTable();
+            alert(`${newInvoices.length}개 인보이스 항목을 가져왔어요.`);
+        } catch (err) {
+            console.error(err);
+            alert('CSV 파일을 읽는 중 오류가 발생했어요: ' + err.message);
+        }
+    };
+    reader.readAsText(file, 'utf-8');
+    e.target.value = '';
+});
+
 
 // --- Settings modal wiring ---
 document.getElementById('settingsBtn').addEventListener('click', () => {
