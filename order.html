@@ -85,7 +85,8 @@
     </div>
 
     <!--
-
+      [Formspree 연결됨] 제출 시 Formspree(mrpzlqob)를 통해 등록된 이메일로 전달됩니다.
+      받을 이메일 변경은 formspree.io 대시보드에서 하세요.
     -->
     <form class="order-form wrap-sm" action="https://formspree.io/f/mrpzlqob" method="POST" enctype="multipart/form-data">
         <!-- 1단계: 서비스 -->
@@ -120,12 +121,12 @@
         </div>
 
         <div class="field">
-            <label class="flabel"><span class="en-content">Contact (email / KakaoTalk / Instagram)<span class="req">*</span></span><span class="ko-content">연락처 (이메일 / 카카오톡 / 인스타)<span class="req">*</span></span></label>
-            <input type="text" name="contact" required>
+            <label class="flabel"><span class="en-content">Email<span class="req">*</span></span><span class="ko-content">이메일<span class="req">*</span></span></label>
+            <input type="email" name="email" required>
         </div>
 
         <div class="field">
-            <label class="flabel"><span class="en-content">Reference photos / files (optional)</span><span class="ko-content">참고 사진 / 자료 (선택)</span></label>
+            <label class="flabel"><span class="en-content">Reference Photo / File / Logo</span><span class="ko-content">참고 사진 / 자료 / 로고</span></label>
             <label class="file-drop" for="photoInput">
                 <span class="file-icon">upload_file</span>
                 <p><span class="en-content">Click to upload</span><span class="ko-content">클릭해서 올리기</span></p>
@@ -135,7 +136,7 @@
         </div>
 
         <div class="field">
-            <label class="flabel"><span class="en-content">Project details / desired mood</span><span class="ko-content">프로젝트 설명 / 원하는 느낌</span></label>
+            <label class="flabel"><span class="en-content">Project details</span><span class="ko-content">프로젝트 설명</span></label>
             <textarea name="details"></textarea>
             <div class="hint"><span class="en-content">Tell us what you want to make and the vibe you're going for.</span><span class="ko-content">어떤 영상을 원하는지, 어떤 느낌인지 편하게 적어주세요.</span></div>
         </div>
