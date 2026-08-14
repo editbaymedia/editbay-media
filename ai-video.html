@@ -94,12 +94,11 @@
         .video-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(59,130,246,0.25); }
 
         .price-card { padding: 40px 32px; position: relative; display: flex; flex-direction: column; }
-        .price-card.popular { border-color: rgba(59,130,246,0.4); }
-        .price-card-wrap { position: relative; height: 100%; }
-        .price-card-wrap.popular { padding-top: 16px; display: flex; flex-direction: column; }
-        .price-card-wrap.popular .video-card { flex: 1; }
+        .price-card.popular { border-color: rgba(59,130,246,0.4); overflow: visible; }
+        .price-card-wrap { position: relative; height: 100%; display: flex; flex-direction: column; }
+        .price-card-wrap .video-card, .price-card-wrap .price-card { flex: 1; }
         .popular-badge {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
             z-index: 2;
             background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
             letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: 999px;
@@ -133,6 +132,10 @@
         .process-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
         @media (max-width: 900px) { .process-grid { grid-template-columns: repeat(2, 1fr); } }
         .process-step { text-align: center; }
+        .process-step .step-icon {
+            font-family: 'Material Symbols Outlined'; font-size: 34px; color: var(--accent);
+            display: block; margin: 0 auto 10px; line-height: 1;
+        }
         .process-step .num { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 12px; }
         .process-step p { font-size: 13.5px; color: var(--text-dim); font-weight: 300; line-height: 1.6; }
 
@@ -196,7 +199,34 @@
         footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
         footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
         footer a:hover { opacity: 1; }
+
+        /* --- Sample Reels --- */
+        #samples { padding: 40px 0 24px; }
+        .srx-tabs { display: flex; gap: 10px; justify-content: center; margin: 32px 0; flex-wrap: wrap; }
+        .srx-tab {
+            background: rgba(255,255,255,0.05); color: var(--text-dim);
+            border: 1px solid rgba(255,255,255,0.1); padding: 11px 24px; border-radius: 999px;
+            font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s;
+            font-family: inherit;
+        }
+        .srx-tab:hover { border-color: rgba(59,130,246,0.5); }
+        .srx-tab.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .srx-player { max-width: 300px; margin: 0 auto; }
+        .srx-srclabel { text-align: center; font-size: 12px; color: var(--text-faint); margin-bottom: 10px; }
+        .srx-srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .srx-src { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+        .srx-arrow { text-align: center; color: var(--accent); font-size: 20px; margin: 4px 0 10px; }
+        .srx-frame { position: relative; aspect-ratio: 9/16; background: #000; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .srx-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .srx-cta {
+            display: block; text-align: center; margin-top: 16px; padding: 14px;
+            background: var(--accent); color: #fff; font-weight: 700; font-size: 14px;
+            border-radius: 12px; transition: background .2s;
+        }
+        .srx-cta:hover { background: #2563eb; }
+        .srx-note { text-align: center; margin-top: 10px; font-size: 12px; color: var(--text-faint); }
     </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body>
 
@@ -240,6 +270,54 @@
         </div>
     </section>
 
+    <!-- Sample Reels -->
+    <section id="samples" class="wrap-md">
+        <div class="section-title">
+            <div class="hero-badge" style="margin: 0 auto 16px;">
+                <span class="en-content">Sample Reels</span>
+                <span class="ko-content">샘플 릴스</span>
+            </div>
+            <h2>
+                <span class="en-content">See a new menu become a reel</span>
+                <span class="ko-content">신메뉴, 릴스로 미리 보기</span>
+            </h2>
+            <p class="price-note" style="margin-top: 16px;">
+                <span class="en-content">Pick an industry to watch a sample reel. Love it? We\'ll make one for your new menu.</span>
+                <span class="ko-content">업종별 샘플 릴스를 확인하세요.</span>
+            </p>
+        </div>
+
+        <div class="srx-tabs">
+            <button type="button" class="srx-tab is-active" data-cat="cafe"><span class="en-content">Cafe</span><span class="ko-content">카페</span></button>
+            <button type="button" class="srx-tab" data-cat="food"><span class="en-content">Restaurant</span><span class="ko-content">식당</span></button>
+            <button type="button" class="srx-tab" data-cat="product"><span class="en-content">Product</span><span class="ko-content">제품</span></button>
+        </div>
+
+        <div class="srx-player">
+            <div class="srx-srclabel">
+                <span class="en-content">These 2 photos became the reel below</span>
+                <span class="ko-content">이 사진 2장으로 아래 영상을 만들었습니다</span>
+            </div>
+            <div class="srx-srcgrid">
+                <img id="srxSrcA" class="srx-src" src="cafe-1.jpg" alt="source 1">
+                <img id="srxSrcB" class="srx-src" src="cafe-2.jpg" alt="source 2">
+            </div>
+            <div class="srx-arrow">&#8595;</div>
+
+            <div class="srx-frame">
+                <iframe id="srxYt" src="https://www.youtube.com/embed/hM9VtzvD9dA" title="sample reel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <a href="contact.html" class="srx-cta">
+                <span class="en-content">Start my video &#8594;</span><span class="ko-content">제작하기 &#8594;</span>
+            </a>
+            <div class="srx-note">
+                <span class="en-content">Send us a photo — your reel in 48 hours.</span>
+                <span class="ko-content">사진만 보내주시면 48시간 안에 릴스를 드려요</span>
+            </div>
+        </div>
+    </section>
+
     <!-- 2. Pricing -->
     <section id="pricing" class="wrap">
         <div class="price-grid">
@@ -267,8 +345,8 @@
             </div>
 
             <div class="price-card-wrap popular">
-                <span class="popular-badge"><span class="en-content">Most Popular</span><span class="ko-content">인기</span></span>
                 <div class="video-card price-card popular">
+                    <span class="popular-badge"><span class="en-content">Most Popular</span><span class="ko-content">인기</span></span>
                     <h3><span class="en-content">Standard</span><span class="ko-content">스탠다드</span></h3>
                     <p class="desc">
                         <span class="en-content">AI-narrated videos with branded polish.</span>
@@ -329,22 +407,27 @@
         </div>
         <div class="process-grid">
             <div class="process-step">
+                <span class="step-icon">forum</span>
                 <div class="num">01</div>
                 <p><span class="en-content">Discuss your desired style and concept.</span><span class="ko-content">원하시는 스타일 및 콘셉트 논의</span></p>
             </div>
             <div class="process-step">
+                <span class="step-icon">dashboard</span>
                 <div class="num">02</div>
                 <p><span class="en-content">Storyboard and draft AI model images delivered.</span><span class="ko-content">스토리보드 및 AI 모델 이미지 초안 전달</span></p>
             </div>
             <div class="process-step">
+                <span class="step-icon">edit</span>
                 <div class="num">03</div>
                 <p><span class="en-content">Revisions applied based on your feedback.</span><span class="ko-content">피드백 반영해서 수정</span></p>
             </div>
             <div class="process-step">
+                <span class="step-icon">movie</span>
                 <div class="num">04</div>
                 <p><span class="en-content">Video production based on the finalized images.</span><span class="ko-content">최종 확정 이미지 기반 영상화 또는 활용 포맷 제작</span></p>
             </div>
             <div class="process-step">
+                <span class="step-icon">check_circle</span>
                 <div class="num">05</div>
                 <p><span class="en-content">Final deliverable handover.</span><span class="ko-content">최종 결과물 전달</span></p>
             </div>
@@ -403,12 +486,12 @@
         </div>
         <div class="grid-2">
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/C8WePt4gmkc" title="AI Branded Film 01" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/-yapoXm91tw" title="AI Branded Film 01" allowfullscreen></iframe></div>
                 <h3>AI Branded Film 01</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/hnZAk7Ekf_c" title="AI Branded Film 02" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/xOZfN9Vf-88" title="AI Branded Film 02" allowfullscreen></iframe></div>
                 <h3>AI Branded Film 02</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
@@ -420,22 +503,22 @@
         </div>
         <div class="grid-4v">
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/yS5tJiP8I2M" title="AI Short Form AD 01" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/aGynKYvXTwY" title="AI Short Form AD 01" allowfullscreen></iframe></div>
                 <h3>AI Short Form AD 01</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/aGynKYvXTwY" title="AI Short Form AD 02" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/yS5tJiP8I2M" title="AI Short Form AD 02" allowfullscreen></iframe></div>
                 <h3>AI Short Form AD 02</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
-            <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/Ddo1rniH5LM" title="AI Short Form AD 03" allowfullscreen></iframe></div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>AI Short Form AD 03</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
-            <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/Yrpg-fsi-6A" title="AI Short Form AD 04" allowfullscreen></iframe></div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>AI Short Form AD 04</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
@@ -494,6 +577,30 @@ function updateButtonState(lang) {
         }
     }
 }
+    </script>
+
+    <script>
+        (function () {
+            var data = {
+                cafe:    { id: "hM9VtzvD9dA", a: "cafe-1.jpg",    b: "cafe-2.jpg" },
+                food:    { id: "u1iMSu1Q55w", a: "food-1.jpg",    b: "food-2.jpg" },
+                product: { id: "Jbe4O773b4I", a: "product-1.jpg", b: "product-2.jpg" }
+            };
+            var tabs = document.querySelectorAll(".srx-tab");
+            var yt = document.getElementById("srxYt");
+            var srcA = document.getElementById("srxSrcA");
+            var srcB = document.getElementById("srxSrcB");
+            tabs.forEach(function (tab) {
+                tab.addEventListener("click", function () {
+                    tabs.forEach(function (t) { t.classList.remove("is-active"); });
+                    tab.classList.add("is-active");
+                    var d = data[tab.dataset.cat];
+                    yt.src = "https://www.youtube.com/embed/" + d.id;
+                    srcA.src = d.a;
+                    srcB.src = d.b;
+                });
+            });
+        })();
     </script>
 </body>
 </html>
