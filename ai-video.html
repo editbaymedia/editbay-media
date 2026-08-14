@@ -308,7 +308,7 @@
                 <iframe id="srxYt" src="https://www.youtube.com/embed/hM9VtzvD9dA" title="sample reel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
-            <a href="contact.html" class="srx-cta">
+            <a href="order.html?service=ai" class="srx-cta" id="srxCta">
                 <span class="en-content">Start my video &#8594;</span><span class="ko-content">제작하기 &#8594;</span>
             </a>
             <div class="srx-note">
@@ -598,6 +598,8 @@ function updateButtonState(lang) {
                     yt.src = "https://www.youtube.com/embed/" + d.id;
                     srcA.src = d.a;
                     srcB.src = d.b;
+                    var cta = document.getElementById("srxCta");
+                    if (cta) cta.href = "order.html?service=ai";
                 });
             });
         })();
