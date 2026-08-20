@@ -187,16 +187,13 @@
     .invoice-preview .bill-to .cname { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
     .invoice-preview .bill-to .line { font-size: 13px; color: #555; }
 
-    .invoice-preview table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #fff; }
-    .invoice-preview th { text-align: left; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: #666; padding: 8px 6px; border-bottom: 1px solid #ddd; background: #fff; }
+    .invoice-preview table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .invoice-preview th { text-align: left; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: #999; padding: 8px 6px; border-bottom: 1px solid #ddd; }
     .invoice-preview th.num, .invoice-preview td.num { text-align: right; }
-    .invoice-preview td { padding: 10px 6px; font-size: 13.5px; border-bottom: 1px solid #eee; vertical-align: top; color: #1a1a1a; background: #fff; }
-    .invoice-preview tr, .invoice-preview tbody tr:hover { background: #fff; }
-    .invoice-preview .item-desc { font-weight: 700; color: #1a1a1a; }
-    .invoice-preview .item-sub { font-size: 12px; color: #666; margin-top: 2px; font-weight: 400; }
-    .invoice-preview .item-person { font-size: 13px; color: #333; }
-    .invoice-preview .item-date { font-size: 13px; color: #333; white-space: nowrap; }
-    .invoice-preview .item-total { font-weight: 700; color: #1a1a1a; }
+    .invoice-preview td { padding: 10px 6px; font-size: 13.5px; border-bottom: 1px solid #eee; vertical-align: top; }
+    .invoice-preview .item-desc { font-weight: 700; }
+    .invoice-preview .item-sub { font-size: 12px; color: #888; margin-top: 2px; font-weight: 400; }
+    .invoice-preview .item-total { font-weight: 700; }
 
     .invoice-preview .totals { margin-left: auto; width: 260px; margin-top: 10px; }
     .invoice-preview .totals .row { display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 0; color: #444; }
@@ -718,7 +715,7 @@ const CLIENTS_KEY = 'editbay_clients_seeded';
 function seedClientsIfNeeded() {
     if (db.clients && db.clients.length) return;
     db.clients = [
-        { id: uid(), name: 'Property Spaces', email: 'propertyspaces@gmail.com', address: '33 Harbour Square, Suite 2019, Toronto ON, M5J 2G2, Canada', template: 'PS-{YYYY}{MM}{HALF}' },
+        { id: uid(), name: 'Property Spaces', billTo: 'Lukas Peters', email: '', address: '', template: 'PS-{YYYY}{MM}{HALF}' },
         { id: uid(), name: 'Leon Li', email: '', address: '', template: 'Leon Li - {YYYY}{MM}{DD}' },
         { id: uid(), name: 'Daniel Kupnicki', email: '', address: '', template: '' },
         { id: uid(), name: 'Dan Kirchner', email: '', address: '', template: '360Hometours - {YYYY}{MM}{DD}' },
@@ -746,6 +743,7 @@ function renderClientsList() {
         <div class="video-card" style="padding:16px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;" data-client-id="${c.id}">
             <div class="field" style="margin:0;"><label>이름 (프로젝트의 클라이언트 값과 일치해야 함)</label><input type="text" value="${c.name || ''}" data-cfield="name"></div>
             <div class="field" style="margin:0;"><label>인보이스 번호 템플릿</label><input type="text" value="${c.template || ''}" data-cfield="template" placeholder="예: PS-{YYYY}{MM}{HALF}"></div>
+            <div class="field" style="margin:0; grid-column:1/-1;"><label>청구서에 찍히는 이름 (BILL TO) — 비우면 위 '이름'이 그대로 찍힘</label><input type="text" value="${c.billTo || ''}" data-cfield="billTo" placeholder="예: Lukas Peters"></div>
             <div class="field" style="margin:0;"><label>이메일</label><input type="text" value="${c.email || ''}" data-cfield="email"></div>
             <div class="field" style="margin:0;"><label>주소</label><input type="text" value="${c.address || ''}" data-cfield="address"></div>
             <button class="btn danger small" data-remove-client="${c.id}" style="grid-column: 1 / -1; justify-self:end;">삭제</button>
@@ -856,6 +854,7 @@ document.getElementById('genInvoiceBtn').addEventListener('click', () => {
 
     currentInvoiceProjectIds = matched.map(p => p.id);
     const profile = getClientProfile(client) || {};
+    const billToName = (profile.billTo && profile.billTo.trim()) || client;
     const invNumber = document.getElementById('invNumber').value.trim() || buildInvoiceNumber(profile.template, end) || '(번호 미지정)';
 
     let subtotal = 0;
@@ -866,9 +865,7 @@ document.getElementById('genInvoiceBtn').addEventListener('click', () => {
             const projTotal = computeProjectTotal(p.id);
             subtotal += projTotal;
             rowsHtml += `<tr>
-                <td class="item-date">${p.date || '—'}</td>
                 <td><div class="item-desc">${p.type || p.name}</div><div class="item-sub">${p.name}</div></td>
-                <td class="item-person">—</td>
                 <td class="num">1</td><td class="num">${fmt(projTotal)}</td><td class="num item-total">${fmt(projTotal)}</td>
             </tr>`;
             return;
@@ -877,9 +874,7 @@ document.getElementById('genInvoiceBtn').addEventListener('click', () => {
             const lineTotal = (Number(i.price) || 0) * (Number(i.qty) || 0);
             subtotal += lineTotal;
             rowsHtml += `<tr>
-                <td class="item-date">${i.date || p.date || '—'}</td>
                 <td><div class="item-desc">${i.item || p.type || ''}</div><div class="item-sub">${p.name}</div></td>
-                <td class="item-person">${i.person || '—'}</td>
                 <td class="num">${i.qty}</td><td class="num">${fmt(i.price)}</td><td class="num item-total">${fmt(lineTotal)}</td>
             </tr>`;
         });
@@ -905,13 +900,13 @@ document.getElementById('genInvoiceBtn').addEventListener('click', () => {
 
             <div class="bill-to">
                 <div class="label">BILL TO</div>
-                <div class="cname">${client}</div>
+                <div class="cname">${billToName}</div>
                 ${profile.email ? `<div class="line">${profile.email}</div>` : ''}
                 ${profile.address ? `<div class="line">${profile.address}</div>` : ''}
             </div>
 
             <table>
-                <thead><tr><th>Date</th><th>Description</th><th>Person</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">Total</th></tr></thead>
+                <thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">Total</th></tr></thead>
                 <tbody>${rowsHtml}</tbody>
             </table>
 
@@ -937,17 +932,19 @@ document.getElementById('printInvoiceBtn').addEventListener('click', () => windo
 
 document.getElementById('copyInvoiceBtn').addEventListener('click', () => {
     const client = document.getElementById('invClientSelect').value;
+    const copyProfile = getClientProfile(client) || {};
+    const billToName = (copyProfile.billTo && copyProfile.billTo.trim()) || client;
     const invNumber = document.getElementById('invNumber').value.trim();
     const taxPct = Number(document.getElementById('invTax').value) || 0;
     const matched = db.projects.filter(p => currentInvoiceProjectIds.includes(p.id));
-    let text = `EDITBAY MEDIA — INVOICE\nInvoice #: ${invNumber}\nBill To: ${client}\nDate: ${new Date().toISOString().slice(0, 10)}\n\n`;
+    let text = `EDITBAY MEDIA — INVOICE\nInvoice #: ${invNumber}\nBill To: ${billToName}\nDate: ${new Date().toISOString().slice(0, 10)}\n\n`;
     let subtotal = 0;
     matched.forEach(p => {
         const items = db.invoices.filter(i => i.projectId === p.id);
         items.forEach(i => {
             const lineTotal = (Number(i.price) || 0) * (Number(i.qty) || 0);
             subtotal += lineTotal;
-            text += `${i.date || p.date || ''}  ${i.item || p.type || ''} (${p.name})${i.person ? ' / ' + i.person : ''}  qty ${i.qty} x ${fmt(i.price)} = ${fmt(lineTotal)}\n`;
+            text += `${i.item || p.type || ''} (${p.name})  qty ${i.qty} x ${fmt(i.price)} = ${fmt(lineTotal)}\n`;
         });
     });
     const taxAmount = subtotal * (taxPct / 100);
