@@ -58,7 +58,7 @@
         .nav-right { display: flex; align-items: center; gap: 32px; }
         .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
         .nav-links a { transition: color .2s; }
-        .nav-links a:hover { color: var(--c-ai); }
+        .nav-links a:hover { color: #60a5fa; }
         @media (max-width: 767px) { .nav-links { display: none; } }
 
         .lang-switch {
@@ -238,7 +238,8 @@
     <nav class="glass-nav">
         <div class="nav-inner wrap">
             <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="EditBay Logo">
+                <img src="logo.png" alt="EditBay Media Logo">
+                <span class="nav-logo-text">EDITBAY MEDIA</span>
             </a>
             <div class="nav-right">
                 <div class="nav-links">
@@ -520,12 +521,12 @@
                 <span class="card-tag">AI Creative</span>
             </div>
             <div class="video-card card-v placeholder">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/Uk6lW7aPbDY" title="AI Short Form AD 03" allowfullscreen></iframe></div>
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>AI Short Form AD 03</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
             <div class="video-card card-v placeholder">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/Jbe4O773b4I" title="AI Short Form AD 04" allowfullscreen></iframe></div>
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>AI Short Form AD 04</h3>
                 <span class="card-tag">AI Creative</span>
             </div>
@@ -592,8 +593,8 @@ function updateButtonState(lang) {
                 cafe:    { id: "hM9VtzvD9dA", a: "cafe-1.jpg",    b: "cafe-2.jpg" },
                 food:    { id: "u1iMSu1Q55w", a: "food-1.jpg",    b: "food-2.jpg" },
                 product: { id: "Jbe4O773b4I", a: "product-1.jpg", b: "product-2.jpg" },
-                health:     { id: "Uk6lW7aPbDY", a: "health-1.jpg",     b: "health-2.jpg" },
-                realestate: { id: "cGA6uS06kow", a: "realestate-1.jpg", b: "realestate-2.jpg" },
+                health:     { id: "REPLACE_ME", a: "health-1.jpg",     b: "health-2.jpg" },
+                realestate: { id: "REPLACE_ME", a: "realestate-1.jpg", b: "realestate-2.jpg" },
                 ugc:        { id: "REPLACE_ME", a: "ugc-1.jpg",        b: "ugc-2.jpg" }
             };
             var tabs = document.querySelectorAll(".srx-tab");
