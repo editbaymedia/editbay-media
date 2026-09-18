@@ -49,8 +49,12 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
         .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
         .nav-logo:hover img { opacity: .8; }
+        .nav-logo-text { font-size: 20px; font-weight: 700; letter-spacing: 0.16em; color: #fff; white-space: nowrap; transition: opacity .2s; }
+        .nav-logo:hover .nav-logo-text { opacity: .8; }
+        @media (max-width: 420px) { .nav-logo-text { font-size: 15px; letter-spacing: 0.12em; } }
         .nav-right { display: flex; align-items: center; gap: 32px; }
         .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
         .nav-links a { transition: color .2s; }
@@ -184,7 +188,8 @@
     <nav class="glass-nav">
         <div class="nav-inner wrap">
             <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="EditBay Logo">
+                <img src="logo.png" alt="EditBay Media Logo">
+                <span class="nav-logo-text">EDITBAY MEDIA</span>
             </a>
             <div class="nav-right">
                 <div class="nav-links">
@@ -335,17 +340,17 @@
         </div>
         <div class="grid-3">
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/WVIgJEfBmig" title="Real Estate Video 01" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/6aDCxezccow" title="Real Estate Video 01" allowfullscreen></iframe></div>
                 <h3>Real Estate Video 01</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/6aDCxezccow" title="Real Estate Video 02" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/WVIgJEfBmig" title="Real Estate Video 02" allowfullscreen></iframe></div>
                 <h3>Real Estate Video 02</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/zUf2rXOfkbw" title="Real Estate with AI" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/bdEyUkXHGIE" title="Real Estate with AI" allowfullscreen></iframe></div>
                 <h3>Real Estate with AI</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
@@ -357,22 +362,22 @@
         </div>
         <div class="grid-4v">
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/W5WlU9QpfJg" title="Real Estate Vertical Video 01" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/fLAxMlUxwgg" title="Real Estate Vertical Video 01" allowfullscreen></iframe></div>
                 <h3>Real Estate Vertical Video 01</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
-            <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/dE9Nt1wyqyM" title="Real Estate Vertical Video 01" allowfullscreen></iframe></div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>Real Estate Vertical Video 02</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
-            <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/cGA6uS06kow" title="Real Estate Vertical Video 01" allowfullscreen></iframe></div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>Real Estate Vertical Video 03</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
-            <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/vllsYuuF18k" title="Real Estate Vertical Video 01" allowfullscreen></iframe></div>
+            <div class="video-card card-v placeholder">
+                <div class="thumb">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>Real Estate Vertical Video 04</h3>
                 <span class="card-tag">Real Estate</span>
             </div>
