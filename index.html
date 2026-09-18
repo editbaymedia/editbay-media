@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services & Portfolio | EditBay Media</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#050a14">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
 
@@ -50,8 +58,12 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
         .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
         .nav-logo:hover img { opacity: .8; }
+        .nav-logo-text { font-size: 20px; font-weight: 700; letter-spacing: 0.16em; color: #fff; white-space: nowrap; transition: opacity .2s; }
+        .nav-logo:hover .nav-logo-text { opacity: .8; }
+        @media (max-width: 420px) { .nav-logo-text { font-size: 15px; letter-spacing: 0.12em; } }
         .nav-right { display: flex; align-items: center; gap: 32px; }
         .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
         .nav-links a { transition: color .2s; }
@@ -153,7 +165,8 @@
     <nav class="glass-nav">
         <div class="nav-inner wrap">
             <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="EditBay Logo">
+                <img src="logo.png" alt="EditBay Media Logo">
+                <span class="nav-logo-text">EDITBAY MEDIA</span>
             </a>
             <div class="nav-right">
                 <!-- Navigation Menu (SERVICES - CONTACT, WORKS 제거) -->
