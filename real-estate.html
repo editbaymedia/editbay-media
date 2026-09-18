@@ -98,12 +98,11 @@
         .video-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(16,185,129,0.25); }
 
         .price-card { padding: 40px 32px; position: relative; display: flex; flex-direction: column; }
-        .price-card.popular { border-color: rgba(16,185,129,0.4); }
-        .price-card-wrap { position: relative; height: 100%; }
-        .price-card-wrap.popular { padding-top: 16px; display: flex; flex-direction: column; }
-        .price-card-wrap.popular .video-card { flex: 1; }
+        .price-card.popular { border-color: rgba(16,185,129,0.4); overflow: visible; }
+        .price-card-wrap { position: relative; height: 100%; display: flex; flex-direction: column; }
+        .price-card-wrap .video-card, .price-card-wrap .price-card { flex: 1; }
         .popular-badge {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
             z-index: 2;
             background: var(--accent); color: #04150f; font-size: 11px; font-weight: 700;
             letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: 999px;
