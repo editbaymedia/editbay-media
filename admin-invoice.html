@@ -98,6 +98,17 @@
 
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-faint); font-size: 13.5px; }
 
+    /* --- Password lock --- */
+    .lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .lock-screen.hidden { display: none; }
+    .lock-box { width: 100%; max-width: 360px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 34px 28px; text-align: center; }
+    .lock-title { font-size: 22px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .lock-sub { font-size: 12.5px; color: var(--text-faint); margin-bottom: 22px; line-height: 1.6; }
+    .lock-box input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--line); color: var(--text); padding: 12px 14px; border-radius: 10px; font-size: 14px; font-family: inherit; margin-bottom: 12px; text-align: center; }
+    .lock-box input:focus { outline: 1px solid var(--accent); }
+    .lock-err { color: #f87171; font-size: 12.5px; margin-top: 12px; min-height: 16px; }
+    .lock-hint { color: var(--amber); font-size: 11.5px; margin-top: 14px; line-height: 1.6; }
+
     /* --- Modal --- */
     .overlay {
         display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -220,40 +231,18 @@
 </head>
 <body>
 
-<!-- ===== 관리자 비밀번호 잠금 (임시) ===== -->
-<script>
-(function () {
-    var ADMIN_PASSWORD = "20262026";   // ← 이 값만 원하는 비번으로 바꾸세요
-    var KEY = "editbay_admin_ok";
-    if (sessionStorage.getItem(KEY) === "1") return;  // 이 세션에서 이미 통과했으면 통과
+<!-- Password Lock -->
+<div class="lock-screen" id="lockScreen">
+    <div class="lock-box">
+        <div class="lock-title">🔒 EDITBAY MEDIA</div>
+        <div class="lock-sub">비공개 관리자 페이지<br>비밀번호를 입력하세요</div>
+        <input type="password" id="lockInput" placeholder="비밀번호" autocomplete="current-password">
+        <button class="btn primary" id="lockBtn" style="width:100%;">들어가기</button>
+        <div class="lock-err" id="lockErr"></div>
+        <div class="lock-hint" id="lockHint" style="display:none;"></div>
+    </div>
+</div>
 
-    var lock = document.createElement("div");
-    lock.style.cssText = "position:fixed;inset:0;z-index:99999;background:#050a14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:'Inter','Noto Sans KR',sans-serif;color:#f8fafc;";
-    lock.innerHTML =
-        '<div style="font-size:20px;font-weight:700;">EDITBAY MEDIA · 관리자</div>' +
-        '<div style="font-size:13px;color:#94a3b8;">비밀번호를 입력하세요</div>' +
-        '<input id="__pw" type="password" style="background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:12px 16px;border-radius:10px;font-size:14px;width:240px;text-align:center;outline:none;">' +
-        '<button id="__go" style="background:#3b82f6;color:#fff;border:none;padding:11px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">들어가기</button>' +
-        '<div id="__err" style="font-size:12px;color:#f87171;height:14px;"></div>';
-    document.documentElement.style.overflow = "hidden";
-    document.body.appendChild(lock);
-
-    function tryEnter() {
-        if (document.getElementById("__pw").value === ADMIN_PASSWORD) {
-            sessionStorage.setItem(KEY, "1");
-            lock.remove();
-            document.documentElement.style.overflow = "";
-        } else {
-            document.getElementById("__err").textContent = "비밀번호가 틀렸어요.";
-            document.getElementById("__pw").value = "";
-        }
-    }
-    document.getElementById("__go").addEventListener("click", tryEnter);
-    document.getElementById("__pw").addEventListener("keydown", function (e) { if (e.key === "Enter") tryEnter(); });
-    document.getElementById("__pw").focus();
-})();
-</script>    
-    
 <div class="wrap">
     <header class="top">
         <div>
@@ -1475,6 +1464,42 @@ document.getElementById('clearEndpointBtn').addEventListener('click', () => {
     setSyncStatus('연동 안 됨');
     renderTable();
 });
+
+/* ============ Password Lock ============ */
+/* ▼▼▼ 여기에 원하는 비밀번호를 따옴표 안에 입력하세요 ▼▼▼ */
+const ADMIN_PASSWORD = '';   /* 예:  const ADMIN_PASSWORD = 'mySecret123';  */
+/* ▲▲▲ 비워두면 아무 값이나 통과합니다 (아직 비밀번호 미설정 상태) ▲▲▲ */
+
+const UNLOCK_KEY = 'editbay_admin_unlocked';
+
+function unlockApp() {
+    document.getElementById('lockScreen').classList.add('hidden');
+}
+function tryUnlock() {
+    const val = document.getElementById('lockInput').value;
+    if (ADMIN_PASSWORD === '' || val === ADMIN_PASSWORD) {
+        try { sessionStorage.setItem(UNLOCK_KEY, '1'); } catch (e) {}
+        unlockApp();
+    } else {
+        document.getElementById('lockErr').textContent = '비밀번호가 올바르지 않아요.';
+        const inp = document.getElementById('lockInput');
+        inp.value = '';
+        inp.focus();
+    }
+}
+(function initLock() {
+    let unlocked = false;
+    try { unlocked = sessionStorage.getItem(UNLOCK_KEY) === '1'; } catch (e) {}
+    if (unlocked) unlockApp();
+    if (ADMIN_PASSWORD === '') {
+        const hint = document.getElementById('lockHint');
+        hint.style.display = 'block';
+        hint.textContent = '※ 아직 비밀번호가 설정되지 않았어요. 코드의 ADMIN_PASSWORD 값을 채워주세요.';
+    }
+    document.getElementById('lockBtn').addEventListener('click', tryUnlock);
+    document.getElementById('lockInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+    if (!unlocked) setTimeout(() => document.getElementById('lockInput').focus(), 100);
+})();
 
 // --- Initial load ---
 (async () => {
