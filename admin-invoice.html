@@ -220,6 +220,40 @@
 </head>
 <body>
 
+<!-- ===== 관리자 비밀번호 잠금 (임시) ===== -->
+<script>
+(function () {
+    var ADMIN_PASSWORD = "여기에_원하는_비밀번호";20262026   // ← 이 값만 원하는 비번으로 바꾸세요
+    var KEY = "editbay_admin_ok";
+    if (sessionStorage.getItem(KEY) === "1") return;  // 이 세션에서 이미 통과했으면 통과
+
+    var lock = document.createElement("div");
+    lock.style.cssText = "position:fixed;inset:0;z-index:99999;background:#050a14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:'Inter','Noto Sans KR',sans-serif;color:#f8fafc;";
+    lock.innerHTML =
+        '<div style="font-size:20px;font-weight:700;">EDITBAY MEDIA · 관리자</div>' +
+        '<div style="font-size:13px;color:#94a3b8;">비밀번호를 입력하세요</div>' +
+        '<input id="__pw" type="password" style="background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:12px 16px;border-radius:10px;font-size:14px;width:240px;text-align:center;outline:none;">' +
+        '<button id="__go" style="background:#3b82f6;color:#fff;border:none;padding:11px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">들어가기</button>' +
+        '<div id="__err" style="font-size:12px;color:#f87171;height:14px;"></div>';
+    document.documentElement.style.overflow = "hidden";
+    document.body.appendChild(lock);
+
+    function tryEnter() {
+        if (document.getElementById("__pw").value === ADMIN_PASSWORD) {
+            sessionStorage.setItem(KEY, "1");
+            lock.remove();
+            document.documentElement.style.overflow = "";
+        } else {
+            document.getElementById("__err").textContent = "비밀번호가 틀렸어요.";
+            document.getElementById("__pw").value = "";
+        }
+    }
+    document.getElementById("__go").addEventListener("click", tryEnter);
+    document.getElementById("__pw").addEventListener("keydown", function (e) { if (e.key === "Enter") tryEnter(); });
+    document.getElementById("__pw").focus();
+})();
+</script>    
+    
 <div class="wrap">
     <header class="top">
         <div>
