@@ -48,8 +48,12 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
         .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
         .nav-logo:hover img { opacity: .8; }
+        .nav-logo-text { font-size: 20px; font-weight: 700; letter-spacing: 0.16em; color: #fff; white-space: nowrap; transition: opacity .2s; }
+        .nav-logo:hover .nav-logo-text { opacity: .8; }
+        @media (max-width: 420px) { .nav-logo-text { font-size: 15px; letter-spacing: 0.12em; } }
         .nav-right { display: flex; align-items: center; gap: 32px; }
         .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
         .nav-links a { transition: color .2s; }
@@ -175,7 +179,8 @@
     <nav class="glass-nav">
         <div class="nav-inner wrap">
             <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="EditBay Logo">
+                <img src="logo.png" alt="EditBay Media Logo">
+                <span class="nav-logo-text">EDITBAY MEDIA</span>
             </a>
             <div class="nav-right">
                 <div class="nav-links">
@@ -297,12 +302,12 @@
         </div>
         <div class="grid-2">
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/F53hSCu1sII" title="Event Highlight" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/zUf2rXOfkbw" title="Event Highlight" allowfullscreen></iframe></div>
                 <h3>Event Highlight</h3>
                 <span class="card-tag">Custom Project</span>
             </div>
-            <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/P14NsDiexM4" title="Color Grading" allowfullscreen></iframe></div>
+            <div class="video-card card-h placeholder">
+                <div class="thumb placeholder">Add Video ID<br>영상 ID를 넣어주세요</div>
                 <h3>Color Grading</h3>
                 <span class="card-tag">Custom Project</span>
             </div>
@@ -310,36 +315,30 @@
 
         <div class="group-label">
             <span>
-                <span class="en-content">Custom Project — Vertical</span>
+                <span class="en-content">Motion &amp; Short Drama — Vertical</span>
                 <span class="ko-content">모션 &amp; 숏드라마 — 세로형</span>
             </span>
             <div class="rule"></div>
         </div>
         <div class="grid-4v">
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/bKASF1V_UlY" title="Motion Graphics" allowfullscreen></iframe></div>
-                <h3>Short Vertical Drama 01</h3>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/VKiz-sVO2-I" title="Motion Graphics" allowfullscreen></iframe></div>
+                <h3>Motion Graphics</h3>
                 <span class="card-tag">Custom Project</span>
             </div>
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/VKiz-sVO2-I" title="Short Vertical Drama" allowfullscreen></iframe></div>
-                <h3>Short Vertical Drama 02</h3>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/P14NsDiexM4" title="Short Vertical Drama" allowfullscreen></iframe></div>
+                <h3>Short Vertical Drama</h3>
                 <span class="card-tag">Custom Project</span>
             </div>
             <div class="video-card card-v placeholder">
-                <div class="thumb placeholder">
-                    <span class="en-content">✨ Your Future Video</span>
-                    <span class="ko-content">✨ 다음 프로젝트가<br>여기에 채워집니다</span>
-                </div>
-                <h3><span class="en-content">Your Future Video</span><span class="ko-content">당신의 미래 영상</span></h3>
+                <div class="thumb placeholder">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3><span class="en-content">TBD</span><span class="ko-content">미정</span></h3>
                 <span class="card-tag">Custom Project</span>
             </div>
             <div class="video-card card-v placeholder">
-                <div class="thumb placeholder">
-                    <span class="en-content">✨ Your Future Video</span>
-                    <span class="ko-content">✨ 다음 프로젝트가<br>여기에 채워집니다</span>
-                </div>
-                <h3><span class="en-content">Your Future Video</span><span class="ko-content">당신의 미래 영상</span></h3>
+                <div class="thumb placeholder">Add Video ID<br>영상 ID를 넣어주세요</div>
+                <h3><span class="en-content">TBD</span><span class="ko-content">미정</span></h3>
                 <span class="card-tag">Custom Project</span>
             </div>
         </div>
