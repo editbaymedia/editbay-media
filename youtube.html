@@ -56,8 +56,12 @@
             justify-content: space-between;
             padding: 16px 24px;
         }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
         .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
         .nav-logo:hover img { opacity: .8; }
+        .nav-logo-text { font-size: 20px; font-weight: 700; letter-spacing: 0.16em; color: #fff; white-space: nowrap; transition: opacity .2s; }
+        .nav-logo:hover .nav-logo-text { opacity: .8; }
+        @media (max-width: 420px) { .nav-logo-text { font-size: 15px; letter-spacing: 0.12em; } }
         .nav-right { display: flex; align-items: center; gap: 32px; }
         .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
         .nav-links a { transition: color .2s; }
@@ -239,7 +243,8 @@
     <nav class="glass-nav">
         <div class="nav-inner wrap">
             <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="EditBay Logo">
+                <img src="logo.png" alt="EditBay Media Logo">
+                <span class="nav-logo-text">EDITBAY MEDIA</span>
             </a>
 
             <div class="nav-right">
@@ -379,17 +384,17 @@
                 <span class="card-tag">YouTube Content</span>
             </div>
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/9QMKkQbAlFQ" title="YouTube Video 02" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/2Jz3OyxQWC0" title="YouTube Video 02" allowfullscreen></iframe></div>
                 <h3>YouTube Video 02</h3>
                 <span class="card-tag">YouTube Content</span>
             </div>
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/CcXbH3w2KQM" title="YouTube Video 03" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/9D_pFdLPdRg" title="YouTube Video 03" allowfullscreen></iframe></div>
                 <h3>YouTube Video 03</h3>
                 <span class="card-tag">YouTube Content</span>
             </div>
             <div class="video-card card-h">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/bdEyUkXHGIE" title="YouTube Video 04" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/hmjG9IMfRfU" title="YouTube Video 04" allowfullscreen></iframe></div>
                 <h3>YouTube Video 04</h3>
                 <span class="card-tag">YouTube Content</span>
             </div>
@@ -406,23 +411,23 @@
 
         <div class="grid-4">
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/lJ8UXlyNaLU" title="Viral Shorts 01" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/KL9ByIMIQs4" title="Viral Shorts 01" allowfullscreen></iframe></div>
                 <h3>Viral Shorts 01</h3>
                 <span class="card-tag">Short Form</span>
             </div>
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/eevmyqp_CTI" title="Viral Shorts 02" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/FK8JLth94WM" title="Viral Shorts 02" allowfullscreen></iframe></div>
                 <h3>Viral Shorts 02</h3>
                 <span class="card-tag">Short Form</span>
             </div>
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/yDaSEJyMBKA" title="Viral Shorts 03" allowfullscreen></iframe></div>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/Vx_IBkAMFWU" title="Viral Shorts 03" allowfullscreen></iframe></div>
                 <h3>Viral Shorts 03</h3>
                 <span class="card-tag">Short Form</span>
             </div>
             <div class="video-card card-v">
-                <div class="thumb"><iframe src="https://www.youtube.com/embed/oPlBN9pRjrg" title="Viral Shorts 04" allowfullscreen></iframe></div>
-                <h3>Viral Shorts 03</h3>
+                <div class="thumb"><iframe src="https://www.youtube.com/embed/F53hSCu1sII" title="Viral Shorts 04" allowfullscreen></iframe></div>
+                <h3>Viral Shorts 04</h3>
                 <span class="card-tag">Short Form</span>
             </div>
         </div>
