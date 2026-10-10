@@ -103,6 +103,19 @@
         }
         .hero-btn:hover { background: #2563eb; }
 
+        /* --- Brand reel --- */
+        #brand-reel { padding: 24px 0 96px; }
+        .reel-head { text-align: center; margin-bottom: 32px; }
+        .reel-label { font-size: 12px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--c-ai); }
+        .reel-head h2 { margin-top: 12px; font-size: clamp(28px, 4vw, 36px); font-weight: 700; letter-spacing: -0.01em; color: #fff; }
+        .reel-frame {
+            position: relative; aspect-ratio: 16/9; border-radius: 24px; overflow: hidden; background: #000;
+            border: 1px solid rgba(96,165,250,0.15);
+            box-shadow: 0 25px 50px -20px rgba(59,130,246,0.35);
+        }
+        .reel-frame video { display: block; width: 100%; height: 100%; object-fit: cover; }
+        @media (max-width: 767px) { .reel-frame { border-radius: 16px; } }
+
         /* --- Services list --- */
         #services-list { background: rgba(2, 6, 23, 0.5); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 40px 0; }
         .category-title { text-align: center; margin: 80px 0 64px; }
@@ -210,6 +223,21 @@
         </div>
     </section>
 
+    <!-- 1-b. Brand Reel (30s motion graphics intro) -->
+    <section id="brand-reel">
+        <div class="wrap">
+            <div class="reel-head">
+                <div class="reel-label">Brand Reel 2026</div>
+                <h2><span class="en-content">Meet EditBay Media</span><span class="ko-content">에디트베이 미디어를 소개합니다</span></h2>
+            </div>
+            <div class="reel-frame">
+                <video id="brandReel" muted loop playsinline preload="none" poster="editbay-reel-poster.jpg" aria-label="EditBay Media 30-second brand reel">
+                    <source data-src="editbay-reel-2026.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+
     <!-- 2. Services List -->
     <main id="services-list">
         <div class="wrap">
@@ -266,7 +294,7 @@
             </div>
             <div class="card-grid cat-yt">
                 <div class="video-card">
-                    <div class="thumb"><iframe src="https://www.youtube.com/embed/Q3PCwfny75s?si=uiWCAfNuzjxtjorY" title="Professional Main Video" allowfullscreen></iframe></div>
+                    <div class="thumb"><iframe src="https://www.youtube.com/embed/anOqaENnlqM" title="Professional Main Video" allowfullscreen></iframe></div>
                     <h3><span class="en-content">Professional Main Video</span><span class="ko-content">전문 메인 콘텐츠 (가로형)</span></h3>
                     <p>
                         <span class="en-content">High-quality long-form content focused on viewer retention.<br>Storytelling to motion graphics.</span>
@@ -343,6 +371,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('editbay_lang') || 'en';
     updateButtonState(savedLang);
 });
+
+// Brand reel: load only when it comes near the screen, play while visible, pause when scrolled away
+(function() {
+    const v = document.getElementById('brandReel');
+    if (!v) return;
+    const src = v.querySelector('source[data-src]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let loaded = false;
+    function load() { if (!loaded) { src.src = src.dataset.src; v.load(); loaded = true; } }
+    if (reduceMotion || !('IntersectionObserver' in window)) { load(); v.controls = true; return; }
+    new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { load(); v.play().catch(() => { v.controls = true; }); }
+            else if (loaded) { v.pause(); }
+        });
+    }, { rootMargin: '200px 0px', threshold: 0.25 }).observe(v);
+})();
 
 function changeLang(lang) {
     localStorage.setItem('editbay_lang', lang);
