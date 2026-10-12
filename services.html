@@ -18,6 +18,8 @@
             --c-re: #10b981;
             --c-yt: #ef4444;
             --c-cu: #a855f7;
+            --c-rl: #ec4899;
+            --c-wd: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,15 +99,29 @@
         .svc-card.re:hover { border-color: var(--c-re); box-shadow: 0 20px 40px -15px rgba(16,185,129,0.25); }
         .svc-card.yt:hover { border-color: var(--c-yt); box-shadow: 0 20px 40px -15px rgba(239,68,68,0.25); }
         .svc-card.cu:hover { border-color: var(--c-cu); box-shadow: 0 20px 40px -15px rgba(168,85,247,0.25); }
+        .svc-card.rl:hover { border-color: var(--c-rl); box-shadow: 0 20px 40px -15px rgba(236,72,153,0.25); }
+        .svc-card.wd:hover { border-color: var(--c-wd); box-shadow: 0 20px 40px -15px rgba(245,158,11,0.25); }
 
         .svc-thumb { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         .svc-thumb iframe { width: 100%; height: 100%; border: 0; }
+
+        /* 예시 영상이 아직 없을 때 보여주는 임시 화면 (영상 생기면 iframe으로 교체) */
+        .svc-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.75);
+        }
+        .svc-placeholder .ph-icon { font-size: 36px; line-height: 1; }
+        .svc-card.rl .svc-placeholder { background: linear-gradient(135deg, rgba(236,72,153,0.35), rgba(5,10,20,0.9)); }
+        .svc-card.wd .svc-placeholder { background: linear-gradient(135deg, rgba(245,158,11,0.35), rgba(5,10,20,0.9)); }
 
         .svc-card h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 12px; }
         .svc-card.ai h3 { color: var(--c-ai); }
         .svc-card.re h3 { color: var(--c-re); }
         .svc-card.yt h3 { color: var(--c-yt); }
         .svc-card.cu h3 { color: var(--c-cu); }
+        .svc-card.rl h3 { color: var(--c-rl); }
+        .svc-card.wd h3 { color: var(--c-wd); }
 
         .svc-card p.desc { color: var(--text-dim); font-size: 14px; font-weight: 300; line-height: 1.7; margin-bottom: 20px; flex-grow: 1; }
 
@@ -124,6 +140,8 @@
         .svc-card.re .svc-btn { background: var(--c-re); }
         .svc-card.yt .svc-btn { background: var(--c-yt); }
         .svc-card.cu .svc-btn { background: var(--c-cu); }
+        .svc-card.rl .svc-btn { background: var(--c-rl); }
+        .svc-card.wd .svc-btn { background: var(--c-wd); }
 
         /* --- Contact CTA --- */
         #contact { padding: 0 0 96px; text-align: center; }
@@ -216,18 +234,56 @@
                 <a href="real-estate.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
             </div>
 
+            <!-- Instagram Reels Editing (NEW) -->
+            <div class="svc-card rl">
+                <div class="svc-thumb">
+                    <!-- 예시 영상이 생기면 아래 div를 지우고 iframe으로 교체하세요 -->
+                    <div class="svc-placeholder">
+                        <span class="ph-icon">▶</span>
+                        <span class="en-content">Sample Reel Coming Soon</span>
+                        <span class="ko-content">예시 영상 준비 중</span>
+                    </div>
+                </div>
+                <h3><span class="en-content">Instagram Reels Editing</span><span class="ko-content">인스타그램 릴스 편집</span></h3>
+                <p class="desc">
+                    <span class="en-content">Filmed it, but never posted it?<br>Send us your clips — we turn them into ready-to-post Reels with English &amp; Korean captions.</span>
+                    <span class="ko-content">열심히 찍었는데, 편집 못 해서 못 올리고 있나요?<br>영상만 보내주세요. 한국어·영어 자막까지 넣어 바로 올릴 수 있는 릴스로 만들어 드려요.</span>
+                </p>
+                <div class="svc-price"><span class="en-content">Starting at $80+</span><span class="ko-content">시작가 $80+</span></div>
+                <a href="contact.html" class="svc-btn"><span class="en-content">Get a Quote →</span><span class="ko-content">문의하기 →</span></a>
+            </div>
+
             <!-- YouTube Content -->
             <div class="svc-card yt">
                 <div class="svc-thumb">
                     <iframe src="https://www.youtube.com/embed/anOqaENnlqM?autoplay=0&mute=1&controls=0&loop=1" title="YouTube Content" allowfullscreen></iframe>
                 </div>
-                <h3><span class="en-content">YouTube Content</span><span class="ko-content">유튜브 영상 편집</span></h3>
+                <h3><span class="en-content">YouTube Content</span><span class="ko-content">유튜브 콘텐츠 관리</span></h3>
                 <p class="desc">
                     <span class="en-content">End-to-end editing for creators.<br>Focus on retention, dynamic pacing, and custom motion graphics.</span>
                     <span class="ko-content">크리에이터를 위한 전문 편집 서비스입니다.<br>시청 지속시간과 다이나믹한 호흡에 집중합니다.</span>
                 </p>
                 <div class="svc-price"><span class="en-content">Price Custom</span><span class="ko-content">가격 별도 협의</span></div>
                 <a href="youtube.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
+            </div>
+
+            <!-- Wedding Films (NEW) -->
+            <div class="svc-card wd">
+                <div class="svc-thumb">
+                    <!-- 예시 영상이 생기면 아래 div를 지우고 iframe으로 교체하세요 -->
+                    <div class="svc-placeholder">
+                        <span class="ph-icon">♡</span>
+                        <span class="en-content">Sample Film Coming Soon</span>
+                        <span class="ko-content">예시 영상 준비 중</span>
+                    </div>
+                </div>
+                <h3><span class="en-content">Wedding Films</span><span class="ko-content">웨딩 영상 편집</span></h3>
+                <p class="desc">
+                    <span class="en-content">Turn your wedding footage into a film you'll rewatch for years.<br>Highlight films and full ceremony edits.</span>
+                    <span class="ko-content">결혼식 날의 영상을 오래도록 다시 보고 싶은 한 편의 영화로.<br>하이라이트 영상부터 본식 전체 편집까지.</span>
+                </p>
+                <div class="svc-price"><span class="en-content">Consultation Bespoke</span><span class="ko-content">상담 후 맞춤 견적</span></div>
+                <a href="contact.html" class="svc-btn"><span class="en-content">Get a Quote →</span><span class="ko-content">문의하기 →</span></a>
             </div>
 
             <!-- Custom Projects -->
