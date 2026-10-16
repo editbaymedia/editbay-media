@@ -1,360 +1,109 @@
 <!DOCTYPE html>
 <html lang="en" class="en-mode">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services | EditBay Media</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
-
-        :root {
-            --accent: #3b82f6;
-            --bg-dark: #050a14;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --text-faint: #64748b;
-
-            --c-ai: #3b82f6;
-            --c-re: #10b981;
-            --c-yt: #ef4444;
-            --c-cu: #a855f7;
-            --c-rl: #ec4899;
-            --c-wd: #f59e0b;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-
-        a { color: inherit; text-decoration: none; }
-        img { display: block; max-width: 100%; }
-
-        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-        .wrap-sm { max-width: 896px; margin: 0 auto; padding: 0 24px; }
-
-        /* --- 언어 제어 로직 --- */
-        .en-content, .ko-content { display: none !important; }
-        .en-mode .en-content { display: block !important; }
-        .en-mode span.en-content, .en-mode a.en-content { display: inline-block !important; }
-        .ko-mode .ko-content { display: block !important; }
-        .ko-mode span.ko-content, .ko-mode a.ko-content { display: inline-block !important; }
-
-        /* --- Nav --- */
-        .glass-nav {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
-            background: rgba(5, 10, 20, 0.85);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
-        .nav-logo { display: flex; align-items: center; gap: 12px; }
-        .nav-logo img { height: 40px; width: auto; transition: opacity .2s; }
-        .nav-logo:hover img { opacity: .8; }
-        .nav-logo-text { font-size: 20px; font-weight: 700; letter-spacing: 0.16em; color: #fff; white-space: nowrap; transition: opacity .2s; }
-        .nav-logo:hover .nav-logo-text { opacity: .8; }
-        @media (max-width: 420px) { .nav-logo-text { font-size: 15px; letter-spacing: 0.12em; } }
-        .nav-right { display: flex; align-items: center; gap: 32px; }
-        .nav-links { display: flex; gap: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: #fff; }
-        .nav-links a { transition: color .2s; }
-        .nav-links a:hover { color: var(--c-ai); }
-        @media (max-width: 767px) { .nav-links { display: none; } }
-        
-        .lang-switch {
-            display: flex; align-items: center; gap: 8px;
-            padding: 4px 12px; border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-        }
-        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; opacity: 0.4; color: var(--text-main); transition: opacity .3s; }
-        .lang-btn.active { opacity: 1; color: var(--accent); }
-        .lang-divider { color: rgba(255,255,255,0.1); font-size: 10px; }
-
-        /* --- Hero --- */
-        #hero { padding: 160px 0 64px; text-align: center; }
-        .hero-text h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #fff; }
-        .hero-text p { margin-top: 20px; color: var(--text-dim); font-size: clamp(16px, 2vw, 19px); font-weight: 300; line-height: 1.7; max-width: 560px; margin-left: auto; margin-right: auto; }
-
-        /* --- Service cards --- */
-        #services-grid { padding: 32px 0 96px; }
-        .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
-        @media (max-width: 860px) { .svc-grid { grid-template-columns: 1fr; } }
-
-        .svc-card {
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 2rem;
-            overflow: hidden;
-            padding: 28px;
-            display: flex; flex-direction: column;
-            transition: all 0.4s ease;
-        }
-        .svc-card:hover { transform: translateY(-5px); }
-        .svc-card.ai:hover { border-color: var(--c-ai); box-shadow: 0 20px 40px -15px rgba(59,130,246,0.25); }
-        .svc-card.re:hover { border-color: var(--c-re); box-shadow: 0 20px 40px -15px rgba(16,185,129,0.25); }
-        .svc-card.yt:hover { border-color: var(--c-yt); box-shadow: 0 20px 40px -15px rgba(239,68,68,0.25); }
-        .svc-card.cu:hover { border-color: var(--c-cu); box-shadow: 0 20px 40px -15px rgba(168,85,247,0.25); }
-        .svc-card.rl:hover { border-color: var(--c-rl); box-shadow: 0 20px 40px -15px rgba(236,72,153,0.25); }
-        .svc-card.wd:hover { border-color: var(--c-wd); box-shadow: 0 20px 40px -15px rgba(245,158,11,0.25); }
-
-        .svc-thumb { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .svc-thumb iframe { width: 100%; height: 100%; border: 0; }
-
-        /* 예시 영상이 아직 없을 때 보여주는 임시 화면 (영상 생기면 iframe으로 교체) */
-        .svc-placeholder {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-            font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.75);
-        }
-        .svc-placeholder .ph-icon { font-size: 36px; line-height: 1; }
-        .svc-card.rl .svc-placeholder { background: linear-gradient(135deg, rgba(236,72,153,0.35), rgba(5,10,20,0.9)); }
-        .svc-card.wd .svc-placeholder { background: linear-gradient(135deg, rgba(245,158,11,0.35), rgba(5,10,20,0.9)); }
-
-        .svc-card h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 12px; }
-        .svc-card.ai h3 { color: var(--c-ai); }
-        .svc-card.re h3 { color: var(--c-re); }
-        .svc-card.yt h3 { color: var(--c-yt); }
-        .svc-card.cu h3 { color: var(--c-cu); }
-        .svc-card.rl h3 { color: var(--c-rl); }
-        .svc-card.wd h3 { color: var(--c-wd); }
-
-        .svc-card p.desc { color: var(--text-dim); font-size: 14px; font-weight: 300; line-height: 1.7; margin-bottom: 20px; flex-grow: 1; }
-
-        .svc-price { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 20px; }
-
-        .svc-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-            color: #fff;
-            padding: 13px 24px; border-radius: 12px;
-            width: fit-content;
-            transition: opacity .2s;
-        }
-        .svc-btn:hover { opacity: .85; }
-        .svc-card.ai .svc-btn { background: var(--c-ai); }
-        .svc-card.re .svc-btn { background: var(--c-re); }
-        .svc-card.yt .svc-btn { background: var(--c-yt); }
-        .svc-card.cu .svc-btn { background: var(--c-cu); }
-        .svc-card.rl .svc-btn { background: var(--c-rl); }
-        .svc-card.wd .svc-btn { background: var(--c-wd); }
-
-        /* --- Contact CTA --- */
-        #contact { padding: 0 0 96px; text-align: center; }
-        #contact h2 { font-size: clamp(28px, 4vw, 36px); font-weight: 700; color: #fff; margin-bottom: 32px; }
-        .cta-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-        .cta-btn {
-            padding: 16px 32px; border-radius: 12px;
-            font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
-            transition: all .2s;
-        }
-        .cta-btn.solid { background: var(--accent); color: #fff; }
-        .cta-btn.solid:hover { background: #2563eb; }
-        .cta-btn.outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-        .cta-btn.outline:hover { background: rgba(255,255,255,0.08); }
-
-        footer { padding: 48px 24px; text-align: center; color: #334155; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
-        footer a { margin-left: 8px; opacity: 0; transition: opacity .2s; cursor: default; }
-        footer a:hover { opacity: 1; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services | EditBay Media</title>
+<meta name="description" content="AI video, Instagram Reels, real estate, YouTube, wedding and event video editing in Vancouver — English and Korean.">
+<script>try{document.documentElement.className=(localStorage.getItem('editbay_lang')||'en')+'-mode'}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="logo" aria-label="EditBay Media home"><svg width="44" height="35" viewBox="180 245 640 510" fill="none" stroke="#1E1E1E" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="214,282 361,372 361,648 214,720"/><polygon points="472,412 787,280 787,720 472,648"/><line x1="472" y1="412" x2="787" y2="720"/><line x1="361" y1="648" x2="472" y2="648"/><line x1="214" y1="720" x2="787" y2="720"/></svg><span>EDITBAY MEDIA</span></a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="services.html" class="current"><span class="en-content">Services</span><span class="ko-content">서비스</span></a>
+        <a href="index.html#work"><span class="en-content">Work</span><span class="ko-content">작업물</span></a>
+        <a href="index.html#faq"><span class="en-content">FAQ</span><span class="ko-content">자주 묻는 질문</span></a>
+      </div>
+      <div class="lang">
+        <button type="button" id="btn-en" class="active" onclick="changeLang('en')">EN</button>
+        <button type="button" id="btn-ko" onclick="changeLang('ko')">KR</button>
+      </div>
+      <a href="contact.html" class="btn btn-ink" style="min-height:44px;padding:0 20px;font-size:14px"><span class="en-content">Contact us</span><span class="ko-content">문의하기</span></a>
+    </div>
+  </nav>
+</header>
+<section class="wrap page-hero">
+  <a href="services.html" class="crumb"><span class="en-content">Services</span><span class="ko-content">서비스</span></a>
+  <h1><span class="en-content">Video for every stage of your business</span><span class="ko-content">비즈니스의 모든 단계를 위한 영상</span></h1>
+  <p><span class="en-content">From AI-made ads with no filming, to editing the footage you already have. English &amp; Korean, based in Vancouver.</span><span class="ko-content">촬영 없이 만드는 AI 광고부터, 이미 찍어둔 영상 편집까지. 밴쿠버에서 한국어·영어로 진행해요.</span></p>
+  
+</section>
 
-    <!-- Navigation -->
-    <nav class="glass-nav">
-        <div class="nav-inner wrap">
-            <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="EditBay Media Logo">
-                <span class="nav-logo-text">EDITBAY MEDIA</span>
-            </a>
-            <div class="nav-right">
-                <!-- Navigation Menu (SERVICES - CONTACT, WORKS 제거) -->
-                <div class="nav-links">
-                    <a href="services.html" class="en-content">SERVICES</a>
-                    <a href="services.html" class="ko-content">서비스</a>
-                    <a href="contact.html" class="en-content">CONTACT</a>
-                    <a href="contact.html" class="ko-content">문의하기</a>
-                </div>
-                <div class="lang-switch">
-                    <button onclick="changeLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <span class="lang-divider">|</span>
-                    <button onclick="changeLang('ko')" id="btn-ko" class="lang-btn">KR</button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 1. Hero -->
-    <section id="hero" class="wrap-sm">
-        <div class="hero-text">
-            <div class="en-content">
-                <h1>Our Expertise</h1>
-                <p>We provide tailored video solutions using high-end AI tools and cinematic techniques.</p>
-            </div>
-            <div class="ko-content">
-                <h1>제작 솔루션</h1>
-                <p>하이엔드 AI 도구와 시네마틱 기법을 활용한 맞춤형 영상 솔루션을 제공합니다.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 2. Service Cards -->
-    <section id="services-grid" class="wrap">
-        <div class="svc-grid">
-
-            <!-- AI Video Solutions -->
-            <div class="svc-card ai">
-                <div class="svc-thumb">
-                    <iframe src="https://www.youtube.com/embed/hnZAk7Ekf_c?autoplay=0&mute=1&controls=0&loop=1" title="AI Video Solutions" allowfullscreen></iframe>
-                </div>
-                <h3><span class="en-content">AI Video Solutions</span><span class="ko-content">AI 비디오 솔루션</span></h3>
-                <p class="desc">
-                    <span class="en-content">Transform your brand with AI-generated visuals.<br>Ideal for branded films, high-concept ads, and storytelling.</span>
-                    <span class="ko-content">AI 기술로 브랜드 메시지를 시각화합니다.<br>촬영 없이도 감각적인 광고 및 스토리텔링 구현이 가능합니다.</span>
-                </p>
-                <div class="svc-price"><span class="en-content">Starting at $100+</span><span class="ko-content">시작가 $100+</span></div>
-                <a href="ai-video.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
-            </div>
-
-            <!-- Real Estate Editing -->
-            <div class="svc-card re">
-                <div class="svc-thumb">
-                    <iframe src="https://www.youtube.com/embed/6aDCxezccow?autoplay=0&mute=1&controls=0&loop=1" title="Real Estate Editing" allowfullscreen></iframe>
-                </div>
-                <h3><span class="en-content">Real Estate Editing</span><span class="ko-content">부동산 영상 편집</span></h3>
-                <p class="desc">
-                    <span class="en-content">Showcase properties with a cinematic touch.<br>Optimized for agent's high-retention property tours.</span>
-                    <span class="ko-content">매물의 가치를 높이는 시네마틱 투어 영상입니다.<br>밴쿠버 럭셔리 매물 시장의 노하우를 담았습니다.</span>
-                </p>
-                <div class="svc-price"><span class="en-content">Starting at $50+</span><span class="ko-content">시작가 $50+</span></div>
-                <a href="real-estate.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
-            </div>
-
-            <!-- Instagram Reels Editing (NEW) -->
-            <div class="svc-card rl">
-                <div class="svc-thumb">
-                    <!-- 예시 영상이 생기면 아래 div를 지우고 iframe으로 교체하세요 -->
-                    <div class="svc-placeholder">
-                        <span class="ph-icon">▶</span>
-                        <span class="en-content">Sample Reel Coming Soon</span>
-                        <span class="ko-content">예시 영상 준비 중</span>
-                    </div>
-                </div>
-                <h3><span class="en-content">Instagram Reels Editing</span><span class="ko-content">인스타그램 릴스 편집</span></h3>
-                <p class="desc">
-                    <span class="en-content">Filmed it, but never posted it?<br>Send us your clips — we turn them into ready-to-post Reels with English &amp; Korean captions.</span>
-                    <span class="ko-content">열심히 찍었는데, 편집 못 해서 못 올리고 있나요?<br>영상만 보내주세요. 한국어·영어 자막까지 넣어 바로 올릴 수 있는 릴스로 만들어 드려요.</span>
-                </p>
-                <div class="svc-price"><span class="en-content">Starting at $80+</span><span class="ko-content">시작가 $80+</span></div>
-                <a href="contact.html" class="svc-btn"><span class="en-content">Get a Quote →</span><span class="ko-content">문의하기 →</span></a>
-            </div>
-
-            <!-- YouTube Content -->
-            <div class="svc-card yt">
-                <div class="svc-thumb">
-                    <iframe src="https://www.youtube.com/embed/anOqaENnlqM?autoplay=0&mute=1&controls=0&loop=1" title="YouTube Content" allowfullscreen></iframe>
-                </div>
-                <h3><span class="en-content">YouTube Content</span><span class="ko-content">유튜브 콘텐츠 관리</span></h3>
-                <p class="desc">
-                    <span class="en-content">End-to-end editing for creators.<br>Focus on retention, dynamic pacing, and custom motion graphics.</span>
-                    <span class="ko-content">크리에이터를 위한 전문 편집 서비스입니다.<br>시청 지속시간과 다이나믹한 호흡에 집중합니다.</span>
-                </p>
-                <div class="svc-price"><span class="en-content">Price Custom</span><span class="ko-content">가격 별도 협의</span></div>
-                <a href="youtube.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
-            </div>
-
-            <!-- Wedding Films (NEW) -->
-            <div class="svc-card wd">
-                <div class="svc-thumb">
-                    <!-- 예시 영상이 생기면 아래 div를 지우고 iframe으로 교체하세요 -->
-                    <div class="svc-placeholder">
-                        <span class="ph-icon">♡</span>
-                        <span class="en-content">Sample Film Coming Soon</span>
-                        <span class="ko-content">예시 영상 준비 중</span>
-                    </div>
-                </div>
-                <h3><span class="en-content">Wedding Films</span><span class="ko-content">웨딩 영상 편집</span></h3>
-                <p class="desc">
-                    <span class="en-content">Turn your wedding footage into a film you'll rewatch for years.<br>Highlight films and full ceremony edits.</span>
-                    <span class="ko-content">결혼식 날의 영상을 오래도록 다시 보고 싶은 한 편의 영화로.<br>하이라이트 영상부터 본식 전체 편집까지.</span>
-                </p>
-                <div class="svc-price"><span class="en-content">Consultation Bespoke</span><span class="ko-content">상담 후 맞춤 견적</span></div>
-                <a href="contact.html" class="svc-btn"><span class="en-content">Get a Quote →</span><span class="ko-content">문의하기 →</span></a>
-            </div>
-
-            <!-- Custom Projects -->
-            <div class="svc-card cu">
-                <div class="svc-thumb">
-                    <iframe src="https://www.youtube.com/embed/-C6HhWm9_Jk?autoplay=0&mute=1&controls=0&loop=1" title="Custom Projects" allowfullscreen></iframe>
-                </div>
-                <h3><span class="en-content">Custom Projects</span><span class="ko-content">커스텀 프로젝트</span></h3>
-                <p class="desc">
-                    <span class="en-content">Music videos, event highlights, or any unique creative vision.<br>Tailored to your exact needs.</span>
-                    <span class="ko-content">뮤직비디오, 이벤트 하이라이트 등<br>창의적인 모든 프로젝트를 귀하의 요구에 맞춰 제작합니다.</span>
-                </p>
-                <div class="svc-price"><span class="en-content">Consultation Bespoke</span><span class="ko-content">상담 후 맞춤 견적</span></div>
-                <a href="custom.html" class="svc-btn"><span class="en-content">View Details →</span><span class="ko-content">상세 정보 →</span></a>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- 3. Contact CTA -->
-    <section id="contact" class="wrap-sm">
-        <h2>
-            <span class="en-content">Let's Create Something Extraordinary</span>
-            <span class="ko-content">압도적인 결과물을 함께 만드세요</span>
-        </h2>
-        <div class="cta-actions">
-            <a href="contact.html" class="cta-btn solid">
-                <span class="en-content">Get in Touch</span><span class="ko-content">문의하기</span>
-            </a>
-            <a href="index.html" class="cta-btn outline">
-                <span class="en-content">Home</span><span class="ko-content">홈으로</span>
-            </a>
-        </div>
-    </section>
-
-    <footer>
-        <p>© 2026 EDITBAY MEDIA. ALL RIGHTS RESERVED.
-            <a href="admin-invoice.html">ADMIN</a>
-        </p>
-    </footer>
-
-    <script>
-(function() {
-    const savedLang = localStorage.getItem('editbay_lang') || 'en';
-    document.documentElement.className = savedLang + '-mode';
-})();
-
-document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('editbay_lang') || 'en';
-    updateButtonState(savedLang);
-});
-
-function changeLang(lang) {
-    localStorage.setItem('editbay_lang', lang);
-    document.documentElement.className = lang + '-mode';
-    updateButtonState(lang);
-}
-
-function updateButtonState(lang) {
-    const btnEn = document.getElementById('btn-en');
-    const btnKo = document.getElementById('btn-ko');
-    if (btnEn && btnKo) {
-        if (lang === 'ko') {
-            btnKo.classList.add('active');
-            btnEn.classList.remove('active');
-        } else {
-            btnEn.classList.add('active');
-            btnKo.classList.remove('active');
-        }
-    }
-}
-    </script>
+<section class="wrap" style="padding-bottom:72px">
+  <div class="ways">
+    <div class="way" style="background:var(--ink);color:var(--sand)"><b style="color:var(--tan)"><span class="en-content">NO FOOTAGE?</span><span class="ko-content">영상이 없나요?</span></b><strong><span class="en-content">We create it with AI</span><span class="ko-content">AI로 만들어 드려요</span></strong><span style="color:rgba(242,240,236,.8)"><span class="en-content">AI Video</span><span class="ko-content">AI 영상 제작</span></span></div>
+    <div class="way" style="background:var(--tan);color:var(--ink)"><b><span class="en-content">ALREADY FILMED IT?</span><span class="ko-content">이미 찍어두셨나요?</span></b><strong><span class="en-content">We edit your footage</span><span class="ko-content">편집해 드려요</span></strong><span><span class="en-content">Reels · Real Estate · YouTube · Weddings · Events</span><span class="ko-content">릴스 · 부동산 · 유튜브 · 웨딩 · 이벤트</span></span></div>
+  </div>
+</section>
+<section class="wrap" style="padding-bottom:96px"><div class="svc-grid"><div class="svc"><div class="f16"><iframe src="https://www.youtube.com/embed/hnZAk7Ekf_c" title="AI Video" loading="lazy" allowfullscreen></iframe></div>
+      <div class="svc-top"><b><span class="en-content">AI CREATION</span><span class="ko-content">AI 제작</span></b><span class="pill"><span class="en-content">From $100</span><span class="ko-content">$100부터</span></span></div>
+      <h3><span class="en-content">AI Video</span><span class="ko-content">AI 영상 제작</span></h3><p><span class="en-content">Branded ads and storytelling made with AI — shots no camera can capture, no crew needed.</span><span class="ko-content">AI로 만드는 브랜드 광고와 스토리텔링. 카메라로 못 찍는 장면도, 촬영팀 없이.</span></p><div class="tags"><span><span class="en-content">No filming</span><span class="ko-content">촬영 없음</span></span><span><span class="en-content">Cafés &amp; brands</span><span class="ko-content">카페 · 브랜드</span></span><span><span class="en-content">Product ads</span><span class="ko-content">제품 광고</span></span></div>
+      <a href="ai-video.html" class="go"><span class="en-content">View details →</span><span class="ko-content">자세히 보기 →</span></a></div><div class="svc"><div class="f16 empty"><!-- 릴스 예시 영상 자리 --><span class="en-content">Sample Reel coming soon</span><span class="ko-content">릴스 예시 영상 준비 중</span></div>
+      <div class="svc-top"><b><span class="en-content">EDITING</span><span class="ko-content">편집</span></b><span class="pill"><span class="en-content">From $80</span><span class="ko-content">$80부터</span></span></div>
+      <h3><span class="en-content">Instagram Reels</span><span class="ko-content">인스타그램 릴스</span></h3><p><span class="en-content">Send your clips — get ready-to-post Reels with English &amp; Korean captions.</span><span class="ko-content">영상만 보내주세요. 한국어·영어 자막까지 넣어 바로 올릴 수 있는 릴스로.</span></p><div class="tags"><span><span class="en-content">Up to 60 sec</span><span class="ko-content">60초 이하</span></span><span><span class="en-content">EN + KR captions</span><span class="ko-content">한·영 자막</span></span><span><span class="en-content">Monthly plans</span><span class="ko-content">월간 플랜</span></span></div>
+      <a href="instagramreels.html" class="go"><span class="en-content">View details →</span><span class="ko-content">자세히 보기 →</span></a></div><div class="svc"><div class="f16"><iframe src="https://www.youtube.com/embed/6aDCxezccow" title="Real Estate" loading="lazy" allowfullscreen></iframe></div>
+      <div class="svc-top"><b><span class="en-content">EDITING</span><span class="ko-content">편집</span></b><span class="pill"><span class="en-content">From $50</span><span class="ko-content">$50부터</span></span></div>
+      <h3><span class="en-content">Real Estate</span><span class="ko-content">부동산 영상</span></h3><p><span class="en-content">Cinematic property tours and social-ready listing videos for agents and developers.</span><span class="ko-content">에이전트와 개발사를 위한 시네마틱 매물 투어와 SNS용 매물 영상.</span></p><div class="tags"><span><span class="en-content">Property tours</span><span class="ko-content">매물 투어</span></span><span><span class="en-content">Vertical reels</span><span class="ko-content">세로형 릴스</span></span><span><span class="en-content">AI visual upgrade</span><span class="ko-content">AI 비주얼 업그레이드</span></span></div>
+      <a href="real-estate.html" class="go"><span class="en-content">View details →</span><span class="ko-content">자세히 보기 →</span></a></div><div class="svc"><div class="f16"><iframe src="https://www.youtube.com/embed/anOqaENnlqM" title="YouTube and custom" loading="lazy" allowfullscreen></iframe></div>
+      <div class="svc-top"><b><span class="en-content">EDITING</span><span class="ko-content">편집</span></b><span class="pill"><span class="en-content">Custom quote</span><span class="ko-content">맞춤 견적</span></span></div>
+      <h3><span class="en-content">YouTube · Weddings · Events</span><span class="ko-content">유튜브 · 웨딩 · 이벤트</span></h3><p><span class="en-content">Long-form YouTube, shorts, wedding films, event highlights, music videos — tailored to you.</span><span class="ko-content">유튜브 롱폼과 쇼츠, 웨딩 영상, 이벤트 하이라이트, 뮤직비디오까지 맞춤 제작.</span></p><div class="tags"><span><span class="en-content">Long-form &amp; Shorts</span><span class="ko-content">롱폼 · 쇼츠</span></span><span><span class="en-content">Weddings</span><span class="ko-content">웨딩</span></span><span><span class="en-content">Events</span><span class="ko-content">이벤트</span></span></div>
+      <a href="custom.html" class="go"><span class="en-content">View details →</span><span class="ko-content">자세히 보기 →</span></a></div></div></section>
+<section class="dark on-dark">
+  <div class="wrap">
+    <div class="sec-left"><span class="eyebrow"><span class="en-content">How it works</span><span class="ko-content">진행 방식</span></span><h2 class="h2"><span class="en-content">Two ways we work</span><span class="ko-content">두 가지 진행 방식</span></h2></div>
+    <div class="tracks">
+      <div class="track"><div class="track-head"><b><span class="en-content">NO FOOTAGE</span><span class="ko-content">영상 없음</span></b><strong><span class="en-content">We create it with AI</span><span class="ko-content">AI로 만들어요</span></strong><span><span class="en-content">AI Video</span><span class="ko-content">AI 영상 제작</span></span></div><div class="tstep"><em>01</em><div><strong><span class="en-content">Brief</span><span class="ko-content">브리프</span></strong><span><span class="en-content">Tell us about your business, customers and goal. Send photos or your logo if you have them.</span><span class="ko-content">비즈니스, 고객, 목표를 알려주세요. 사진이나 로고가 있다면 함께 보내주세요.</span></span></div></div><div class="tstep"><em>02</em><div><strong><span class="en-content">Concept &amp; storyboard</span><span class="ko-content">컨셉 · 스토리보드</span></strong><span><span class="en-content">We send a short script and scene plan. Nothing is made until you approve it.</span><span class="ko-content">짧은 대본과 장면 구성을 보내드려요. 승인 전에는 제작하지 않아요.</span></span></div></div><div class="tstep"><em>03</em><div><strong><span class="en-content">AI creation</span><span class="ko-content">AI 제작</span></strong><span><span class="en-content">We generate the visuals and motion — no filming, no crew.</span><span class="ko-content">촬영 없이 AI로 장면과 움직임을 만들어요.</span></span></div></div><div class="tstep"><em>04</em><div><strong><span class="en-content">Edit &amp; review</span><span class="ko-content">편집 · 확인</span></strong><span><span class="en-content">Music, captions and your branding added. You review and request changes.</span><span class="ko-content">음악, 자막, 브랜딩을 넣고 확인 후 수정 요청을 받아요.</span></span></div></div><div class="tstep"><em>05</em><div><strong><span class="en-content">Delivery</span><span class="ko-content">납품</span></strong><span><span class="en-content">Final files sized for every platform you post on.</span><span class="ko-content">올리실 플랫폼에 맞는 최종 파일을 드려요.</span></span></div></div></div>
+      <div class="track"><div class="track-head"><b><span class="en-content">YOUR FOOTAGE</span><span class="ko-content">찍어둔 영상</span></b><strong><span class="en-content">We edit what you filmed</span><span class="ko-content">찍은 영상을 편집해요</span></strong><span><span class="en-content">Reels · Real Estate · YouTube · Weddings · Events</span><span class="ko-content">릴스 · 부동산 · 유튜브 · 웨딩 · 이벤트</span></span></div><div class="tstep"><em>01</em><div><strong><span class="en-content">Send your clips</span><span class="ko-content">영상 보내기</span></strong><span><span class="en-content">Upload to the shared Drive link, with a short note on what the video is about.</span><span class="ko-content">공유 드라이브 링크에 영상을 올리고, 어떤 영상인지 짧게 메모해 주세요.</span></span></div></div><div class="tstep"><em>02</em><div><strong><span class="en-content">Editing</span><span class="ko-content">편집</span></strong><span><span class="en-content">We cut the best parts and add captions (EN + KR), music and highlights.</span><span class="ko-content">좋은 부분을 골라 자르고 자막(한·영), 음악, 강조 문구를 넣어요.</span></span></div></div><div class="tstep"><em>03</em><div><strong><span class="en-content">Preview &amp; revise</span><span class="ko-content">미리보기 · 수정</span></strong><span><span class="en-content">You watch a preview first and tell us what to change.</span><span class="ko-content">미리보기를 먼저 보시고 바꿀 부분을 알려주세요.</span></span></div></div><div class="tstep"><em>04</em><div><strong><span class="en-content">Ready to post</span><span class="ko-content">업로드 준비 완료</span></strong><span><span class="en-content">Final MP4 for Instagram, TikTok, YouTube or your big day.</span><span class="ko-content">인스타, 틱톡, 유튜브용 최종 MP4를 드려요.</span></span></div></div></div>
+    </div>
+    <p class="note" style="margin-top:24px"><span class="en-content">Each service page shows its own detailed steps and turnaround time.</span><span class="ko-content">각 서비스 페이지에서 자세한 단계와 작업 기간을 확인하실 수 있어요.</span></p>
+  </div>
+</section>
+<section class="wrap" style="padding-top:96px">
+  <div class="cta-simple">
+    <h2><span class="en-content">Not sure which one you need?</span><span class="ko-content">어떤 서비스가 맞는지 모르겠다면?</span></h2>
+    <p><span class="en-content">Tell us what you have — we'll suggest the best fit. English or Korean.</span><span class="ko-content">가지고 계신 걸 알려주세요. 가장 잘 맞는 방법을 추천해 드릴게요. 한국어·영어 모두 OK.</span></p>
+    <div class="hero-btns">
+      <a href="mailto:editbaymedia@gmail.com" class="btn btn-sand"><span class="en-content">Email Us</span><span class="ko-content">이메일 보내기</span></a>
+      <a href="https://instagram.com/editbay.ai" class="btn btn-line-light">DM @editbay.ai</a>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="wrap foot">
+    <div class="foot-brand">
+      <div class="logo"><svg width="40" height="32" viewBox="180 245 640 510" fill="none" stroke="#F2F0EC" stroke-width="30" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="214,282 361,372 361,648 214,720"/><polygon points="472,412 787,280 787,720 472,648"/><line x1="472" y1="412" x2="787" y2="720"/><line x1="361" y1="648" x2="472" y2="648"/><line x1="214" y1="720" x2="787" y2="720"/></svg><span style="font-size:16px">EDITBAY MEDIA</span></div>
+      <p><span class="en-content">AI video and editing studio in Vancouver. English &amp; Korean.</span><span class="ko-content">밴쿠버의 AI 영상·편집 스튜디오. 한국어·영어 상담.</span></p>
+      <a href="mailto:editbaymedia@gmail.com" class="btn" style="align-self:flex-start;background:var(--tan);color:var(--ink);min-height:44px;font-size:14px"><span class="en-content">Talk to us</span><span class="ko-content">이메일 보내기</span></a>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <b><span class="en-content">Services</span><span class="ko-content">서비스</span></b>
+        <a href="ai-video.html"><span class="en-content">AI Video</span><span class="ko-content">AI 영상</span></a>
+        <a href="instagramreels.html"><span class="en-content">Instagram Reels</span><span class="ko-content">인스타그램 릴스</span></a>
+        <a href="real-estate.html"><span class="en-content">Real Estate</span><span class="ko-content">부동산</span></a>
+        <a href="custom.html"><span class="en-content">YouTube · Weddings · Events</span><span class="ko-content">유튜브 · 웨딩 · 이벤트</span></a>
+      </div>
+      <div class="foot-col">
+        <b><span class="en-content">Social</span><span class="ko-content">소셜</span></b>
+        <a href="https://instagram.com/editbay.ai">@editbay.ai</a>
+        <a href="https://instagram.com/editbaymedia">@editbaymedia</a>
+      </div>
+      <div class="foot-col">
+        <b><span class="en-content">Contact</span><span class="ko-content">연락처</span></b>
+        <a href="mailto:editbaymedia@gmail.com">editbaymedia@gmail.com</a>
+        <span>Vancouver, BC</span>
+      </div>
+    </div>
+  </div>
+  <div class="copy">© 2026 EDITBAY MEDIA</div>
+</footer>
+<script src="lang.js"></script>
 </body>
 </html>
