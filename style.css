@@ -260,3 +260,5 @@ footer{background:var(--ink);color:var(--sand);margin-top:112px}
 .vgrid-v.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:900px){.vgrid-v.cols-6{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:600px){.vgrid-v.cols-6,.vgrid-v.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.step-top{display:flex;align-items:center;justify-content:space-between;color:var(--tan)}
+.step .days{display:inline-block;align-self:flex-start;margin-top:auto;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ink);background:var(--tan);border-radius:999px;padding:4px 12px}
