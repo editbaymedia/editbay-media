@@ -250,3 +250,13 @@ footer{background:var(--ink);color:var(--sand);margin-top:112px}
 .checklist li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.6;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px 20px}
 .checklist li em{font-style:normal;font-family:var(--serif);color:var(--teal);font-size:18px;min-width:24px}
 .nav-links a.current{color:var(--teal);font-weight:700}
+
+/* ===== Korean: always gothic (Noto Sans KR) ===== */
+.ko-content{font-family:var(--sans)}
+.ko-mode :is(h1,.h2,.sub-h,.cta h2,.cta-simple h2,.tile .name,.svc h3,.plan h3,.way strong,.track-head strong,.bundle-top strong,.madefor-list > span) .ko-content{font-weight:700;letter-spacing:-.03em}
+.ko-mode :is(h1,.h2,.cta h2,.cta-simple h2) .ko-content{line-height:1.25}
+.ko-mode :is(.hero h1,.page-hero h1) .ko-content{font-size:.86em}
+.vgrid-v.cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.vgrid-v.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.vgrid-v.cols-6{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:600px){.vgrid-v.cols-6,.vgrid-v.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
