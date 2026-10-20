@@ -375,6 +375,10 @@
                 <label>환불 (%)</label>
                 <input type="number" id="invRefundPct" value="50" step="1" min="0" max="100" style="width:70px;">
             </div>
+            <div class="field cancel-only" style="margin:0; display:none;">
+                <label>작업 시작 전 금액 (전액 환불)</label>
+                <input type="number" id="invNotStarted" value="0" step="0.01" min="0" style="width:110px;">
+            </div>
             <button class="btn primary small" id="genInvoiceBtn">미리보기 생성</button>
             <div class="spacer"></div>
             <button class="btn ghost small" id="printInvoiceBtn" style="display:none;">🖨 인쇄/PDF</button>
@@ -902,12 +906,20 @@ function computePaymentSplit(projectTotal) {
         if (isNaN(refundPct)) refundPct = 50;
         refundPct = Math.min(100, Math.max(0, refundPct));
         const paid = paidBasis === 'deposit' ? deposit : projectTotal;
-        const refund = Math.round(paid * refundPct) / 100;
-        const fee = Math.round((paid - refund) * 100) / 100;
+        // 작업 시작 전 항목은 전액 환불, 나머지(작업 시작된 부분)만 환불 % 적용
+        let notStarted = Number(document.getElementById('invNotStarted').value) || 0;
+        notStarted = Math.min(paid, Math.max(0, notStarted));
+        const started = Math.round((paid - notStarted) * 100) / 100;
+        const startedRefund = Math.round(started * refundPct) / 100;
+        const refund = Math.round((startedRefund + notStarted) * 100) / 100;
+        const fee = Math.round((started - startedRefund) * 100) / 100;
         const paidLabel = paidBasis === 'deposit' ? `Deposit Paid (${pct}%)` : 'Amount Paid';
-        return { mode, pct, deposit, balance, paid, paidLabel, refund, fee, refundPct,
-            due: refund, dueLabel: `Refund Due (${refundPct}%)`,
-            note: `This project has been cancelled at the client's request. As per our cancellation policy, ${100 - refundPct}% of the amount paid (${fmt(fee)}) is retained as a cancellation fee to cover work already completed. A refund of ${fmt(refund)} will be sent via e-Transfer.` };
+        const feePct = 100 - refundPct;
+        let note = `This project has been cancelled at the client's request. As per our cancellation policy, ${feePct}% of the amount paid for work already in progress (${fmt(started)}) is retained as a cancellation fee (${fmt(fee)}).`;
+        if (notStarted > 0) note += ` Items on which work had not yet begun (${fmt(notStarted)}) are refunded in full.`;
+        note += ` A total refund of ${fmt(refund)} will be sent via e-Transfer.`;
+        return { mode, pct, deposit, balance, paid, paidLabel, refund, fee, refundPct, feePct, started, notStarted,
+            due: refund, dueLabel: notStarted > 0 ? 'Total Refund Due' : `Refund Due (${refundPct}%)`, note };
     }
     return { mode: 'full', pct, deposit, balance, due: projectTotal, dueLabel: 'Total Due', note: '' };
 }
@@ -1013,7 +1025,9 @@ document.getElementById('genInvoiceBtn').addEventListener('click', () => {
                 ${pay.mode !== 'full' ? `<div class="row"><span>Project Total</span><span>${fmt(projectTotal)}</span></div>` : ''}
                 ${pay.mode === 'balance' ? `<div class="row"><span>Less: Deposit Paid (${pay.pct}%)</span><span>-${fmt(pay.deposit)}</span></div>` : ''}
                 ${pay.mode === 'cancel' ? `<div class="row"><span>${pay.paidLabel}</span><span>${fmt(pay.paid)}</span></div>
-                <div class="row"><span>Less: Cancellation Fee (${100 - pay.refundPct}%)</span><span>-${fmt(pay.fee)}</span></div>` : ''}
+                ${pay.notStarted > 0 ? `<div class="row"><span>Work in Progress</span><span>${fmt(pay.started)}</span></div>
+                <div class="row"><span>Work Not Started (100% refund)</span><span>${fmt(pay.notStarted)}</span></div>` : ''}
+                <div class="row"><span>Less: Cancellation Fee (${pay.feePct}%${pay.notStarted > 0 ? ' of work in progress' : ''})</span><span>-${fmt(pay.fee)}</span></div>` : ''}
                 <div class="row due"><span>${pay.dueLabel}</span><span class="v">${fmt(total)}</span></div>
             </div>
 
@@ -1066,7 +1080,11 @@ document.getElementById('copyInvoiceBtn').addEventListener('click', () => {
     text += `\nSubtotal: ${fmt(subtotal)}\nTax (${taxPct}%): ${fmt(taxAmount)}`;
     if (pay.mode !== 'full') text += `\nProject Total: ${fmt(subtotal + taxAmount)}`;
     if (pay.mode === 'balance') text += `\nLess: Deposit Paid (${pay.pct}%): -${fmt(pay.deposit)}`;
-    if (pay.mode === 'cancel') text += `\n${pay.paidLabel}: ${fmt(pay.paid)}\nLess: Cancellation Fee (${100 - pay.refundPct}%): -${fmt(pay.fee)}`;
+    if (pay.mode === 'cancel') {
+        text += `\n${pay.paidLabel}: ${fmt(pay.paid)}`;
+        if (pay.notStarted > 0) text += `\nWork in Progress: ${fmt(pay.started)}\nWork Not Started (100% refund): ${fmt(pay.notStarted)}`;
+        text += `\nLess: Cancellation Fee (${pay.feePct}%${pay.notStarted > 0 ? ' of work in progress' : ''}): -${fmt(pay.fee)}`;
+    }
     text += `\n${pay.dueLabel}: ${fmt(pay.due)}`;
     if (pay.note) text += `\n\n${pay.note}`;
     if (!isCancel) text += `\n\n${CANCEL_POLICY}`;
